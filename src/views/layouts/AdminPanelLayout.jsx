@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import {
     LayoutDashboard,
@@ -38,11 +38,20 @@ import {
     DropdownMenuSeparator,
     DropdownMenuLabel,
 } from "@/components/ui/dropdown-menu";
+import { useAuth } from "../../hooks/useAuth";
 
 export default function AdminPanelLayout({ children, role = "admin" }) {
     const location = useLocation();
     const navigate = useNavigate();
+    const {logout, user} = useAuth()
     const [isModalOpen, setIsModalOpen] = useState(false);
+
+    useEffect(() => {
+        if(!user) {
+            navigate('/')
+        }
+    }, [])
+    
 
     const menuItems = {
         admin: [
@@ -122,6 +131,13 @@ export default function AdminPanelLayout({ children, role = "admin" }) {
             },
         ],
     };
+
+    const exit = () => {
+        logout()
+        setTimeout(() => {
+            navigate('/')
+        }, 1000);
+    }
 
     return (
         <SidebarProvider>
@@ -246,7 +262,7 @@ export default function AdminPanelLayout({ children, role = "admin" }) {
                                     </DropdownMenuItem>
                                     <DropdownMenuSeparator className="bg-slate-100 dark:bg-zinc-800" />
                                     <DropdownMenuItem
-                                        onClick={() => setIsModalOpen(true)}
+                                        onClick={() => exit()}
                                         className="flex items-center gap-2 p-2 rounded-lg cursor-pointer text-red-600 dark:text-red-400 focus:bg-red-50 dark:focus:bg-red-950/50 font-medium"
                                     >
                                         <LogOut className="size-4" />
