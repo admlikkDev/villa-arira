@@ -3,16 +3,16 @@ import Cart from './Cart';
 
 const menuItems = [
     { name: 'Home', href: '/' },
-    { name: 'Informasi', href: '#informasi' },
-    { name: 'Pilihan Sewa', href: '#pilihan-sewa' },
-    { name: 'Pricelist', href: '#pricelist' },
-    { name: 'Fasilitas', href: '#fasilitas' },
+    // { name: 'Informasi', href: '#informasi' },
+    // { name: 'Pilihan Sewa', href: '#pilihan-sewa' },
+    // { name: 'Pricelist', href: '#pricelist' },
+    // { name: 'Fasilitas', href: '#fasilitas' },
     { name: 'Gallery', href: '/gallery' },
-    { name: 'Paket', href: '#paket' },
-    { name: 'Add-on', href: '#add-on' },
-    { name: 'Review', href: '#review' },
-    { name: 'Lokasi', href: '#lokasi' },
-    { name: 'FAQ', href: '#faq' },
+    // { name: 'Paket', href: '#paket' },
+    // { name: 'Add-on', href: '#add-on' },
+    // { name: 'Review', href: '#review' },
+    // { name: 'Lokasi', href: '#lokasi' },
+    // { name: 'FAQ', href: '#faq' },
     { name: 'Contact', href: '/contact' },
 ];
 
