@@ -40,7 +40,7 @@ export default function UpdateHeroModal({ open, onOpenChange, data }) {
             return resp.data;
         },
         onSuccess: () => {
-            queryClient.invalidateQueries({ queryKey: ["admin-hero-section"] });
+            queryClient.invalidateQueries({ queryKey: ["hero-section"] });
             onOpenChange(false);
         },
         onError: (errData) => {

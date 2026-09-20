@@ -1,11 +1,11 @@
-import { LayoutTemplate, Pencil, Image as ImageIcon, Clock, AlertCircle } from "lucide-react";
+import { LayoutTemplate, Pencil, Image as ImageIcon, Clock, AlertCircle, Loader2 } from "lucide-react";
 import { Link } from "react-router-dom";
 import AdminPanelLayout from "../../layouts/AdminPanelLayout";
 import useFetch from "../../../hooks/useFetch";
 import { useQuery } from "@tanstack/react-query";
-import { Loader2 } from "lucide-react";
 import UpdateHeroModal from "./Update";
 import { useState } from "react";
+import Hero from "../../../components/Hero";
 
 const formatTimeAgo = (isoString) => {
     if (!isoString) return "Belum diperbarui";
@@ -26,14 +26,13 @@ const formatTimeAgo = (isoString) => {
 
 export default function Index() {
     const { get } = useFetch();
+    const [isOpen, setIsOpen] = useState(false);
 
     const fetchData = async () => {
         const resp = await get('hero-section');
         if (!resp.status) throw new Error(resp.error);
         return resp.data;
     };
-
-    const [isOpen, setIsOpen] = useState(false)
 
     const { data, isLoading, isError, error } = useQuery({
         queryKey: ['admin-hero-section'],
@@ -68,7 +67,7 @@ export default function Index() {
         <AdminPanelLayout>
             <UpdateHeroModal open={isOpen} onOpenChange={setIsOpen} data={heroContent} />
 
-            <div className="space-y-6 max-w-4xl relative">
+            <div className="space-y-6 max-w-5xl relative">
                 <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 border-b border-slate-100 dark:border-zinc-800 pb-5">
                     <div className="flex items-center gap-3">
                         <div className="flex size-10 items-center justify-center rounded-xl bg-indigo-50 dark:bg-indigo-950/60 text-indigo-600 dark:text-indigo-400 border border-indigo-100 dark:border-indigo-900/40 shadow-xs">
@@ -94,17 +93,30 @@ export default function Index() {
 
                     <div className="relative z-10 p-6 sm:p-8 rounded-3xl border border-slate-200/80 dark:border-zinc-800 bg-white dark:bg-zinc-900 shadow-sm transition-all backdrop-blur-sm">
                         <div className="flex flex-col gap-6">
-                            <div className="space-y-3 max-w-2xl pt-2">
-                                <h3 className="text-2xl font-bold text-slate-900 dark:text-slate-100 tracking-tight flex items-center gap-2">
-                                    {heroContent?.title || "Judul belum diatur"}
-                                </h3>
-                                <p className="text-sm text-slate-600 dark:text-zinc-300 leading-relaxed bg-slate-50/60 dark:bg-zinc-950/50 p-4 rounded-2xl border border-slate-100 dark:border-zinc-800/80">
-                                    {heroContent?.subtitle || "Subtitle belum diatur."}
-                                </p>
+                            
+                            <div className="rounded-2xl overflow-hidden border border-slate-200/80 dark:border-zinc-800 shadow-sm bg-slate-50 dark:bg-zinc-950">
+                                <div className="flex items-center px-4 py-3 bg-slate-100 dark:bg-zinc-800/80 border-b border-slate-200/80 dark:border-zinc-800">
+                                    <div className="flex gap-2 w-20">
+                                        <div className="size-3 rounded-full bg-red-400/90 shadow-sm"></div>
+                                        <div className="size-3 rounded-full bg-amber-400/90 shadow-sm"></div>
+                                        <div className="size-3 rounded-full bg-emerald-400/90 shadow-sm"></div>
+                                    </div>
+                                    <div className="flex-1 flex justify-center">
+                                        <div className="px-6 py-1.5 rounded-md bg-white dark:bg-zinc-900 border border-slate-200/80 dark:border-zinc-700 shadow-xs flex items-center justify-center min-w-[240px]">
+                                            <span className="text-[11px] font-medium text-slate-500 dark:text-zinc-400 font-mono tracking-tight">
+                                                villaarira.com
+                                            </span>
+                                        </div>
+                                    </div>
+                                    <div className="w-20"></div>
+                                </div>
+                                <div className="w-full h-[450px] overflow-y-auto overflow-x-hidden relative bg-white dark:bg-zinc-950">
+                                    <Hero />
+                                </div>
                             </div>
 
-                            <div className="pt-4 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 border-t border-slate-100 dark:border-zinc-800/80">
-                                <div className="flex items-center gap-2 text-xs text-slate-400 dark:text-zinc-500">
+                            <div className="pt-2 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 border-t border-slate-100 dark:border-zinc-800/80">
+                                <div className="flex items-center gap-2 text-xs text-slate-400 dark:text-zinc-500 mt-2">
                                     <Clock className="size-4" />
                                     <span>Terakhir diperbarui: {formatTimeAgo(heroContent?.updatedAt)}</span>
                                 </div>
@@ -112,7 +124,7 @@ export default function Index() {
                                 <button
                                     type="button"
                                     onClick={() => setIsOpen(true)}
-                                    className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-indigo-600 hover:bg-indigo-700 text-white text-sm font-medium transition-all shadow-sm cursor-pointer self-end sm:self-auto"
+                                    className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-indigo-600 hover:bg-indigo-700 text-white text-sm font-medium transition-all shadow-sm cursor-pointer self-end sm:self-auto mt-2 sm:mt-0"
                                 >
                                     <Pencil className="size-4" />
                                     <span>Edit Konten Hero</span>
@@ -121,8 +133,6 @@ export default function Index() {
                         </div>
                     </div>
                 </div>
-
-
             </div>
         </AdminPanelLayout>
     );
