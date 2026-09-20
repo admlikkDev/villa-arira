@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import {
     LayoutDashboard,
+    LayoutTemplate,
     Users,
     Package,
     FolderTree,
@@ -12,9 +13,9 @@ import {
     Command,
     ChevronsUpDown,
     Check,
-    Sparkles,
     UserCircle,
-    Settings
+    Settings,
+    Clock
 } from "lucide-react";
 import {
     SidebarProvider,
@@ -43,22 +44,28 @@ import { useAuth } from "../../hooks/useAuth";
 export default function AdminPanelLayout({ children, role = "admin" }) {
     const location = useLocation();
     const navigate = useNavigate();
-    const {logout, user} = useAuth()
-    const [isModalOpen, setIsModalOpen] = useState(false);
+    const { logout, user } = useAuth();
+    const [currentTime, setCurrentTime] = useState(new Date());
 
     useEffect(() => {
-        if(!user) {
-            navigate('/')
+        if (!user) {
+            navigate('/');
         }
-    }, [])
-    
+    }, [user, navigate]);
+
+    useEffect(() => {
+        const timer = setInterval(() => {
+            setCurrentTime(new Date());
+        }, 1000);
+        return () => clearInterval(timer);
+    }, []);
 
     const menuItems = {
         admin: [
             {
-                title: "Dashboard",
-                icon: LayoutDashboard,
-                url: "/admin/dashboard",
+                title: "Hero section",
+                icon: LayoutTemplate,
+                url: "/admin/hero-section",
             },
             {
                 title: "Users",
@@ -133,11 +140,11 @@ export default function AdminPanelLayout({ children, role = "admin" }) {
     };
 
     const exit = () => {
-        logout()
+        logout();
         setTimeout(() => {
-            navigate('/')
+            navigate('/');
         }, 1000);
-    }
+    };
 
     return (
         <SidebarProvider>
@@ -146,19 +153,22 @@ export default function AdminPanelLayout({ children, role = "admin" }) {
                     <SidebarMenu>
                         <SidebarMenuItem>
                             <DropdownMenu>
-                                <DropdownMenuTrigger asChild>
+                                <DropdownMenuTrigger className="w-full text-left outline-none cursor-pointer bg-transparent border-none p-0">
                                     <SidebarMenuButton
+                                        asChild
                                         size="lg"
-                                        className="data-[state=open]:bg-slate-100 dark:data-[state=open]:bg-zinc-800/80 hover:bg-slate-100 dark:hover:bg-zinc-800/50 transition-all rounded-xl"
+                                        className="data-[state=open]:bg-slate-100 dark:data-[state=open]:bg-zinc-800/80 hover:bg-slate-100 dark:hover:bg-zinc-800/50 transition-all rounded-xl w-full h-14 px-3"
                                     >
-                                        <div className="flex aspect-square size-8 items-center justify-center rounded-lg bg-indigo-600 text-white shadow-xs">
-                                            <Command className="size-4" />
+                                        <div className="flex w-full items-center gap-3">
+                                            <div className="flex aspect-square size-9 shrink-0 items-center justify-center rounded-lg bg-indigo-600 text-white shadow-xs">
+                                                <Command className="size-4" />
+                                            </div>
+                                            <div className="flex flex-1 flex-col text-left leading-tight">
+                                                <span className="truncate font-semibold text-slate-900 dark:text-slate-100">Villa Arira</span>
+                                                <span className="truncate text-xs capitalize text-slate-500 dark:text-zinc-400">{role} Panel</span>
+                                            </div>
+                                            <ChevronsUpDown className="ml-auto size-4 text-slate-400 shrink-0" />
                                         </div>
-                                        <div className="grid flex-1 text-left text-sm leading-tight">
-                                            <span className="truncate font-semibold text-slate-900 dark:text-slate-100">Villa Arira</span>
-                                            <span className="truncate text-xs capitalize text-slate-500 dark:text-zinc-400">{role} Panel</span>
-                                        </div>
-                                        <ChevronsUpDown className="ml-auto size-4 text-slate-400" />
                                     </SidebarMenuButton>
                                 </DropdownMenuTrigger>
                                 <DropdownMenuContent
@@ -183,7 +193,6 @@ export default function AdminPanelLayout({ children, role = "admin" }) {
 
                 <SidebarSeparator className="mx-3 bg-slate-100 dark:bg-zinc-800/60" />
 
-                {/* Konten Menu Navigasi */}
                 <SidebarContent className="px-2 py-3">
                     <SidebarGroup>
                         <SidebarGroupContent>
@@ -196,8 +205,8 @@ export default function AdminPanelLayout({ children, role = "admin" }) {
                                             <SidebarMenuButton
                                                 tooltip={item.title}
                                                 asChild
-                                                className={`h-10 px-3 rounded-xl transition-all duration-200 ${isActive
-                                                    ? "bg-indigo-50 text-indigo-600 font-semibold dark:bg-indigo-950/60 dark:text-indigo-400 shadow-2xs"
+                                                className={`h-11 px-3 rounded-xl transition-all duration-200 ${isActive
+                                                    ? "bg-indigo-50 text-indigo-600 font-semibold dark:bg-indigo-500/10 dark:text-indigo-400"
                                                     : "text-slate-600 dark:text-zinc-400 hover:bg-slate-100 dark:hover:bg-zinc-800/60 hover:text-slate-900 dark:hover:text-slate-200"
                                                     }`}
                                             >
@@ -218,20 +227,23 @@ export default function AdminPanelLayout({ children, role = "admin" }) {
                     <SidebarMenu>
                         <SidebarMenuItem>
                             <DropdownMenu>
-                                <DropdownMenuTrigger asChild>
+                                <DropdownMenuTrigger className="w-full text-left outline-none cursor-pointer bg-transparent border-none p-0">
                                     <SidebarMenuButton
+                                        asChild
                                         size="lg"
-                                        className="h-12 px-2 rounded-xl hover:bg-slate-100 dark:hover:bg-zinc-800/50 transition-all data-[state=open]:bg-slate-100 dark:data-[state=open]:bg-zinc-800/80 cursor-pointer"
+                                        className="h-14 px-3 rounded-xl hover:bg-slate-100 dark:hover:bg-zinc-800/50 transition-all data-[state=open]:bg-slate-100 dark:data-[state=open]:bg-zinc-800/80 w-full"
                                         tooltip="Account Profile"
                                     >
-                                        <div className="flex size-9 items-center justify-center rounded-xl bg-slate-200 dark:bg-zinc-800 text-slate-700 dark:text-slate-200 font-bold text-sm">
-                                            AD
+                                        <div className="flex w-full items-center gap-3">
+                                            <div className="flex size-9 shrink-0 items-center justify-center rounded-lg bg-indigo-50 dark:bg-zinc-800 text-indigo-600 dark:text-slate-200 font-bold text-sm">
+                                                AD
+                                            </div>
+                                            <div className="flex flex-1 flex-col text-left leading-tight">
+                                                <span className="truncate font-semibold text-slate-800 dark:text-slate-100 text-sm">Adam Malik</span>
+                                                <span className="truncate text-xs text-slate-500 dark:text-zinc-400 capitalize">Role: {role}</span>
+                                            </div>
+                                            <ChevronsUpDown className="ml-auto size-4 text-slate-400 shrink-0" />
                                         </div>
-                                        <div className="grid flex-1 text-left text-sm leading-tight ml-1">
-                                            <span className="truncate font-semibold text-slate-800 dark:text-slate-100">Adam Malik</span>
-                                            <span className="truncate text-xs text-slate-500 dark:text-zinc-400 capitalize">Role: {role}</span>
-                                        </div>
-                                        <ChevronsUpDown className="ml-auto size-4 text-slate-400" />
                                     </SidebarMenuButton>
                                 </DropdownMenuTrigger>
                                 <DropdownMenuContent
@@ -241,11 +253,11 @@ export default function AdminPanelLayout({ children, role = "admin" }) {
                                     sideOffset={4}
                                 >
                                     <div className="p-2 font-normal">
-                                        <div className="flex items-center gap-2 px-1 py-1.5 text-left text-sm">
-                                            <div className="flex size-8 items-center justify-center rounded-lg bg-slate-200 dark:bg-zinc-800 text-slate-700 dark:text-slate-200 font-bold text-xs">
+                                        <div className="flex items-center gap-3 px-1 py-1.5 text-left text-sm">
+                                            <div className="flex size-8 shrink-0 items-center justify-center rounded-lg bg-indigo-50 dark:bg-zinc-800 text-indigo-600 dark:text-slate-200 font-bold text-xs">
                                                 AD
                                             </div>
-                                            <div className="grid flex-1 text-left text-sm leading-tight">
+                                            <div className="flex flex-1 flex-col text-left leading-tight">
                                                 <span className="truncate font-semibold text-slate-800 dark:text-slate-100">Adam Malik</span>
                                                 <span className="truncate text-xs text-slate-500 dark:text-zinc-400">admin@villaarira.com</span>
                                             </div>
@@ -275,13 +287,25 @@ export default function AdminPanelLayout({ children, role = "admin" }) {
                 </SidebarFooter>
             </Sidebar>
 
-            <main className="w-full min-h-screen bg-slate-50/80 dark:bg-zinc-950 flex flex-col">
-                {/* Header Atas */}
+            <main className="w-full min-h-screen bg-slate-50/50 dark:bg-zinc-950 flex flex-col">
                 <header className="flex items-center justify-between h-16 px-6 bg-white/80 backdrop-blur-md dark:bg-zinc-900/80 border-b border-slate-200/80 dark:border-zinc-800 shrink-0 sticky top-0 z-10">
                     <div className="flex items-center gap-3">
                         <SidebarTrigger className="text-slate-600 dark:text-zinc-300 hover:bg-slate-100 dark:hover:bg-zinc-800 p-2 rounded-lg transition-colors" />
                         <span className="text-sm font-medium text-slate-300 dark:text-zinc-700">/</span>
                         <h1 className="font-semibold text-slate-800 dark:text-slate-100 text-sm tracking-tight">Admin Dashboard</h1>
+                    </div>
+
+                    <div className="flex items-center rounded-full bg-white dark:bg-zinc-900 border border-slate-200/80 dark:border-zinc-800 shadow-sm pr-4 pl-1.5 py-1.5 gap-2.5">
+                        <div className="flex items-center justify-center size-7 rounded-full bg-indigo-50 dark:bg-indigo-500/10 text-indigo-600 dark:text-indigo-400">
+                            <Clock className="size-3.5" />
+                        </div>
+                        <span className="text-sm font-semibold tracking-wider font-mono text-slate-700 dark:text-slate-200 tabular-nums">
+                            {currentTime.toLocaleTimeString('id-ID', {
+                                hour: '2-digit',
+                                minute: '2-digit',
+                                second: '2-digit',
+                            }).replace(/\./g, ':')}
+                        </span>
                     </div>
                 </header>
 

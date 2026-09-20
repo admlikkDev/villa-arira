@@ -2,10 +2,10 @@ import { useRoutes } from "react-router-dom";
 import Homepage from "./views/Homepage";
 import GalleryPage from "./views/GalleryPage";
 import ContactPage from "./views/ContactPage";
-import Index from "./views/Admin";
 import PublicLayout from "./views/layouts/PublicLayout";
 import Login from "./views/Authentication/Login";
 import Register from "./views/Authentication/Register";
+import Index from "./views/Admin/HeroSection/Index";
 
 export default function App() {
   return useRoutes([
@@ -39,7 +39,7 @@ export default function App() {
 
     // admin panel
     {
-      path: '/admin/hero/index',
+      path: '/admin/hero-section',
       element: <Index />
     },
   ])

@@ -1,4 +1,6 @@
+import { useQuery } from '@tanstack/react-query';
 import { useState } from 'react';
+import useFetch from '../hooks/useFetch';
 
 const buttonStyle = {
     marginTop: '3rem',
@@ -57,8 +59,28 @@ const subtitleStyle = {
     textShadow: '0 1px 2px rgba(0,0,0,0.3)',
 };
 
+
 export default function Hero() {
     const [isHovered, setIsHovered] = useState(false);
+
+    const { get } = useFetch()
+    const fetchData = async () => {
+        const resp = await get('/hero-section');
+        if (!resp.status) throw new Error(resp.error);
+        return resp.data;
+    };
+
+    const { data, isLoading, isError, error } = useQuery({
+        queryKey: ['hero-section'],
+        queryFn: fetchData
+    })
+
+    
+    if (isLoading) return <div className="text-stone-400">Memuat data...</div>
+    if (isError) return <div className="text-red-400">Terjadi error: {error.message}</div>
+    
+    const heroContent = data?.data || data;
+    // console.log(heroContent)
 
     return (
         <section style={{ position: 'relative', width: '100%', height: '100vh', overflow: 'hidden', backgroundColor: '#1a1a1a' }}>
@@ -85,11 +107,9 @@ export default function Hero() {
 
             <div style={{ ...textContainerStyle, height: '100%', justifyContent: 'center' }}>
                 <div>
-                    <h1 style={titleStyle}>Villa Arira</h1>
+                    <h1 style={titleStyle}>{heroContent?.title}</h1>
                     <p style={subtitleStyle}>
-                        Tempat peristirahatan eksklusif berarsitektur kayu tradisional Sunda, kolam teratai
-                        nan syahdu, private pool, meja biliar, dan halaman lapang berhawa sejuk
-                        pegunungan Lembang, Bandung Barat.
+                        {heroContent?.subtitle}
                     </p>
 
                     <a href="#cek-jadwal">

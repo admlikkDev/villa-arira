@@ -26,10 +26,10 @@ export default function Login() {
             return false;
         }
 
-        login(resp.data);
+        login(resp.data.data);
         
         if (resp.data?.data?.user?.role === 'admin') {
-            navigate('/admin/hero/index');
+            navigate('/admin/hero-section');
         } else {
             navigate('/');
         }
