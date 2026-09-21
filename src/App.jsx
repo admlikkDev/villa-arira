@@ -7,6 +7,7 @@ import Login from "./views/Authentication/Login";
 import Register from "./views/Authentication/Register";
 import Index from "./views/Admin/HeroSection/Index";
 import FaqIndex from "./views/Admin/FaqSection/Index";
+import GalleryIndex from "./views/Admin/Gallery/Index";
 
 export default function App() {
   return useRoutes([
@@ -46,6 +47,10 @@ export default function App() {
     {
       path: '/admin/faq-section',
       element: <FaqIndex />
+    },
+    {
+      path: '/admin/gallery',
+      element: <GalleryIndex />
     },
   ])
 }

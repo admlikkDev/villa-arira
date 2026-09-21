@@ -16,7 +16,8 @@ import {
     Check,
     UserCircle,
     Settings,
-    Clock
+    Clock,
+    Image
 } from "lucide-react";
 import {
     SidebarProvider,
@@ -72,6 +73,11 @@ export default function AdminPanelLayout({ children, role = "admin" }) {
                 title: "Faq section",
                 icon: MessageCircleQuestion,
                 url: "/admin/faq-section",
+            },
+            {
+                title: "Gallery",
+                icon: Image,
+                url: "/admin/gallery",
             },
         ],
         borrower: [
