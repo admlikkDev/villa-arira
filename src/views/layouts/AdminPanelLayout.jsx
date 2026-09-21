@@ -6,6 +6,7 @@ import {
     Users,
     Package,
     FolderTree,
+    MessageCircleQuestion,
     FileText,
     RotateCcw,
     Activity,
@@ -68,34 +69,9 @@ export default function AdminPanelLayout({ children, role = "admin" }) {
                 url: "/admin/hero-section",
             },
             {
-                title: "Users",
-                icon: Users,
-                url: "/admin/users",
-            },
-            {
-                title: "Items",
-                icon: Package,
-                url: "/admin/items",
-            },
-            {
-                title: "Categories",
-                icon: FolderTree,
-                url: "/admin/categories",
-            },
-            {
-                title: "Borrows",
-                icon: FileText,
-                url: "/admin/borrow-requests",
-            },
-            {
-                title: "Returns",
-                icon: RotateCcw,
-                url: "/admin/returns",
-            },
-            {
-                title: "Activity Log",
-                icon: Activity,
-                url: "/admin/logs",
+                title: "Faq section",
+                icon: MessageCircleQuestion,
+                url: "/admin/faq-section",
             },
         ],
         borrower: [

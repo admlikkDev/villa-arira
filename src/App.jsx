@@ -6,6 +6,7 @@ import PublicLayout from "./views/layouts/PublicLayout";
 import Login from "./views/Authentication/Login";
 import Register from "./views/Authentication/Register";
 import Index from "./views/Admin/HeroSection/Index";
+import FaqIndex from "./views/Admin/FaqSection/Index";
 
 export default function App() {
   return useRoutes([
@@ -41,6 +42,10 @@ export default function App() {
     {
       path: '/admin/hero-section',
       element: <Index />
+    },
+    {
+      path: '/admin/faq-section',
+      element: <FaqIndex />
     },
   ])
 }
