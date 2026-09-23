@@ -1,15 +1,8 @@
 import { useEffect, useState } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import {
-    LayoutDashboard,
     LayoutTemplate,
-    Users,
-    Package,
-    FolderTree,
     MessageCircleQuestion,
-    FileText,
-    RotateCcw,
-    Activity,
     LogOut,
     Command,
     ChevronsUpDown,
@@ -18,6 +11,7 @@ import {
     Settings,
     Clock,
     Image,
+    MessageSquareQuote,
 } from "lucide-react";
 import {
     SidebarProvider,
@@ -81,47 +75,8 @@ export default function AdminPanelLayout({ children, role = "admin" }) {
             },
             {
                 title: "Testimony",
-                icon: Image,
+                icon: MessageSquareQuote,
                 url: "/admin/testimony",
-            },
-        ],
-        borrower: [
-            {
-                title: "Dashboard",
-                icon: LayoutDashboard,
-                url: "/dashboard",
-            },
-            {
-                title: "Items",
-                icon: Package,
-                url: "/items",
-            },
-            {
-                title: "Borrows",
-                icon: FileText,
-                url: "/borrow-requests",
-            },
-            {
-                title: "Returns",
-                icon: RotateCcw,
-                url: "/returns",
-            },
-        ],
-        officer: [
-            {
-                title: "Dashboard",
-                icon: LayoutDashboard,
-                url: "/officer/dashboard",
-            },
-            {
-                title: "Borrows",
-                icon: FileText,
-                url: "/officer/borrow-requests",
-            },
-            {
-                title: "Returns",
-                icon: RotateCcw,
-                url: "/officer/returns",
             },
         ],
     };

@@ -4,6 +4,7 @@ import { useState } from "react";
 import useFetch from "../../../hooks/useFetch";
 import { useQuery } from "@tanstack/react-query";
 import CreateUpdateTesimonyModal from "./CreateUpdateTestimony";
+import GlobalDeleteModal from "../../../components/modal/Delete";
 // import CreateUpdateFaqModal from "./CreateOrUpdate";
 // import DeleteFaqModal from "./Delete";
 export default function TestimonyIndex() {
@@ -54,6 +55,7 @@ export default function TestimonyIndex() {
     return (
         <AdminPanelLayout>
             <CreateUpdateTesimonyModal open={openModal} onOpenChange={setOpenModal} isCreate={isCreate} id={id} />
+            <GlobalDeleteModal open={openDeleteModal} onOpenChange={setOpenDeleteModal} id={deleteId} path={'testimonies'} queryKey={'admin-testimony-section'}/>
             {/* <DeleteFaqModal open={openDeleteModal} onOpenChange={setOpenDeleteModal} id={deleteId} /> */}
 
             <div className="space-y-6 max-w-5xl relative">
