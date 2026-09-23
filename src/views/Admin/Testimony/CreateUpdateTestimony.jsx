@@ -17,18 +17,17 @@ import { useAuth } from "../../../hooks/useAuth";
 
 export default function CreateUpdateTesimonyModal({ open, onOpenChange, isCreate, id }) {
     const [comment, setComment] = useState("");
-    const [star, setStar] = useState(0);
+    const [star, setStar] = useState("");
     const [username, setUsername] = useState("");
     const [sortOrder, setSortOrder] = useState("");
     const [errors, setErrors] = useState({});
-    const {user} = useAuth()
-    // console.log(user.token)
+    const { user } = useAuth();
 
     const { post, put, get } = useFetch();
     const queryClient = useQueryClient();
 
     const { data, isLoading: isFetching } = useQuery({
-        queryKey: ['faq-detail', id],
+        queryKey: ['testimony-detail', id],
         queryFn: async () => {
             const resp = await get(`testimonies/${id}`);
             if (!resp.status) throw resp.error;
@@ -46,11 +45,11 @@ export default function CreateUpdateTesimonyModal({ open, onOpenChange, isCreate
                 setStar("");
                 setSortOrder("");
             } else if (data) {
-                const faqData = data.data || data;
-                setComment(faqData.comment || "");
-                setUsername(faqData.username || "");
-                setStar(faqData.star || 0);
-                setSortOrder(faqData.sort_order ?? "");
+                const testimonyData = data.data || data;
+                setComment(testimonyData.comment || "");
+                setUsername(testimonyData.username || "");
+                setStar(testimonyData.star ?? "");
+                setSortOrder(testimonyData.sort_order ?? "");
             }
         }
     }, [open, isCreate, data]);
@@ -92,9 +91,10 @@ export default function CreateUpdateTesimonyModal({ open, onOpenChange, isCreate
         e.preventDefault();
         setErrors({});
 
+        // Pastikan tipe data angka dikonversi dengan benar agar tidak error 500 di server
         const payload = {
             comment,
-            star,
+            star: star === "" ? null : Number(star),
             username,
             sort_order: sortOrder === "" ? null : Number(sortOrder)
         };
@@ -118,10 +118,10 @@ export default function CreateUpdateTesimonyModal({ open, onOpenChange, isCreate
                         </div>
                         <div>
                             <DialogTitle className="text-lg font-bold text-slate-900 dark:text-slate-100 tracking-tight">
-                                {isCreate ? "Tambah FAQ Baru" : "Edit FAQ"}
+                                {isCreate ? "Tambah Testimoni Baru" : "Edit Testimoni"}
                             </DialogTitle>
                             <DialogDescription className="text-xs sm:text-sm text-slate-500 dark:text-zinc-400 mt-1">
-                                {isCreate ? "Masukkan pertanyaan yang sering diajukan beserta jawabannya." : "Perbarui pertanyaan atau jawaban FAQ yang sudah ada."}
+                                {isCreate ? "Masukkan ulasan dan informasi testimoni baru." : "Perbarui data testimoni yang sudah ada."}
                             </DialogDescription>
                         </div>
                     </DialogHeader>
@@ -140,22 +140,22 @@ export default function CreateUpdateTesimonyModal({ open, onOpenChange, isCreate
                                 </div>
                             )}
 
+                            {/* Comment */}
                             <div className="space-y-2">
-                                <Label htmlFor="question" className={`font-medium text-sm ${errors.comment ? "text-red-600 dark:text-red-400" : "text-slate-700 dark:text-zinc-300"}`}>
-                                    Comment
+                                <Label htmlFor="comment" className={`font-medium text-sm ${errors.comment ? "text-red-600 dark:text-red-400" : "text-slate-700 dark:text-zinc-300"}`}>
+                                    Komentar
                                 </Label>
                                 <Input
-                                    id="question"
-                                    name="question"
+                                    id="comment"
+                                    name="comment"
                                     type="text"
                                     value={comment}
                                     onChange={(e) => setComment(e.target.value)}
-                                    placeholder="Contoh: Jam berapa standar waktu check-in?"
+                                    placeholder="Contoh: Pelayanannya sangat memuaskan!"
                                     disabled={isPending}
-                                    className={`h-11 rounded-xl bg-slate-50 dark:bg-zinc-900/50 text-slate-900 dark:text-slate-100 disabled:opacity-50 transition-colors ${errors.comment
-                                            ? "border-red-300 focus-visible:ring-red-500 dark:border-red-900/50"
-                                            : "border-slate-200 dark:border-zinc-800 focus-visible:ring-indigo-600"
-                                        }`}
+                                    className={`h-11 rounded-xl bg-slate-50 dark:bg-zinc-900/50 text-slate-900 dark:text-slate-100 disabled:opacity-50 transition-colors ${
+                                        errors.comment ? "border-red-300 focus-visible:ring-red-500" : "border-slate-200 dark:border-zinc-800 focus-visible:ring-indigo-600"
+                                    }`}
                                 />
                                 {errors.comment && (
                                     <p className="text-xs text-red-600 dark:text-red-400 font-medium">
@@ -164,23 +164,22 @@ export default function CreateUpdateTesimonyModal({ open, onOpenChange, isCreate
                                 )}
                             </div>
 
+                            {/* Username */}
                             <div className="space-y-2">
-                                <Label htmlFor="answer" className={`font-medium text-sm ${errors.username ? "text-red-600 dark:text-red-400" : "text-slate-700 dark:text-zinc-300"}`}>
-                                    Jawaban
+                                <Label htmlFor="username" className={`font-medium text-sm ${errors.username ? "text-red-600 dark:text-red-400" : "text-slate-700 dark:text-zinc-300"}`}>
+                                    Username
                                 </Label>
-                                <input
-                                    type="text"
+                                <Input
                                     id="username"
                                     name="username"
-                                    rows={5}
+                                    type="text"
                                     value={username}
                                     onChange={(e) => setUsername(e.target.value)}
-                                    placeholder="Tuliskan jawaban secara lengkap dan jelas..."
+                                    placeholder="Contoh: Budi Santoso"
                                     disabled={isPending}
-                                    className={`w-full p-3 rounded-xl bg-slate-50 dark:bg-zinc-900/50 text-slate-900 dark:text-slate-100 placeholder:text-slate-400 focus:outline-none focus:ring-2 text-sm leading-relaxed resize-none disabled:opacity-50 transition-colors border ${errors.username
-                                            ? "border-red-300 focus:ring-red-500 dark:border-red-900/50"
-                                            : "border-slate-200 dark:border-zinc-800 focus:ring-indigo-600"
-                                        }`}
+                                    className={`h-11 rounded-xl bg-slate-50 dark:bg-zinc-900/50 text-slate-900 dark:text-slate-100 disabled:opacity-50 transition-colors ${
+                                        errors.username ? "border-red-300 focus-visible:ring-red-500" : "border-slate-200 dark:border-zinc-800 focus-visible:ring-indigo-600"
+                                    }`}
                                 />
                                 {errors.username && (
                                     <p className="text-xs text-red-600 dark:text-red-400 font-medium">
@@ -189,22 +188,24 @@ export default function CreateUpdateTesimonyModal({ open, onOpenChange, isCreate
                                 )}
                             </div>
 
+                            {/* Star */}
                             <div className="space-y-2">
-                                <Label htmlFor="sortOrder" className={`font-medium text-sm ${errors.star ? "text-red-600 dark:text-red-400" : "text-slate-700 dark:text-zinc-300"}`}>
-                                    Star
+                                <Label htmlFor="star" className={`font-medium text-sm ${errors.star ? "text-red-600 dark:text-red-400" : "text-slate-700 dark:text-zinc-300"}`}>
+                                    Bintang (Star)
                                 </Label>
                                 <Input
-                                    id="sortOrder"
+                                    id="star"
                                     name="star"
                                     type="number"
+                                    min="1"
+                                    max="5"
                                     value={star}
                                     onChange={(e) => setStar(e.target.value)}
-                                    placeholder="Contoh: 1"
+                                    placeholder="Contoh: 5"
                                     disabled={isPending}
-                                    className={`h-11 rounded-xl bg-slate-50 dark:bg-zinc-900/50 text-slate-900 dark:text-slate-100 disabled:opacity-50 transition-colors ${errors.star
-                                            ? "border-red-300 focus-visible:ring-red-500 dark:border-red-900/50"
-                                            : "border-slate-200 dark:border-zinc-800 focus-visible:ring-indigo-600"
-                                        }`}
+                                    className={`h-11 rounded-xl bg-slate-50 dark:bg-zinc-900/50 text-slate-900 dark:text-slate-100 disabled:opacity-50 transition-colors ${
+                                        errors.star ? "border-red-300 focus-visible:ring-red-500" : "border-slate-200 dark:border-zinc-800 focus-visible:ring-indigo-600"
+                                    }`}
                                 />
                                 {errors.star && (
                                     <p className="text-xs text-red-600 dark:text-red-400 font-medium">
@@ -213,6 +214,7 @@ export default function CreateUpdateTesimonyModal({ open, onOpenChange, isCreate
                                 )}
                             </div>
 
+                            {/* Sort Order */}
                             <div className="space-y-2">
                                 <Label htmlFor="sortOrder" className={`font-medium text-sm ${errors.sort_order ? "text-red-600 dark:text-red-400" : "text-slate-700 dark:text-zinc-300"}`}>
                                     Urutan (Sort Order)
@@ -225,10 +227,9 @@ export default function CreateUpdateTesimonyModal({ open, onOpenChange, isCreate
                                     onChange={(e) => setSortOrder(e.target.value)}
                                     placeholder="Contoh: 1"
                                     disabled={isPending}
-                                    className={`h-11 rounded-xl bg-slate-50 dark:bg-zinc-900/50 text-slate-900 dark:text-slate-100 disabled:opacity-50 transition-colors ${errors.sort_order
-                                            ? "border-red-300 focus-visible:ring-red-500 dark:border-red-900/50"
-                                            : "border-slate-200 dark:border-zinc-800 focus-visible:ring-indigo-600"
-                                        }`}
+                                    className={`h-11 rounded-xl bg-slate-50 dark:bg-zinc-900/50 text-slate-900 dark:text-slate-100 disabled:opacity-50 transition-colors ${
+                                        errors.sort_order ? "border-red-300 focus-visible:ring-red-500" : "border-slate-200 dark:border-zinc-800 focus-visible:ring-indigo-600"
+                                    }`}
                                 />
                                 {errors.sort_order && (
                                     <p className="text-xs text-red-600 dark:text-red-400 font-medium">
@@ -237,7 +238,7 @@ export default function CreateUpdateTesimonyModal({ open, onOpenChange, isCreate
                                 )}
                             </div>
 
-                            <DialogFooter className="pt-4 flex items-center justify-end gap-3 sm:gap-3 border-t border-slate-100 dark:border-zinc-800/80">
+                            <DialogFooter className="pt-4 flex items-center justify-end gap-3 border-t border-slate-100 dark:border-zinc-800/80">
                                 <Button
                                     type="button"
                                     variant="outline"
@@ -253,7 +254,7 @@ export default function CreateUpdateTesimonyModal({ open, onOpenChange, isCreate
                                     className="h-11 px-6 rounded-xl bg-indigo-600 hover:bg-indigo-700 text-white font-medium transition-all shadow-sm cursor-pointer flex items-center gap-2 disabled:opacity-70 disabled:cursor-not-allowed"
                                 >
                                     {isPending ? <Loader2 className="size-4 animate-spin" /> : <Save className="size-4" />}
-                                    <span>{isPending ? "Menyimpan..." : (isCreate ? "Tambah FAQ" : "Simpan Perubahan")}</span>
+                                    <span>{isPending ? "Menyimpan..." : (isCreate ? "Tambah Testimoni" : "Simpan Perubahan")}</span>
                                 </Button>
                             </DialogFooter>
                         </form>
