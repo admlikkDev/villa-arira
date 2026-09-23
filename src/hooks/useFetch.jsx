@@ -23,7 +23,7 @@ const formatErr = (err) => {
 
 export default function useFetch() {
     const { user } = useAuth();
-    
+
     const url = import.meta.env.VITE_APP_URL || import.meta.env.VITE_URL_APP;
 
     const axiosProvider = axios.create({

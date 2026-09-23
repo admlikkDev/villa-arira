@@ -8,6 +8,7 @@ import Register from "./views/Authentication/Register";
 import Index from "./views/Admin/HeroSection/Index";
 import FaqIndex from "./views/Admin/FaqSection/Index";
 import GalleryIndex from "./views/Admin/Gallery/Index";
+import TestimonyIndex from "./views/Admin/Testimony/Index";
 
 export default function App() {
   return useRoutes([
@@ -51,6 +52,10 @@ export default function App() {
     {
       path: '/admin/gallery',
       element: <GalleryIndex />
+    },
+    {
+      path: '/admin/testimony',
+      element: <TestimonyIndex />
     },
   ])
 }

@@ -27,7 +27,6 @@ export default function CreateUpdateGalleryModal({ open, onOpenChange, isCreate,
     const queryClient = useQueryClient();
     const baseUrl = import.meta.env.VITE_APP_URL || import.meta.env.VITE_URL_APP;
 
-    // Helper untuk memformat error dari respon Axios
     const formatAxiosError = (err) => {
         if (!err.response) return { general: 'Network error' };
         const responseData = err.response.data;
@@ -44,7 +43,6 @@ export default function CreateUpdateGalleryModal({ open, onOpenChange, isCreate,
         return { general: err.response.statusText || 'Terjadi kesalahan pada server' };
     };
 
-    // Fetch data detail galeri saat mode Edit menggunakan axios.get langsung
     const { data, isLoading: isFetching } = useQuery({
         queryKey: ['gallery-detail', id],
         queryFn: async () => {
@@ -103,14 +101,12 @@ export default function CreateUpdateGalleryModal({ open, onOpenChange, isCreate,
         }
     };
 
-    // Mutasi Create menggunakan axios.post langsung
     const createMutation = useMutation({
         mutationFn: async (formData) => {
             const resp = await axios.post(`${baseUrl}/galleries`, formData, {
                 headers: {
                     'Accept': 'application/json',
                     'Authorization': user?.token ? `Bearer ${user.token}` : ''
-                    // Content-Type sengaja tidak disetel manual agar Axios otomatis menangani multipart/form-data boundary
                 }
             });
             return resp.data;
@@ -119,7 +115,6 @@ export default function CreateUpdateGalleryModal({ open, onOpenChange, isCreate,
         onError: (err) => handleMutationError(formatAxiosError(err))
     });
 
-    // Mutasi Update menggunakan axios.put langsung (atau axios.post jika backend memerlukan spoofing method)
     const updateMutation = useMutation({
         mutationFn: async (formData) => {
             const resp = await axios.put(`${baseUrl}/galleries/${id}`, formData, {

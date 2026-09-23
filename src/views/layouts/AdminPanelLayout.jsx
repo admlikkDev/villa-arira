@@ -17,7 +17,7 @@ import {
     UserCircle,
     Settings,
     Clock,
-    Image
+    Image,
 } from "lucide-react";
 import {
     SidebarProvider,
@@ -78,6 +78,11 @@ export default function AdminPanelLayout({ children, role = "admin" }) {
                 title: "Gallery",
                 icon: Image,
                 url: "/admin/gallery",
+            },
+            {
+                title: "Testimony",
+                icon: Image,
+                url: "/admin/testimony",
             },
         ],
         borrower: [
