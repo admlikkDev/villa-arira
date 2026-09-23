@@ -1,27 +1,7 @@
+import { useQuery } from '@tanstack/react-query';
 import { useState } from 'react';
-
-const faqData = [
-    {
-        question: "Berapa jam check-in dan check-out di Villa Arira?",
-        answer: "Waktu check-in standar dimulai pukul 14.00 WIB dan waktu check-out maksimal pukul 12.00 WIB. Jika Anda memerlukan penyesuaian waktu, silakan hubungi tim kami terlebih dahulu."
-    },
-    {
-        question: "Apakah diperbolehkan membawa hewan peliharaan (pets)?",
-        answer: "Demi menjaga kebersihan, kenyamanan, dan ketertiban seluruh tamu, Villa Arira tidak memperkenankan membawa hewan peliharaan ke dalam area properti."
-    },
-    {
-        question: "Apakah peralatan masak dan makan sudah disediakan lengkap?",
-        answer: "Ya, kami menyediakan peralatan dapur yang sangat lengkap mulai dari kompor gas, rice cooker, kulkas besar, microwave, dispenser air galon, hingga piring, mangkuk, dan gelas saji."
-    },
-    {
-        question: "Bagaimana tata cara booking dan pembayaran?",
-        answer: "Anda dapat memilih jadwal melalui formulir ketersediaan, lalu melanjutkan konfirmasi via WhatsApp. Pembayaran dilakukan melalui transfer bank atau gateway resmi dengan memberikan DP (Down Payment) sebagai tanda jadi."
-    },
-    {
-        question: "Bagaimana jika ingin melakukan reschedule tanggal menginap?",
-        answer: "Reschedule dapat dilakukan maksimal 7 hari sebelum tanggal check-in dengan ketentuan, selama jadwal pengganti masih tersedia dan mengikuti kebijakan penyesuaian tarif musim tertentu."
-    }
-];
+import useFetch from '../hooks/useFetch';
+import { AlertCircle, Loader2 } from 'lucide-react';
 
 export default function FaqVilla() {
     const [activeIndex, setActiveIndex] = useState(null);
@@ -29,6 +9,39 @@ export default function FaqVilla() {
     const toggleAccordion = (index) => {
         setActiveIndex(activeIndex === index ? null : index);
     };
+
+    const {get} = useFetch()
+
+    const fetchData = async () => {
+        const resp = await get('faqs');
+        if (!resp.status) throw new Error(resp.error);
+        return resp.data;
+    };
+
+    const { data, isLoading, isError, error } = useQuery({
+        queryKey: ['admin-faqs-section'],
+        queryFn: fetchData
+    });
+
+    if (isLoading) {
+        return (
+            <div className="flex flex-col items-center justify-center h-64 gap-3 text-slate-400">
+                <Loader2 className="size-6 animate-spin text-indigo-600" />
+                <p className="text-sm font-medium">Memuat data FAQ...</p>
+            </div>
+        );
+    }
+
+    if (isError) {
+        return (
+            <div className="flex items-center gap-3 p-4 rounded-xl bg-red-50 dark:bg-red-950/40 border border-red-200 dark:border-red-900/50 text-red-600 dark:text-red-400 max-w-4xl">
+                <AlertCircle className="size-5 shrink-0" />
+                <p className="text-sm">Gagal memuat data: {error.message}</p>
+            </div>
+        );
+    }
+
+    const faqData = data?.data
 
     return (
         <section id="faq" style={{
@@ -96,8 +109,8 @@ export default function FaqVilla() {
                 {faqData.map((item, index) => {
                     const isOpen = activeIndex === index;
                     return (
-                        <div 
-                            key={index} 
+                        <div
+                            key={index}
                             className="faq-item"
                             style={{
                                 backgroundColor: '#ECE2D8',

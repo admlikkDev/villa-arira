@@ -1,9 +1,9 @@
 import { useState, useEffect } from 'react';
 
 const images = [
-    "public/images/17.jpg",
-    "public/images/16.jpg",
-    "public/images/15 (1).jpg"
+    "/images/17.jpg",
+    "/images/16.jpg",
+    "/images/15 (1).jpg"
 ];
 
 const specs = [
@@ -43,19 +43,16 @@ const specs = [
 
 export default function InformasiSingkat() {
     const [currentIndex, setCurrentIndex] = useState(0);
-    const [isAnimating, setIsAnimating] = useState(false);
 
+    // Mengganti gambar dengan interval halus (4 detik sekali)
     useEffect(() => {
         const interval = setInterval(() => {
-            setIsAnimating(true);
-            setTimeout(() => {
-                setCurrentIndex((prevIndex) => (prevIndex + 1) % images.length);
-                setIsAnimating(false);
-            }, 500);
+            setCurrentIndex((prevIndex) => (prevIndex + 1) % images.length);
         }, 4000);
         return () => clearInterval(interval);
     }, []);
 
+    // Urutan gambar dinamis berdasarkan index aktif
     const currentImages = [
         images[currentIndex],
         images[(currentIndex + 1) % images.length],
@@ -83,22 +80,22 @@ export default function InformasiSingkat() {
                     .info-img-box {
                         position: relative;
                         overflow: hidden;
-                        border-radius: 18px;
-                        box-shadow: 0 16px 32px rgba(11, 13, 12, 0.16);
-                        transition: transform 0.3s cubic-bezier(0.2, 0.8, 0.2, 1);
+                        border-radius: 20px;
+                        box-shadow: 0 16px 32px rgba(11, 13, 12, 0.12);
+                        background-color: #0B0D0C;
                     }
-                    .info-img-box:hover {
-                        transform: translateY(-4px);
-                    }
-                    .info-img-box::after {
-                        content: '';
-                        position: absolute;
-                        top: 0;
-                        left: 0;
+                    /* Efek zoom halus dan transisi fade yang ringan tanpa lag */
+                    .fade-img {
                         width: 100%;
                         height: 100%;
-                        background: linear-gradient(to bottom, rgba(11,13,12,0.2), rgba(11,13,12,0.65));
-                        pointer-events: none;
+                        object-fit: cover;
+                        display: block;
+                        transition: opacity 0.8s ease-in-out, transform 4s ease-out;
+                        animation: subtleZoom 4s infinite alternate ease-in-out;
+                    }
+                    @keyframes subtleZoom {
+                        0% { transform: scale(1); }
+                        100% { transform: scale(1.04); }
                     }
                 `}
             </style>
@@ -111,6 +108,7 @@ export default function InformasiSingkat() {
                 gap: '3.5rem',
                 alignItems: 'center',
             }}>
+                {/* Bagian Grid Foto Kolase */}
                 <div style={{
                     display: 'grid',
                     gridTemplateColumns: '1fr 1fr',
@@ -118,57 +116,37 @@ export default function InformasiSingkat() {
                 }}>
                     <div className="info-img-box" style={{ gridColumn: 'span 2', height: '340px' }}>
                         <img 
+                            key={`img-0-${currentIndex}`}
                             src={currentImages[0]} 
-                            style={{ 
-                                width: '100%', 
-                                height: '100%', 
-                                objectFit: 'cover', 
-                                display: 'block',
-                                transform: isAnimating ? 'scale(1.08)' : 'scale(1)',
-                                opacity: isAnimating ? 0 : 1,
-                                transition: 'transform 0.5s cubic-bezier(0.2, 0.8, 0.2, 1), opacity 0.5s ease-in-out'
-                            }}
+                            className="fade-img"
                             alt="Villa Arira Utama"
                         />
                     </div>
                     <div className="info-img-box" style={{ height: '190px' }}>
                         <img 
+                            key={`img-1-${currentIndex}`}
                             src={currentImages[1]} 
-                            style={{ 
-                                width: '100%', 
-                                height: '100%', 
-                                objectFit: 'cover', 
-                                display: 'block',
-                                transform: isAnimating ? 'scale(1.08)' : 'scale(1)',
-                                opacity: isAnimating ? 0 : 1,
-                                transition: 'transform 0.5s cubic-bezier(0.2, 0.8, 0.2, 1), opacity 0.5s ease-in-out'
-                            }}
+                            className="fade-img"
                             alt="Fasilitas Villa"
                         />
                     </div>
                     <div className="info-img-box" style={{ height: '190px' }}>
                         <img 
+                            key={`img-2-${currentIndex}`}
                             src={currentImages[2]} 
-                            style={{ 
-                                width: '100%', 
-                                height: '100%', 
-                                objectFit: 'cover', 
-                                display: 'block',
-                                transform: isAnimating ? 'scale(1.08)' : 'scale(1)',
-                                opacity: isAnimating ? 0 : 1,
-                                transition: 'transform 0.5s cubic-bezier(0.2, 0.8, 0.2, 1), opacity 0.5s ease-in-out'
-                            }}
+                            className="fade-img"
                             alt="Area Villa"
                         />
                     </div>
                 </div>
 
+                {/* Bagian Konten Teks Spesifikasi */}
                 <div style={{
                     backgroundColor: '#ECE2D8',
                     borderRadius: '24px',
                     padding: '2.8rem',
-                    boxShadow: '0 20px 40px rgba(11, 13, 12, 0.08)',
-                    border: '1px solid rgba(164, 123, 66, 0.18)',
+                    boxShadow: '0 20px 40px rgba(11, 13, 12, 0.06)',
+                    border: '1px solid rgba(164, 123, 66, 0.2)',
                     display: 'flex',
                     flexDirection: 'column',
                     gap: '1.6rem',
@@ -181,7 +159,7 @@ export default function InformasiSingkat() {
                             color: '#A47B42',
                             fontWeight: '700',
                         }}>
-                            Spesifikasi
+                            Spesifikasi Utama
                         </span>
                         <h2 style={{
                             fontSize: '2.2rem',
@@ -191,7 +169,7 @@ export default function InformasiSingkat() {
                             marginBottom: '0',
                             fontWeight: '600',
                         }}>
-                            The Villa
+                            The Villa Experience
                         </h2>
                     </div>
 
@@ -214,6 +192,7 @@ export default function InformasiSingkat() {
                                     justifyContent: 'center',
                                     flexShrink: 0,
                                     boxShadow: '0 4px 10px rgba(11, 13, 12, 0.04)',
+                                    border: '1px solid rgba(164, 123, 66, 0.15)',
                                 }}>
                                     {item.icon}
                                 </div>
@@ -222,6 +201,7 @@ export default function InformasiSingkat() {
                                     fontWeight: '600',
                                     color: '#0B0D0C',
                                     margin: 0,
+                                    fontFamily: '"Plus Jakarta Sans", sans-serif',
                                 }}>
                                     {item.title}
                                 </h4>
@@ -229,6 +209,7 @@ export default function InformasiSingkat() {
                         ))}
                     </div>
 
+                    {/* Informasi Lokasi */}
                     <div style={{
                         backgroundColor: '#DECDBD',
                         borderRadius: '14px',
@@ -238,6 +219,7 @@ export default function InformasiSingkat() {
                         gap: '0.9rem',
                         marginTop: '0.4rem',
                         boxShadow: '0 6px 15px rgba(11, 13, 12, 0.04)',
+                        border: '1px solid rgba(164, 123, 66, 0.2)',
                     }}>
                         <div style={{
                             width: '24px',
@@ -275,7 +257,6 @@ export default function InformasiSingkat() {
                         </div>
                     </div>
                 </div>
-
             </div>
         </section>
     );

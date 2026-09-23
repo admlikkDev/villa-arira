@@ -1,69 +1,44 @@
 import { useState } from 'react';
+import useFetch from '../hooks/useFetch';
+import { useQuery } from '@tanstack/react-query';
+import { Loader2, AlertCircle } from 'lucide-react';
 
 export default function GalleryPage() {
-    const [activeFilter, setActiveFilter] = useState('all');
     const [selectedMedia, setSelectedMedia] = useState(null);
+    const { get } = useFetch();
 
-    const categories = [
-        { id: 'all', label: 'Semua Media' },
-        { id: 'foto', label: 'Foto Villa' },
-        { id: 'video', label: 'Video Cinematic' }
-    ];
+    const fetchData = async () => {
+        const resp = await get('galleries');
+        if (!resp.status) throw new Error(resp.error);
+        return resp.data;
+    };
 
-    const galleryItems = [
-        {
-            id: 1,
-            type: 'foto',
-            title: 'Arira Main House & Living Room',
-            category: 'Interior',
-            src: 'public/images/16.jpg',
-            desc: 'Ruang tengah megah dengan arsitektur kayu etnik Sunda dan fasilitas biliar standar.'
-        },
-        {
-            id: 2,
-            type: 'foto',
-            title: 'Private Pool & Pegunungan Cisarua',
-            category: 'Outdoor',
-            src: 'public/images/17.jpg',
-            desc: 'Kolam renang pribadi berair jernih dengan suasana sejuk khas pegunungan Lembang.'
-        },
-        {
-            id: 3,
-            type: 'video',
-            title: 'Cinematic Tour Villa Arira',
-            category: 'Video Virtual',
-            src: 'https://www.w3schools.com/html/mov_bbb.mp4', // Contoh video placeholder
-            desc: 'Video tur lengkap mengelilingi seluruh sudut kawasan Villa Arira.'
-        },
-        {
-            id: 4,
-            type: 'foto',
-            title: 'Gazebo Etnik di Atas Kolam Teratai',
-            category: 'Spot Santai',
-            src: 'public/images/15 (1).jpg',
-            desc: 'Spot favorit untuk menikmati secangkir kopi hangat di pagi hari dengan ketenangan alam.'
-        },
-        {
-            id: 5,
-            type: 'foto',
-            title: 'Kamar Tidur Utama & Water Heater',
-            category: 'Kamar Tidur',
-            src: 'public/images/16.jpg',
-            desc: 'Kamar tidur luas berstandar hotel dengan selimut hangat dan kamar mandi air panas.'
-        },
-        {
-            id: 6,
-            type: 'video',
-            title: 'Suasana Malam & Area BBQ Outdoor',
-            category: 'Video Virtual',
-            src: 'https://www.w3schools.com/html/movie.mp4', // Contoh video placeholder
-            desc: 'Keseruan malam hari di area halaman luas dengan fasilitas barbeque gratis.'
-        }
-    ];
+    const { data, isLoading, isError, error } = useQuery({
+        queryKey: ['galleries-section'],
+        queryFn: fetchData
+    });
 
-    const filteredItems = activeFilter === 'all' 
-        ? galleryItems 
-        : galleryItems.filter(item => item.type === activeFilter);
+    if (isLoading) {
+        return (
+            <div className="flex flex-col items-center justify-center min-h-screen gap-3 bg-[#F5EFEB] text-stone-500">
+                <Loader2 className="size-8 animate-spin text-[#A47B42]" />
+                <p className="text-sm font-medium tracking-wide">Memuat galeri Villa Arira...</p>
+            </div>
+        );
+    }
+
+    if (isError) {
+        return (
+            <div className="flex items-center justify-center min-h-screen bg-[#F5EFEB] p-6">
+                <div className="flex items-center gap-3 p-4 rounded-xl bg-red-50 border border-red-200 text-red-600 max-w-lg">
+                    <AlertCircle className="size-5 shrink-0" />
+                    <p className="text-sm">Gagal memuat data galeri: {error.message}</p>
+                </div>
+            </div>
+        );
+    }
+
+    const galleryItems = data?.data || data || [];
 
     return (
         <div style={{
@@ -84,13 +59,6 @@ export default function GalleryPage() {
                         transform: translateY(-8px);
                         box-shadow: 0 25px 50px rgba(11, 13, 12, 0.15) !important;
                     }
-                    .filter-btn {
-                        transition: all 0.25s cubic-bezier(0.2, 0.8, 0.2, 1);
-                    }
-                    .filter-btn:hover {
-                        background-color: rgba(164, 123, 66, 0.2) !important;
-                        color: #0B0D0C !important;
-                    }
                     @keyframes fadeIn {
                         from { opacity: 0; transform: scale(0.97); }
                         to { opacity: 1; transform: scale(1); }
@@ -101,13 +69,13 @@ export default function GalleryPage() {
                 `}
             </style>
 
-            {/* Bagian Hero (Sesuai gaya sebelumnya, berupa foto statis dengan teks di tengah) */}
+            {/* Bagian Hero Publik */}
             <header style={{
                 position: 'relative',
                 width: '100%',
                 height: '65vh',
                 minHeight: '450px',
-                backgroundImage: 'linear-gradient(to bottom, rgba(11, 13, 12, 0.55), rgba(11, 13, 12, 0.75)), url("public/images/17.jpg")',
+                backgroundImage: 'linear-gradient(to bottom, rgba(11, 13, 12, 0.55), rgba(11, 13, 12, 0.75)), url("/images/17.jpg")',
                 backgroundSize: 'cover',
                 backgroundPosition: 'center',
                 display: 'flex',
@@ -137,7 +105,7 @@ export default function GalleryPage() {
                 }}>
                     Gallery Villa Arira
                 </h1>
-                <p style={{
+                {/* <p style={{
                     fontSize: '1rem',
                     color: '#DECDBD',
                     maxWidth: '650px',
@@ -146,10 +114,10 @@ export default function GalleryPage() {
                     opacity: 0.9,
                 }}>
                     Jelajahi potret keindahan arsitektur kayu tradisional, fasilitas mewah, dan suasana alam pegunungan Cisarua yang menenangkan.
-                </p>
+                </p> */}
             </header>
 
-            {/* Bagian Filter & Grid Gallery */}
+            {/* Bagian Grid Gallery */}
             <section style={{
                 maxWidth: '1280px',
                 width: '100%',
@@ -157,48 +125,14 @@ export default function GalleryPage() {
                 padding: '5rem 2rem',
                 boxSizing: 'border-box',
             }}>
-                {/* Tombol Kategori Filter */}
-                <div style={{
-                    display: 'flex',
-                    justifyContent: 'center',
-                    gap: '1rem',
-                    marginBottom: '3.5rem',
-                    flexWrap: 'wrap',
-                }}>
-                    {categories.map((cat) => {
-                        const isActive = activeFilter === cat.id;
-                        return (
-                            <button
-                                key={cat.id}
-                                onClick={() => setActiveFilter(cat.id)}
-                                className="filter-btn"
-                                style={{
-                                    padding: '0.7rem 1.6rem',
-                                    borderRadius: '999px',
-                                    backgroundColor: isActive ? '#0B0D0C' : '#ECE2D8',
-                                    color: isActive ? '#F5EFEB' : '#3A3D3C',
-                                    border: '1px solid rgba(164, 123, 66, 0.3)',
-                                    fontSize: '0.9rem',
-                                    fontWeight: '600',
-                                    cursor: 'pointer',
-                                    boxShadow: isActive ? '0 8px 20px rgba(11, 13, 12, 0.15)' : 'none',
-                                }}
-                            >
-                                {cat.label}
-                            </button>
-                        );
-                    })}
-                </div>
-
-                {/* Grid Konten Foto & Video */}
                 <div style={{
                     display: 'grid',
                     gridTemplateColumns: 'repeat(auto-fill, minmax(360px, 1fr))',
                     gap: '2.2rem',
                 }}>
-                    {filteredItems.map((item) => (
-                        <div 
-                            key={item.id} 
+                    {galleryItems?.map(item => (
+                        <div
+                            key={item.id}
                             className="gallery-card"
                             onClick={() => setSelectedMedia(item)}
                             style={{
@@ -219,66 +153,19 @@ export default function GalleryPage() {
                                 overflow: 'hidden',
                                 backgroundColor: '#0B0D0C',
                             }}>
-                                {item.type === 'foto' ? (
-                                    <img 
-                                        src={item.src} 
-                                        alt={item.title}
-                                        style={{
-                                            width: '100%',
-                                            height: '100%',
-                                            objectFit: 'cover',
-                                            transition: 'transform 0.5s ease',
-                                        }}
-                                    />
-                                ) : (
-                                    <div style={{
+                                <img
+                                    src={item.image}
+                                    alt={item.title}
+                                    style={{
                                         width: '100%',
                                         height: '100%',
-                                        display: 'flex',
-                                        alignItems: 'center',
-                                        justifyContent: 'center',
-                                        position: 'relative',
-                                    }}>
-                                        <video 
-                                            src={item.src}
-                                            style={{ width: '100%', height: '100%', objectFit: 'cover', opacity: 0.8 }}
-                                        />
-                                        <div style={{
-                                            position: 'absolute',
-                                            width: '50px',
-                                            height: '50px',
-                                            borderRadius: '50%',
-                                            backgroundColor: 'rgba(164, 123, 66, 0.9)',
-                                            display: 'flex',
-                                            alignItems: 'center',
-                                            justifyContent: 'center',
-                                            color: '#F5EFEB',
-                                            fontSize: '1.2rem',
-                                            boxShadow: '0 4px 15px rgba(0,0,0,0.3)',
-                                        }}>
-                                            ▶
-                                        </div>
-                                    </div>
-                                )}
-                                <span style={{
-                                    position: 'absolute',
-                                    top: '1rem',
-                                    right: '1rem',
-                                    backgroundColor: 'rgba(11, 13, 12, 0.75)',
-                                    color: '#DECDBD',
-                                    padding: '0.3rem 0.8rem',
-                                    borderRadius: '999px',
-                                    fontSize: '0.72rem',
-                                    fontWeight: '700',
-                                    textTransform: 'uppercase',
-                                    letterSpacing: '0.5px',
-                                    backdropFilter: 'blur(4px)',
-                                }}>
-                                    {item.category}
-                                </span>
+                                        objectFit: 'cover',
+                                        transition: 'transform 0.5s ease',
+                                    }}
+                                />
                             </div>
 
-                            <div style={{ padding: '1.8rem', display: 'flex', flexDirection: 'column', gap: '0.6rem' }}>
+                            <div style={{ padding: '1.8rem', display: 'flex', flexDirection: 'column', gap: '0.8rem' }}>
                                 <h3 style={{
                                     fontSize: '1.2rem',
                                     fontFamily: '"Playfair Display", serif',
@@ -289,12 +176,16 @@ export default function GalleryPage() {
                                     {item.title}
                                 </h3>
                                 <p style={{
-                                    fontSize: '0.88rem',
+                                    fontSize: '0.9rem',
                                     color: '#4A4D4C',
                                     lineHeight: '1.6',
                                     margin: 0,
+                                    display: '-webkit-box',
+                                    WebkitLineClamp: 2,
+                                    WebkitBoxOrient: 'vertical',
+                                    overflow: 'hidden',
                                 }}>
-                                    {item.desc}
+                                    {item.description}
                                 </p>
                             </div>
                         </div>
@@ -302,7 +193,6 @@ export default function GalleryPage() {
                 </div>
             </section>
 
-            {/* Modal Lightbox Preview */}
             {selectedMedia && (
                 <div style={{
                     position: 'fixed',
@@ -319,7 +209,7 @@ export default function GalleryPage() {
                     padding: '2rem',
                     boxSizing: 'border-box',
                 }} onClick={() => setSelectedMedia(null)}>
-                    <div 
+                    <div
                         className="modal-content"
                         style={{
                             maxWidth: '900px',
@@ -331,10 +221,10 @@ export default function GalleryPage() {
                             display: 'flex',
                             flexDirection: 'column',
                             position: 'relative',
-                        }} 
+                        }}
                         onClick={(e) => e.stopPropagation()}
                     >
-                        <button 
+                        <button
                             onClick={() => setSelectedMedia(null)}
                             style={{
                                 position: 'absolute',
@@ -358,16 +248,16 @@ export default function GalleryPage() {
                         </button>
 
                         <div style={{ width: '100%', maxHeight: '500px', backgroundColor: '#0B0D0C', overflow: 'hidden', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                            {selectedMedia.type === 'foto' ? (
-                                <img src={selectedMedia.src} alt={selectedMedia.title} style={{ width: '100%', maxHeight: '500px', objectFit: 'contain' }} />
+                            {selectedMedia.type === 'video' ? (
+                                <video src={selectedMedia.image} controls autoPlay style={{ width: '100%', maxHeight: '500px' }} />
                             ) : (
-                                <video src={selectedMedia.src} controls autoPlay style={{ width: '100%', maxHeight: '500px' }} />
+                                <img src={selectedMedia.image} alt={selectedMedia.title} style={{ width: '100%', maxHeight: '500px', objectFit: 'contain' }} />
                             )}
                         </div>
 
                         <div style={{ padding: '2rem' }}>
                             <span style={{ fontSize: '0.75rem', fontWeight: '700', color: '#A47B42', textTransform: 'uppercase', letterSpacing: '1px' }}>
-                                {selectedMedia.category}
+                                {selectedMedia.category || 'Galeri Villa'}
                             </span>
                             <h2 style={{ fontSize: '1.8rem', fontFamily: '"Playfair Display", serif', color: '#0B0D0C', margin: '0.4rem 0 0.8rem 0' }}>
                                 {selectedMedia.title}

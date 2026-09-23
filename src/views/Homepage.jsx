@@ -1,3 +1,6 @@
+import { useIsFetching } from '@tanstack/react-query';
+import { Loader2 } from 'lucide-react';
+
 import AddOnVilla from "../components/AddOnVilla";
 import CekJadwal from "../components/CekJadwal";
 import FaqVilla from "../components/FaqVilla";
@@ -13,23 +16,26 @@ import PilihanSewa from "../components/PilihanSewa";
 import PricelistVilla from "../components/PricelistVilla";
 import ReviewVilla from "../components/ReviewVilla";
 
-export default function Homepage(){
+export default function Homepage() {
+    // const isFetching = useIsFetching({ 
+    //     predicate: (query) => {
+    //         const key = query.queryKey[0];
+    //         return ['faq', 'reviews', 'galleries', 'packages'].some(k => typeof key === 'string' && key.includes(k));
+    //     }
+    // });
+
     return (
         <>  
-            {/* <Navbar /> */}
             <Hero />
             <InformasiSingkat />
             <PilihanSewa />
             <FasilitasVilla />
             <PricelistVilla />
-            <PaketVilla/>
+            <PaketVilla />
             <CekJadwal />
-            <AddOnVilla/>
+            <AddOnVilla />
             <ReviewVilla />
             <FaqVilla />
-            {/* <Footer />
-            <FloatingWhatsApp />
-            <FloatingToTop /> */}
         </>
-    )
+    );
 }

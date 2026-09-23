@@ -3,16 +3,7 @@ import Cart from './Cart';
 
 const menuItems = [
     { name: 'Home', href: '/' },
-    // { name: 'Informasi', href: '#informasi' },
-    // { name: 'Pilihan Sewa', href: '#pilihan-sewa' },
-    // { name: 'Pricelist', href: '#pricelist' },
-    // { name: 'Fasilitas', href: '#fasilitas' },
     { name: 'Gallery', href: '/gallery' },
-    // { name: 'Paket', href: '#paket' },
-    // { name: 'Add-on', href: '#add-on' },
-    // { name: 'Review', href: '#review' },
-    // { name: 'Lokasi', href: '#lokasi' },
-    // { name: 'FAQ', href: '#faq' },
     { name: 'Contact', href: '/contact' },
 ];
 
@@ -45,7 +36,6 @@ export default function Navbar() {
                 setMobileMenuOpen(false);
             }
         };
-        console.log(open)
 
         window.addEventListener('scroll', handleScroll, { passive: true });
         return () => window.removeEventListener('scroll', handleScroll);
@@ -295,36 +285,47 @@ export default function Navbar() {
                         Booking
                     </button>
 
-                    <button
-                        style={{
-                            width: '44px',
-                            height: '44px',
-                            borderRadius: '12px',
-                            backgroundColor: '#DECDBD',
+                    <div style={{ position: 'relative', display: 'inline-block' }}>
+                        <button
+                            style={{
+                                width: '44px',
+                                height: '44px',
+                                borderRadius: '12px',
+                                backgroundColor: '#DECDBD',
+                                display: 'flex',
+                                alignItems: 'center',
+                                justifyContent: 'center',
+                                border: '1px solid rgba(164, 123, 66, 0.2)',
+                                cursor: 'pointer',
+                                transition: 'all 0.3s ease',
+                            }}
+                            onClick={openCart}
+                        >
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#A47B42" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                                <circle cx="8" cy="21" r="1"></circle><circle cx="19" cy="21" r="1"></circle>
+                                <path d="M2.05 2.05h2l2.66 12.42a2 2 0 0 0 2 1.58h9.78a2 2 0 0 0 1.95-1.57l1.65-7.43H5.12"></path>
+                            </svg>
+                        </button>
+
+                        <span style={{
+                            position: 'absolute',
+                            top: '-5px',
+                            right: '-5px',
+                            backgroundColor: '#A47B42',
+                            color: '#F5EFEB',
+                            fontSize: '0.7rem',
+                            fontWeight: '700',
+                            width: '20px',
+                            height: '20px',
+                            borderRadius: '50%',
                             display: 'flex',
                             alignItems: 'center',
                             justifyContent: 'center',
-                            flexShrink: 0,
-                            boxShadow: '0 4px 10px rgba(11, 13, 12, 0.04)',
-                            border: 'none'
-                        }}
-                        onMouseEnter={(e) => {
-                            e.target.style.opacity = '0.92';
-                            e.target.style.transform = 'translateY(-2px)';
-                            e.target.style.boxShadow = '0 8px 20px rgba(164, 123, 66, 0.35)';
-                            e.target.style.cursor = 'pointer'
-                        }}
-                        onMouseLeave={(e) => {
-                            e.target.style.opacity = '1';
-                            e.target.style.transform = 'translateY(0)';
-                            e.target.style.boxShadow = '0 6px 16px rgba(164, 123, 66, 0.25)';
-                        }}
-                        onClick={openCart}
-                    >
-                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#A47B42" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                            <path d="M2 4v16"></path><path d="M2 8h18a2 2 0 0 1 2 2v10"></path><path d="M2 17h20"></path><path d="M6 8v9"></path>
-                        </svg>
-                    </button>
+                            border: '2px solid #F5EFEB',
+                        }}>
+                            2
+                        </span>
+                    </div>
 
                     <button
                         className="hamburger-btn"
