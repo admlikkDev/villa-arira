@@ -7,7 +7,7 @@ import GlobalDeleteModal from "./Delete";
 import GlobalCreateUpdateModal from "./CreateAndUpdate";
 import { useNavigate, useParams } from "react-router-dom";
 
-export default function GlobalIndex({ path, title, subtitle, tableHead, fields, initialValues, createButton = true, deleteButton = true, hasId = true, is_param = false, is_detail = false, pathDetail, navigatePath = null }) {
+export default function GlobalDetailIndex({ path, title, subtitle, tableHead, fields, initialValues, createButton = true, deleteButton = true, hasId = true, is_param = false, is_detail = false, pathDetail, navigatePath = null }) {
     const { get } = useFetch();
     const { idParam } = useParams()
     const navigate = useNavigate()
@@ -28,7 +28,8 @@ export default function GlobalIndex({ path, title, subtitle, tableHead, fields, 
     const fetchDataDetail = async () => {
         const resp = await get(`${path}/${idParam}`);
         if (!resp.status) throw new Error(resp.error);
-        return resp.data;
+        console.log(resp.data?.lists)
+        return resp.data?.lists;
     };
 
     const { data, isPending, isError, error } = useQuery({
@@ -102,9 +103,9 @@ export default function GlobalIndex({ path, title, subtitle, tableHead, fields, 
     if (dataDetail) {
         const rawData = dataDetail?.data || dataDetail;
         if (Array.isArray(rawData)) {
-            items = rawData;
+            itemsDetail = rawData;
         } else if (typeof rawData === 'object' && rawData !== null) {
-            items = [rawData];
+            itemsDetail = [rawData];
         }
     }
 
@@ -170,7 +171,7 @@ export default function GlobalIndex({ path, title, subtitle, tableHead, fields, 
                                     </tr>
                                 </thead>
                                 <tbody className="divide-y divide-slate-100 dark:divide-zinc-800/80">
-                                    {items.map((item, index) => (
+                                    {itemsDetail.map((item, index) => (
                                         <tr
                                             key={item.id}
                                             className="hover:bg-slate-50/50 dark:hover:bg-zinc-800/30 transition-colors group"
@@ -234,7 +235,7 @@ export default function GlobalIndex({ path, title, subtitle, tableHead, fields, 
                                         </tr>
                                     ))}
 
-                                    {items.length === 0 && (
+                                    {itemsDetail.length === 0 && (
                                         <tr>
                                             <td colSpan="4" className="px-6 py-12 text-center">
                                                 <HelpCircle className="size-8 mx-auto text-slate-300 dark:text-zinc-600 mb-3" />

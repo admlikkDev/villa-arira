@@ -12,7 +12,8 @@ import {
     Clock,
     Image,
     MessageSquareQuote,
-    Settings2
+    Settings2,
+    Package
 } from "lucide-react";
 import {
     SidebarProvider,
@@ -83,6 +84,11 @@ export default function AdminPanelLayout({ children, role = "admin" }) {
                 title: "Application Setting",
                 icon: Settings2,
                 url: "/admin/application",
+            },
+            {
+                title: "Package",
+                icon: Package,
+                url: "/admin/package",
             },
         ],
     };

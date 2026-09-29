@@ -90,12 +90,33 @@ export default function GlobalCreateUpdateModal({ open, onOpenChange, isCreate, 
         e.preventDefault();
         setErrors({});
 
-        const payload = {
-            ...formData,
-            sort_order: formData.sort_order !== "" && formData.sort_order !== null
-                ? Number(formData.sort_order)
-                : null
-        };
+        const hasFile = fields.some(field => field.type === "file");
+
+        let payload;
+
+        if (hasFile) {
+            payload = new FormData();
+            Object.keys(formData).forEach((key) => {
+                const value = formData[key];
+                if (value !== null && value !== undefined && value !== "") {
+                    payload.append(key, value);
+                }
+            });
+        } else {
+            payload = { ...formData };
+
+            Object.keys(payload).forEach((key) => {
+                if (payload[key] === "") {
+                    payload[key] = null;
+                }
+            });
+
+            fields.forEach(field => {
+                if (field.type === "number" && payload[field.name] !== null) {
+                    payload[field.name] = Number(payload[field.name]);
+                }
+            });
+        }
 
         if (isCreate) {
             createMutation.mutate(payload);
@@ -195,7 +216,15 @@ export default function GlobalCreateUpdateModal({ open, onOpenChange, isCreate, 
                                                 name={field.name}
                                                 type={field.type || "text"}
                                                 value={formData[field.name] || ""}
-                                                onChange={(e) => handleChange(field.name, e.target.value)}
+                                                onChange={(e) => {
+                                                    let val = e.target.value;
+
+                                                    if (field.type === "number" && val !== "") {
+                                                        val = Number(val);
+                                                    }
+
+                                                    handleChange(field.name, val);
+                                                }}
                                                 placeholder={field.placeholder}
                                                 disabled={isPending}
                                                 className={`h-11 rounded-xl bg-slate-50 dark:bg-zinc-900/50 text-slate-900 dark:text-slate-100 disabled:opacity-50 transition-colors ${errors[field.name]

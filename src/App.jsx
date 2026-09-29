@@ -10,6 +10,8 @@ import FaqIndex from "./views/Admin/FaqSection/Index";
 import GalleryIndex from "./views/Admin/Gallery/Index";
 import TestimonyIndex from "./views/Admin/Testimony/Index";
 import ApplicationIndex from "./views/Admin/Application/Index";
+import PackageIndex from "./views/Admin/Package/Index";
+import PackageListIndex from "./views/Admin/Package/List";
 
 export default function App() {
   return useRoutes([
@@ -61,6 +63,14 @@ export default function App() {
     {
       path: '/admin/application',
       element: <ApplicationIndex />
+    },
+    {
+      path: '/admin/package',
+      element: <PackageIndex />
+    },
+    {
+      path: '/admin/package/:idParam',
+      element: <PackageListIndex />
     },
   ])
 }
