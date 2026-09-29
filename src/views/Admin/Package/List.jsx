@@ -1,4 +1,5 @@
 import GlobalDetailIndex from "../../../components/modal/ReadDetail";
+import GlobalDetailCardIndex from "../../../components/modal/ReadDetailCard";
 
 export default function PackageListIndex() {
 
@@ -20,5 +21,6 @@ export default function PackageListIndex() {
 
     return (
         <GlobalDetailIndex pathDetail={'villa-package-lists'} path={'villa-packages'} title={'Villa Packages List'} subtitle={'Kelola daftar list paket villa.'} tableHead={['text']} fields={fields} is_param={true} is_detail={true} />
+        // <GlobalDetailCardIndex pathDetail={'villa-package-lists'} path={'villa-packages'} title={'Villa Packages List'} subtitle={'Kelola daftar list paket villa.'} tableHead={['text']} fields={fields} is_param={true} is_detail={true} />
     )
 }

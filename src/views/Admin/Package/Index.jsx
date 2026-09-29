@@ -37,6 +37,6 @@ export default function PackageIndex() {
     ]
 
     return (
-        <GlobalIndex path={'villa-packages'} title={'Villa Packages'} subtitle={'Kelola daftar paket villa.'} tableHead={['max_capacity', 'price', 'title', 'subtitle']} fields={fields} navigatePath={'/admin/package'}/>
+        <GlobalIndex path={'villa-packages'} title={'Villa Packages'} subtitle={'Kelola daftar paket villa.'} tableHead={['max_capacity', 'price', 'title', 'subtitle']} fields={fields} navigatePath={'/admin/package'} isCard={false}/>
     )
 }

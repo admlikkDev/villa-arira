@@ -7,12 +7,14 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, Di
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import useFetch from "../../hooks/useFetch";
 
-export default function GlobalCreateUpdateModal({ open, onOpenChange, isCreate, id, path, title, queryKey, initialValues = {}, fields = [], hasId = true }) {
+export default function GlobalCreateUpdateModal({ open, onOpenChange, isCreate, id, path, title, queryKey, initialValues = {}, fields = [], hasId = true, isVillaPackageList = false, idParam = null }) {
     const [formData, setFormData] = useState(initialValues);
     const [errors, setErrors] = useState({});
 
     const { post, put, get } = useFetch();
     const queryClient = useQueryClient();
+
+    // console.log(id)
 
     const { data, isLoading: isFetching } = useQuery({
         queryKey: [`${path}-detail`, id],
@@ -36,7 +38,7 @@ export default function GlobalCreateUpdateModal({ open, onOpenChange, isCreate, 
                 setFormData(resetValues);
             } else if (data) {
                 const itemData = data?.data?.data || data?.data || data;
-
+                console.log(itemData, data) 
                 if (itemData && typeof itemData === 'object') {
                     const loadedValues = {};
                     fields.forEach(field => {
@@ -103,8 +105,10 @@ export default function GlobalCreateUpdateModal({ open, onOpenChange, isCreate, 
                 }
             });
         } else {
-            payload = { ...formData };
-
+            payload = {
+                ...formData,
+            };
+ 
             Object.keys(payload).forEach((key) => {
                 if (payload[key] === "") {
                     payload[key] = null;
@@ -116,10 +120,15 @@ export default function GlobalCreateUpdateModal({ open, onOpenChange, isCreate, 
                     payload[field.name] = Number(payload[field.name]);
                 }
             });
+
+            if(isVillaPackageList) {
+                payload['villa_package_id'] = Number(idParam)
+            }
         }
 
         if (isCreate) {
             createMutation.mutate(payload);
+            console.log(payload)
         } else {
             updateMutation.mutate(payload);
         }
