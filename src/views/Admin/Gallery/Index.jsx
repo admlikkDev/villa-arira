@@ -15,15 +15,17 @@ export default function GalleryIndex() {
 
     const [openDeleteModal, setOpenDeleteModal] = useState(false);
     const [deleteId, setDeleteId] = useState(null);
+    const [page, setPage] = useState(1)
 
     const fetchData = async () => {
-        const resp = await get('galleries');
+        const resp = await get(`galleries?page=${Number(page)}&size=6`);
+        console.log(resp.data)
         if (!resp.status) throw new Error(resp.error);
         return resp.data;
     };
 
     const { data, isLoading, isError, error } = useQuery({
-        queryKey: ['admin-galleries-section'],
+        queryKey: ['admin-galleries-section', page],
         queryFn: fetchData
     });
 
@@ -50,6 +52,7 @@ export default function GalleryIndex() {
     }
 
     const galleries = data?.data || data || [];
+    const galleriePaginates = data?.pagination;
 
     return (
         <AdminPanelLayout>
@@ -151,6 +154,25 @@ export default function GalleryIndex() {
                             <p className="text-xs text-slate-400 dark:text-zinc-500 mt-1">Klik tombol tambah di atas untuk mengunggah foto baru.</p>
                         </div>
                     )}
+                </div>
+                <div className="flex justify-end gap-2">
+                    {Array.from({ length: galleriePaginates?.total_pages || 0 }).map((_, index) => {
+                        const pageNumber = index + 1
+                        const isActive = page === pageNumber
+
+                        return (
+                            <button
+                                key={index}
+                                type="button"
+                                onClick={() => setPage(pageNumber)}
+                                className={`inline-flex cursor-pointer items-center justify-center gap-2 rounded-xl px-4 py-2.5 text-sm font-medium text-white shadow-sm transition-colors focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600 
+                ${isActive ? "bg-indigo-800 ring-2 ring-indigo-400 ring-offset-2 dark:ring-offset-zinc-900" : "bg-indigo-600 hover:bg-indigo-700"}
+                `}
+                            >
+                                {pageNumber}
+                            </button>
+                        )
+                    })}
                 </div>
             </div>
         </AdminPanelLayout>

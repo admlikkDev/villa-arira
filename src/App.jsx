@@ -1,4 +1,7 @@
+import { useEffect } from "react";
+import { useQuery } from "@tanstack/react-query";
 import { useRoutes } from "react-router-dom";
+import useFetch from "./hooks/useFetch";
 import Homepage from "./views/Homepage";
 import GalleryPage from "./views/GalleryPage";
 import ContactPage from "./views/ContactPage";
@@ -14,8 +17,40 @@ import PackageIndex from "./views/Admin/Package/Index";
 import PackageListIndex from "./views/Admin/Package/List";
 
 export default function App() {
-  return useRoutes([
+  const { get } = useFetch();
+  const { data } = useQuery({
+    queryKey: ["application-settings"],
+    queryFn: async () => {
+      const resp = await get("application");
+      if (!resp.status) throw new Error(resp.error);
+      return resp.data;
+    },
+    staleTime: 1000 * 60 * 5, 
+  });
 
+  useEffect(() => {
+    if (data) {
+      const appData = Array.isArray(data?.data) ? data.data[0] : (data?.data || data);
+
+      if (appData) {
+        if (appData.title) {
+          document.title = appData.title;
+        }
+
+        if (appData.logo) {
+          let link = document.querySelector("link[rel~='icon']");
+          if (!link) {
+            link = document.createElement("link");
+            link.rel = "icon";
+            document.head.appendChild(link);
+          }
+          link.href = appData.logo;
+        }
+      }
+    }
+  }, [data]);
+
+  return useRoutes([
     {
       path: '/login',
       element: <Login />
@@ -24,7 +59,6 @@ export default function App() {
       path: '/register',
       element: <Register />
     },
-
     {
       element: <PublicLayout />,
       children: [
@@ -42,7 +76,6 @@ export default function App() {
         },
       ]
     },
-
     // admin panel
     {
       path: '/admin/hero-section',
@@ -72,5 +105,5 @@ export default function App() {
       path: '/admin/package/:idParam',
       element: <PackageListIndex />
     },
-  ])
+  ]);
 }

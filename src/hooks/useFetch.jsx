@@ -23,22 +23,26 @@ const formatErr = (err) => {
 
 export default function useFetch() {
     const { user } = useAuth();
-
     const url = import.meta.env.VITE_APP_URL || import.meta.env.VITE_URL_APP;
 
     const axiosProvider = axios.create({
         baseURL: url,
         headers: {
-            'Content-Type': 'application/json',
             'Accept': 'application/json',
             Authorization: user?.token ? `Bearer ${user.token}` : ''
         }
     });
 
+    const getConfig = (value) => {
+        return value instanceof FormData 
+            ? { headers: { 'Content-Type': 'multipart/form-data' } } 
+            : { headers: { 'Content-Type': 'application/json' } };
+    };
+
     return {
         post: async (path, value) => {
             try {
-                const resp = await axiosProvider.post(path, value);
+                const resp = await axiosProvider.post(path, value, getConfig(value));
                 return { status: true, data: resp.data };
             } catch (error) {
                 return { status: false, error: formatErr(error) };
@@ -54,7 +58,7 @@ export default function useFetch() {
         },
         put: async (path, value) => {
             try {
-                const resp = await axiosProvider.put(path, value);
+                const resp = await axiosProvider.put(path, value, getConfig(value));
                 return { status: true, data: resp.data };
             } catch (error) {
                 return { status: false, error: formatErr(error) };
@@ -62,7 +66,7 @@ export default function useFetch() {
         },
         destroy: async (path, value = null) => {
             try {
-                const config = value ? { data: value } : {};
+                const config = value ? { data: value, ...getConfig(value) } : {};
                 const resp = await axiosProvider.delete(path, config);
                 return { status: true, data: resp.data };
             } catch (error) {

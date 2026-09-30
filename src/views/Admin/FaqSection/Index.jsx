@@ -24,6 +24,6 @@ export default function FaqIndex() {
     ]
 
     return (
-        <GlobalIndex path={'faqs'} title={'FAQ'} subtitle={'Kelola daftar pertanyaan yang sering diajukan beserta jawabannya.'} tableHead={['pertanyaan', 'jawaban']} fields={fields} />
+        <GlobalIndex path={'faqs'} title={'FAQ'} subtitle={'Kelola daftar pertanyaan yang sering diajukan beserta jawabannya.'} tableHead={['pertanyaan', 'jawaban']} fields={fields} is_paginate={true}/>
     );
 }

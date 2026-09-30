@@ -38,7 +38,7 @@ export default function GlobalCreateUpdateModal({ open, onOpenChange, isCreate, 
                 setFormData(resetValues);
             } else if (data) {
                 const itemData = data?.data?.data || data?.data || data;
-                console.log(itemData, data) 
+                console.log(itemData, data)
                 if (itemData && typeof itemData === 'object') {
                     const loadedValues = {};
                     fields.forEach(field => {
@@ -79,8 +79,11 @@ export default function GlobalCreateUpdateModal({ open, onOpenChange, isCreate, 
 
     const updateMutation = useMutation({
         mutationFn: async (payload) => {
-            const pathHadId = hasId ? `${path}/${id}` : path
+            const pathHadId = hasId ? `${path}/${id}` : path;
+
+            // Langsung gunakan put() untuk semua kondisi (Golang bisa handle multipart PUT)
             const resp = await put(pathHadId, payload);
+
             if (!resp.status) throw resp.error;
             return resp.data;
         },
@@ -88,52 +91,93 @@ export default function GlobalCreateUpdateModal({ open, onOpenChange, isCreate, 
         onError: handleMutationError
     });
 
+    // const submit = (e) => {
+    //     e.preventDefault();
+    //     setErrors({});
+
+    //     const hasFile = fields.some(field => field.type === "file");
+
+    //     let payload;
+
+    //     if (hasFile) {
+    //         payload = new FormData();
+    //         Object.keys(formData).forEach((key) => {
+    //             const value = formData[key];
+    //             if (value !== null && value !== undefined && value !== "") {
+    //                 payload.append(key, value);
+    //             }
+    //         });
+    //     } else {
+    //         payload = {
+    //             ...formData,
+    //         };
+
+    //         Object.keys(payload).forEach((key) => {
+    //             if (payload[key] === "") {
+    //                 payload[key] = null;
+    //             }
+    //         });
+
+    //         fields.forEach(field => {
+    //             if (field.type === "number" && payload[field.name] !== null) {
+    //                 payload[field.name] = Number(payload[field.name]);
+    //             }
+    //         });
+
+    //         if(isVillaPackageList) {
+    //             payload['villa_package_id'] = Number(idParam)
+    //         }
+    //     }
+
+    //     if (isCreate) {
+    //         createMutation.mutate(payload);
+    //         console.log(payload)
+    //     } else {
+    //         updateMutation.mutate(payload);
+    //     }
+    // };
     const submit = (e) => {
         e.preventDefault();
         setErrors({});
 
         const hasFile = fields.some(field => field.type === "file");
-
         let payload;
 
         if (hasFile) {
             payload = new FormData();
             Object.keys(formData).forEach((key) => {
                 const value = formData[key];
+                const isFileField = fields.find(f => f.name === key)?.type === 'file';
+
+                // Mencegah pengiriman string URL gambar ke backend Golang
+                if (isFileField && typeof value === 'string') {
+                    return;
+                }
+
                 if (value !== null && value !== undefined && value !== "") {
                     payload.append(key, value);
                 }
             });
+            // Tidak perlu payload.append('_method', 'PUT') 
         } else {
-            payload = {
-                ...formData,
-            };
- 
+            payload = { ...formData };
             Object.keys(payload).forEach((key) => {
-                if (payload[key] === "") {
-                    payload[key] = null;
-                }
+                if (payload[key] === "") payload[key] = null;
             });
-
             fields.forEach(field => {
                 if (field.type === "number" && payload[field.name] !== null) {
                     payload[field.name] = Number(payload[field.name]);
                 }
             });
-
-            if(isVillaPackageList) {
-                payload['villa_package_id'] = Number(idParam)
-            }
+            if (isVillaPackageList) payload['villa_package_id'] = Number(idParam);
         }
 
         if (isCreate) {
             createMutation.mutate(payload);
-            console.log(payload)
         } else {
             updateMutation.mutate(payload);
         }
     };
-
     const isPending = createMutation.isPending || updateMutation.isPending;
 
     return (

@@ -31,6 +31,6 @@ export default function TestimonyIndex() {
     ]
 
     return (
-        <GlobalIndex path={'testimonies'} title={'Testimony'} subtitle={'Kelola daftar testimoni.'} tableHead={['comment', 'username', 'star']} fields={fields} />
+        <GlobalIndex path={'testimonies'} title={'Testimony'} subtitle={'Kelola daftar testimoni.'} tableHead={['comment', 'username', 'star']} fields={fields} is_paginate={true}/>
     )
 }
