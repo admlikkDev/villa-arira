@@ -10,8 +10,10 @@ const authContext = createContext({
 
 export default function UseAuthProvider({ children }) {
     const [user, setUser] = useState(() => {
+        // jika error token 401  
         return localStorage.getItem('user') ? JSON.parse(localStorage.getItem('user')) : null
     })
+
 
     const register = (userData) => {
         localStorage.setItem('user', JSON.stringify(userData))

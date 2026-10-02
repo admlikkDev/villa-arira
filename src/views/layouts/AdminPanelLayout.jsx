@@ -37,7 +37,7 @@ import {
     DropdownMenuSeparator,
     DropdownMenuLabel,
 } from "@/components/ui/dropdown-menu";
-import { useAuth } from "../../hooks/useAuth";
+import { useAuth } from "../../hooks/useAuth"; 
 
 export default function AdminPanelLayout({ children, role = "admin" }) {
     const location = useLocation();
@@ -89,6 +89,11 @@ export default function AdminPanelLayout({ children, role = "admin" }) {
                 title: "Package",
                 icon: Package,
                 url: "/admin/package",
+            },
+            {
+                title: "Spesifikasi",
+                icon: Package,
+                url: "/admin/specification",
             },
         ],
     };

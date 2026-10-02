@@ -7,6 +7,7 @@ import AdminPanelLayout from "../../views/layouts/AdminPanelLayout";
 import GlobalDeleteModal from "./Delete";
 import GlobalCreateUpdateModal from "./CreateAndUpdate";
 import { GlobalCardList } from "../GlobalUi/CardList";
+import MasterIcon from "../icons/MasterIcon";
 
 const formatRupiah = (value) => {
     const number = Number(value);
@@ -46,7 +47,7 @@ export default function GlobalIndex({
     const { data, isPending, isError, error } = useQuery({
         queryKey: [`admin-${path}-section`, page],
         queryFn: async () => {
-            const resp = await get(is_paginate ? `${path}?page=${String(page)}&size=2` : path);
+            const resp = await get(is_paginate ? `${path}?page=${String(page)}&size=6` : path);
             if (!resp.status) throw new Error(resp.error);
             return resp.data;
         },
@@ -74,6 +75,11 @@ export default function GlobalIndex({
         if (field.name === "price") {
             return <span className="text-sm font-bold tabular-nums text-indigo-700 dark:text-indigo-300">{formatRupiah(value)}</span>;
         }
+
+        if (field.name === "logo" || field.name === "icon" || field?.logo) {
+            return <MasterIcon data={value} />;
+        }
+
         return <p className="line-clamp-2 max-w-xs text-sm text-slate-700 dark:text-zinc-200">{value ?? "-"}</p>;
     };
 
