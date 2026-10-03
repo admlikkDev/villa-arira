@@ -91,9 +91,14 @@ export default function AdminPanelLayout({ children, role = "admin" }) {
                 url: "/admin/package",
             },
             {
-                title: "Spesifikasi",
+                title: "Specification",
                 icon: Package,
                 url: "/admin/specification",
+            },
+            {
+                title: "Facility",
+                icon: Package,
+                url: "/admin/facility",
             },
         ],
     };

@@ -16,6 +16,7 @@ import ApplicationIndex from "./views/Admin/Application/Index";
 import PackageIndex from "./views/Admin/Package/Index";
 import PackageListIndex from "./views/Admin/Package/List";
 import SpecificationIndex from "./views/Admin/Specification/Index";
+import FacilityIndex from "./views/Admin/Facility/Index";
 
 export default function App() {
   const { get } = useFetch();
@@ -109,6 +110,10 @@ export default function App() {
     {
       path: '/admin/specification',
       element: <SpecificationIndex />
+    },
+    {
+      path: '/admin/facility',
+      element: <FacilityIndex />
     },
   ]);
 }

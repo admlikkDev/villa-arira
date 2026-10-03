@@ -6,7 +6,7 @@ export default function MasterIcon({ data }) {
     switch (data) {
         case 'person':
             return <UserIcon />
-        case 'home':
+        case 'bed':
             return <BedIcon />
         default:
             return <WifiIcon />
