@@ -19,6 +19,6 @@ export default function PackageListIndex() {
     ]
 
     return (
-        <GlobalDetailIndex pathDetail={'villa-package-lists'} path={'villa-packages'} title={'Villa Packages List'} subtitle={'Kelola daftar list paket villa.'} tableHead={['text']} fields={fields} is_param={true} is_detail={true} />
+        <GlobalDetailIndex pathDetail={'villa-package-lists'} path={'villa-packages'} title={'Villa Packages List'} subtitle={'Kelola daftar list paket villa.'} tableHead={['text']} fields={fields} is_param={true} is_detail={true} nameId={'villa_package_id'} />
     )
 }
