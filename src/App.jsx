@@ -17,6 +17,8 @@ import PackageIndex from "./views/Admin/Package/Index";
 import PackageListIndex from "./views/Admin/Package/List";
 import SpecificationIndex from "./views/Admin/Specification/Index";
 import FacilityIndex from "./views/Admin/Facility/Index";
+import AddonIndex from "./views/Admin/Addon/Index";
+import AddonListIndex from "./views/Admin/Addon/List";
 
 export default function App() {
   const { get } = useFetch();
@@ -114,6 +116,14 @@ export default function App() {
     {
       path: '/admin/facility',
       element: <FacilityIndex />
+    },
+    {
+      path: '/admin/addon',
+      element: <AddonIndex />
+    },
+    {
+      path: '/admin/addon/:idParam',
+      element: <AddonListIndex />
     },
   ]);
 }

@@ -13,7 +13,15 @@ import {
     Image,
     MessageSquareQuote,
     Settings2,
-    Package
+    Package,
+    Quote,
+    Sliders,
+    Box,
+    Layers,
+    FileText,
+    ImagePlus,
+    Sparkles,
+    PlusCircle
 } from "lucide-react";
 import {
     SidebarProvider,
@@ -77,28 +85,38 @@ export default function AdminPanelLayout({ children, role = "admin" }) {
             },
             {
                 title: "Testimony",
-                icon: MessageSquareQuote,
+                icon: Quote,
                 url: "/admin/testimony",
             },
             {
                 title: "Application Setting",
-                icon: Settings2,
+                icon: Sliders,
                 url: "/admin/application",
             },
             {
                 title: "Package",
-                icon: Package,
+                icon: Layers,
                 url: "/admin/package",
             },
             {
                 title: "Specification",
-                icon: Package,
+                icon: FileText,
                 url: "/admin/specification",
             },
             {
+                title: "Image Specification",
+                icon: ImagePlus,
+                url: "/admin/specification/image",
+            },
+            {
                 title: "Facility",
-                icon: Package,
+                icon: Sparkles,
                 url: "/admin/facility",
+            },
+            {
+                title: "Addon",
+                icon: PlusCircle,
+                url: "/admin/addon",
             },
         ],
     };

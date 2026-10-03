@@ -83,6 +83,8 @@ export default function GlobalIndex({
         return <p className="line-clamp-2 max-w-xs text-sm text-slate-700 dark:text-zinc-200">{value ?? "-"}</p>;
     };
 
+    console.log(items)
+
     return (
         <AdminPanelLayout>
             <GlobalCreateUpdateModal open={openModal} onOpenChange={setOpenModal} isCreate={isCreate} id={id} path={path} title={title} queryKey={path} fields={fields} initialValues={initialValues} hasId={hasId} />

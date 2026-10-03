@@ -7,7 +7,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, Di
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import useFetch from "../../hooks/useFetch";
 
-export default function GlobalCreateUpdateModal({ open, onOpenChange, isCreate, id, path, title, queryKey, initialValues = {}, fields = [], hasId = true, isVillaPackageList = false, idParam = null }) {
+export default function GlobalCreateUpdateModal({ open, onOpenChange, isCreate, id, path, title, queryKey, initialValues = {}, fields = [], hasId = true, isVillaList = false, idParam = null, nameId = null}) {
     const [formData, setFormData] = useState(initialValues);
     const [errors, setErrors] = useState({});
 
@@ -81,7 +81,6 @@ export default function GlobalCreateUpdateModal({ open, onOpenChange, isCreate, 
         mutationFn: async (payload) => {
             const pathHadId = hasId ? `${path}/${id}` : path;
 
-            // Langsung gunakan put() untuk semua kondisi (Golang bisa handle multipart PUT)
             const resp = await put(pathHadId, payload);
 
             if (!resp.status) throw resp.error;
@@ -149,7 +148,6 @@ export default function GlobalCreateUpdateModal({ open, onOpenChange, isCreate, 
                 const value = formData[key];
                 const isFileField = fields.find(f => f.name === key)?.type === 'file';
 
-                // Mencegah pengiriman string URL gambar ke backend Golang
                 if (isFileField && typeof value === 'string') {
                     return;
                 }
@@ -158,7 +156,6 @@ export default function GlobalCreateUpdateModal({ open, onOpenChange, isCreate, 
                     payload.append(key, value);
                 }
             });
-            // Tidak perlu payload.append('_method', 'PUT') 
         } else {
             payload = { ...formData };
             Object.keys(payload).forEach((key) => {
@@ -169,7 +166,7 @@ export default function GlobalCreateUpdateModal({ open, onOpenChange, isCreate, 
                     payload[field.name] = Number(payload[field.name]);
                 }
             });
-            if (isVillaPackageList) payload['villa_package_id'] = Number(idParam);
+            if (isVillaList) payload[nameId] = Number(idParam);
         }
 
         if (isCreate) {

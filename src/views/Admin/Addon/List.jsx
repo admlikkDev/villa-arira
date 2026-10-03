@@ -1,6 +1,6 @@
 import GlobalDetailIndex from "../../../components/modal/ReadDetail";
 
-export default function PackageListIndex() {
+export default function AddonListIndex() {
 
     const fields = [
         {
@@ -19,6 +19,6 @@ export default function PackageListIndex() {
     ]
 
     return (
-        <GlobalDetailIndex pathDetail={'villa-package-lists'} path={'villa-packages'} title={'Villa Packages List'} subtitle={'Kelola daftar list paket villa.'} tableHead={['text']} fields={fields} is_param={true} is_detail={true} />
+        <GlobalDetailIndex pathDetail={'addon-lists'} path={'addons'} title={'Villa Addon List'} subtitle={'Kelola daftar addon list villa.'} tableHead={['text']} fields={fields} is_param={true} is_detail={true} nameId={'addon_id'} />
     )
 }

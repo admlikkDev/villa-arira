@@ -8,9 +8,10 @@ import GlobalCreateUpdateModal from "./CreateAndUpdate";
 import { useNavigate, useParams } from "react-router-dom";
 import { VaultFreeIcons } from "@hugeicons/core-free-icons";
 
-export default function GlobalDetailIndex({ path, title, subtitle, tableHead, fields, initialValues, createButton = true, deleteButton = true, hasId = true, is_param = false, is_detail = false, pathDetail = null, navigatePath = null }) {
+export default function GlobalDetailIndex({ path, title, subtitle, tableHead, fields, initialValues, createButton = true, deleteButton = true, hasId = true, is_param = false, is_detail = false, pathDetail = null, navigatePath = null, nameId = null }) {
     const { get } = useFetch();
     const { idParam } = useParams()
+    // console.log(idParam)
     const navigate = useNavigate()
 
     const [openModal, setOpenModal] = useState(false);
@@ -70,7 +71,7 @@ export default function GlobalDetailIndex({ path, title, subtitle, tableHead, fi
 
     return (
         <AdminPanelLayout>
-            <GlobalCreateUpdateModal open={openModal} onOpenChange={setOpenModal} isCreate={isCreate} id={id} idParam={idParam} path={pathDetail} title={title} queryKey={pathDetail} fields={fields} initialValues={initialValues} hasId={hasId} isVillaPackageList={true} />
+            <GlobalCreateUpdateModal open={openModal} onOpenChange={setOpenModal} isCreate={isCreate} id={id} idParam={idParam} path={pathDetail} title={title} queryKey={pathDetail} fields={fields} initialValues={initialValues} hasId={hasId} isVillaList={true} nameId={nameId}/>
             <GlobalDeleteModal open={openDeleteModal} onOpenChange={setOpenDeleteModal} id={deleteId} path={pathDetail} queryKey={`admin-${pathDetail}-section`} />
 
             <div className="space-y-6 max-w-5xl relative">
