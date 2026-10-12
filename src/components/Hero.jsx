@@ -1,69 +1,11 @@
 import { useQuery } from '@tanstack/react-query';
-import { useState } from 'react';
-import useFetch from '../hooks/useFetch';
 import { Loader2 } from 'lucide-react';
-
-const buttonStyle = {
-    marginTop: '3rem',
-    padding: '0.75rem 2.5rem',
-    borderRadius: '999px',
-    border: '1px solid rgba(255, 255, 255, 0.7)',
-    backgroundColor: 'transparent',
-    color: 'white',
-    fontSize: '1rem',
-    fontWeight: '500',
-    cursor: 'pointer',
-    transition: 'all 0.3s ease',
-    backdropFilter: 'blur(4px)',
-    fontFamily: 'var(--font-serif, "Playfair Display", serif)',
-};
-
-const buttonHoverStyle = {
-    backgroundColor: 'rgba(255, 255, 255, 0.15)',
-    borderColor: 'white',
-};
-
-const overlayStyle = {
-    position: 'absolute',
-    top: 0,
-    left: 0,
-    width: '100%',
-    height: '100%',
-    background: 'linear-gradient(to bottom, rgba(0,0,0,0.3) 0%, rgba(0,0,0,0.7) 100%)',
-    zIndex: 1,
-};
-
-const textContainerStyle = {
-    position: 'relative',
-    zIndex: 2,
-    display: 'flex',
-    flexDirection: 'column',
-    alignItems: 'center',
-    textAlign: 'center',
-    color: 'white',
-    padding: '0 1rem',
-};
-
-const titleStyle = {
-    fontSize: '4rem',
-    fontWeight: '700',
-    marginBottom: '1rem',
-    textShadow: '0 2px 4px rgba(0,0,0,0.3)',
-    fontFamily: 'var(--font-serif, "Playfair Display", serif)',
-};
-
-const subtitleStyle = {
-    fontSize: '1.25rem',
-    fontWeight: '400',
-    maxWidth: '600px',
-    lineHeight: '1.6',
-    textShadow: '0 1px 2px rgba(0,0,0,0.3)',
-};
+import useFetch from '../hooks/useFetch';
+import '../assets/styles/villa.css';
 
 export default function Hero() {
-    const [isHovered, setIsHovered] = useState(false);
-
     const { get } = useFetch();
+
     const fetchData = async () => {
         const resp = await get('/hero-section');
         if (!resp.status) throw new Error(resp.error);
@@ -72,22 +14,22 @@ export default function Hero() {
 
     const { data, isLoading, isError, error } = useQuery({
         queryKey: ['hero-section'],
-        queryFn: fetchData
+        queryFn: fetchData,
     });
 
     if (isLoading) {
         return (
-            <div className="flex flex-col items-center justify-center w-full h-screen bg-[#1a1a1a] text-stone-400 gap-3">
-                <Loader2 className="size-8 animate-spin text-white" />
-                <p className="text-sm tracking-widest uppercase font-serif">Memuat Villa Arira...</p>
+            <div className="va-ink va-state va-state--full">
+                <Loader2 className="va-spin" size={28} />
+                <p>Memuat Villa Arira…</p>
             </div>
         );
     }
 
     if (isError) {
         return (
-            <div className="flex items-center justify-center w-full h-screen bg-[#1a1a1a] text-red-400 p-6 text-center">
-                <p className="text-sm">Terjadi kesalahan saat memuat hero section: {error.message}</p>
+            <div className="va-ink va-state va-state--full">
+                <p>Hero section gagal dimuat: {error.message}</p>
             </div>
         );
     }
@@ -95,92 +37,24 @@ export default function Hero() {
     const heroContent = data?.data || data;
 
     return (
-        <section style={{ position: 'relative', width: '100%', height: '100vh', overflow: 'hidden', backgroundColor: '#1a1a1a' }}>
-            {/* Style lokal untuk animasi bounce swipe down */}
-            <style>
-                {`
-                    @keyframes bounceSwipe {
-                        0%, 100% { transform: translateY(0) translateX(-50%); }
-                        50% { transform: translateY(8px) translateX(-50%); }
-                    }
-                    .animate-bounce-custom {
-                        animation: bounceSwipe 2s infinite ease-in-out;
-                    }
-                `}
-            </style>
-
+        <section className="va-hero va-ink">
             <video
-                src='/videos/villa-arira-hero-video.mp4'
+                className="va-hero__video"
+                src="/videos/villa-arira-hero-video.mp4"
                 autoPlay
                 loop
                 muted
                 playsInline
-                style={{
-                    position: 'absolute',
-                    top: '50%',
-                    left: '50%',
-                    transform: 'translate(-50%, -50%)',
-                    width: '100%',
-                    height: '100%',
-                    objectFit: 'cover',
-                    zIndex: 0
-                }}
             />
+            <div className="va-hero__shade" />
 
-            <div style={overlayStyle}></div>
-
-            {/* Konten Utama (Judul, Subtitle, Tombol) */}
-            <div style={{ ...textContainerStyle, height: '100%', justifyContent: 'center' }}>
-                <div>
-                    <h1 style={titleStyle}>{heroContent?.title}</h1>
-                    <p style={subtitleStyle}>
-                        {heroContent?.subtitle}
-                    </p>
-
-                    <a href="#cek-jadwal">
-                        <button
-                            style={isHovered ? { ...buttonStyle, ...buttonHoverStyle } : buttonStyle}
-                            onMouseEnter={() => setIsHovered(true)}
-                            onMouseLeave={() => setIsHovered(false)}
-                        >
-                            Cek Harga & Ketersediaan
-                        </button>
-                    </a>
-                </div>
+            <div className="va-hero__body">
+                <h1 className="va-hero__title">{heroContent?.title}</h1>
+                <p className="va-hero__sub">{heroContent?.subtitle}</p>
+                <a className="va-btn" href="#cek-jadwal">Cek harga & ketersediaan</a>
             </div>
 
-            {/* Indikator Swipe Down yang Diposisikan Absolut Tepat di Tengah */}
-            <div 
-                className="animate-bounce-custom" 
-                style={{ 
-                    position: 'absolute', 
-                    bottom: '30px', 
-                    left: '50%', 
-                    transform: 'translateX(-50%)', 
-                    cursor: 'pointer',
-                    display: 'flex',
-                    flexDirection: 'column',
-                    alignItems: 'center',
-                    zIndex: 2,
-                    textAlign: 'center'
-                }}
-            >
-                <p style={{ fontSize: '0.75rem', letterSpacing: '2px', marginBottom: '4px', textTransform: 'uppercase', color: 'rgba(255,255,255,0.8)' }}>
-                    Swipe Down
-                </p>
-                <svg
-                    width="22"
-                    height="22"
-                    viewBox="0 0 24 24"
-                    fill="none"
-                    stroke="white"
-                    strokeWidth="2"
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                >
-                    <path d="M7 13l5 5 5-5M7 6l5 5 5-5" />
-                </svg>
-            </div>
+            <a className="va-hero__scroll" href="#informasi" aria-label="Gulir ke bawah">Gulir</a>
         </section>
     );
 }

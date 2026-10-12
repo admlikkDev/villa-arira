@@ -15,14 +15,9 @@ import PaketVilla from "../components/PaketVilla";
 import PilihanSewa from "../components/PilihanSewa";
 import PricelistVilla from "../components/PricelistVilla";
 import ReviewVilla from "../components/ReviewVilla";
+import WisataTerdekat from '../components/WisataTerdekat';
 
 export default function Homepage() {
-    // const isFetching = useIsFetching({ 
-    //     predicate: (query) => {
-    //         const key = query.queryKey[0];
-    //         return ['faq', 'reviews', 'galleries', 'packages'].some(k => typeof key === 'string' && key.includes(k));
-    //     }
-    // });
 
     return (
         <>  
@@ -30,6 +25,7 @@ export default function Homepage() {
             <InformasiSingkat />
             <PilihanSewa />
             <FasilitasVilla />
+            <WisataTerdekat />
             <PricelistVilla />
             <PaketVilla />
             <CekJadwal />
