@@ -16,8 +16,8 @@ export default function FacilityIndex() {
             placeholder: 'Input Description Here!',
         },
         {
-            name: 'logo',
-            type: 'text',
+            name: 'logo_id',
+            type: 'select',
             label: 'Logo',
             placeholder: 'Input Logo Here!',
         },
@@ -31,6 +31,6 @@ export default function FacilityIndex() {
     ]
 
     return (
-        <GlobalIndex path={'facilities'} title={'Facilities'} subtitle={'Kelola daftar fasilitas.'} tableHead={['title', 'description', 'logo']} fields={fields} is_paginate={true}/>
+        <GlobalIndex path={'facilities'} title={'Facilities'} subtitle={'Kelola daftar fasilitas.'} tableHead={['title', 'description', 'logo']} fields={fields} is_paginate={true} is_selection={true} is_logo={true}/>
     )
 }

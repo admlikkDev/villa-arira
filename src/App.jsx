@@ -19,6 +19,9 @@ import SpecificationIndex from "./views/Admin/Specification/Index";
 import FacilityIndex from "./views/Admin/Facility/Index";
 import AddonIndex from "./views/Admin/Addon/Index";
 import AddonListIndex from "./views/Admin/Addon/List";
+import LogoIndex from "./views/Admin/Logo/Index";
+import ImageSpecification from "./views/Admin/Specification/Image";
+import PricelistIndex from "./views/Admin/Pricelist/Index";
 
 export default function App() {
   const { get } = useFetch();
@@ -120,6 +123,18 @@ export default function App() {
     {
       path: '/admin/addon',
       element: <AddonIndex />
+    },
+    {
+      path: '/admin/logo',
+      element: < LogoIndex/>
+    },
+    {
+      path: '/admin/specification/image',
+      element: < ImageSpecification/>
+    },
+    {
+      path: '/admin/pricelist',
+      element: < PricelistIndex/>
     },
     {
       path: '/admin/addon/:idParam',

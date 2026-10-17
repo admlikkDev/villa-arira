@@ -11,7 +11,7 @@ export default function SpecificationIndex() {
         },
         {
             name: 'logo',
-            type: 'text',
+            type: 'select',
             label: 'Logo',
             placeholder: 'Input Logo Here!',
         },

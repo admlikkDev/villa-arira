@@ -1,27 +1,24 @@
-import { LayoutTemplate, Pencil, Image as ImageIcon, Clock, AlertCircle, Loader2 } from "lucide-react";
-import { Link } from "react-router-dom";
-import AdminPanelLayout from "../../layouts/AdminPanelLayout";
-import useFetch from "../../../hooks/useFetch";
-import { useQuery } from "@tanstack/react-query";
-import UpdateHeroModal from "./Update";
-import { useState } from "react";
-import Hero from "../../../components/Hero";
+import { Pencil, Clock, AlertCircle, Loader2 } from 'lucide-react';
+import AdminPanelLayout from '../../layouts/AdminPanelLayout';
+import useFetch from '../../../hooks/useFetch';
+import { useQuery } from '@tanstack/react-query';
+import UpdateHeroModal from './Update';
+import { useState } from 'react';
+import Hero from '../../../components/Hero';
+import '../../../assets/styles/villa.css';
 
 const formatTimeAgo = (isoString) => {
-    if (!isoString) return "Belum diperbarui";
+    if (!isoString) return 'Belum diperbarui';
 
     const date = new Date(isoString);
-    const now = new Date();
-    const diffInSeconds = Math.floor((now - date) / 1000);
+    const diffInSeconds = Math.floor((new Date() - date) / 1000);
 
-    if (diffInSeconds < 60) return "Baru saja";
+    if (diffInSeconds < 60) return 'Baru saja';
     if (diffInSeconds < 3600) return `${Math.floor(diffInSeconds / 60)} menit yang lalu`;
     if (diffInSeconds < 86400) return `${Math.floor(diffInSeconds / 3600)} jam yang lalu`;
     if (diffInSeconds < 2592000) return `${Math.floor(diffInSeconds / 86400)} hari yang lalu`;
 
-    return date.toLocaleDateString('id-ID', {
-        day: 'numeric', month: 'long', year: 'numeric'
-    });
+    return date.toLocaleDateString('id-ID', { day: 'numeric', month: 'long', year: 'numeric' });
 };
 
 export default function Index() {
@@ -36,15 +33,15 @@ export default function Index() {
 
     const { data, isLoading, isError, error } = useQuery({
         queryKey: ['admin-hero-section'],
-        queryFn: fetchData
+        queryFn: fetchData,
     });
 
     if (isLoading) {
         return (
             <AdminPanelLayout>
-                <div className="flex flex-col items-center justify-center h-64 gap-3 text-slate-400">
-                    <Loader2 className="size-6 animate-spin text-indigo-600" />
-                    <p className="text-sm font-medium">Memuat data hero section...</p>
+                <div className="va-state">
+                    <Loader2 className="va-spin" size={26} />
+                    <p>Memuat data hero section…</p>
                 </div>
             </AdminPanelLayout>
         );
@@ -53,9 +50,9 @@ export default function Index() {
     if (isError) {
         return (
             <AdminPanelLayout>
-                <div className="flex items-center gap-3 p-4 rounded-xl bg-red-50 dark:bg-red-950/40 border border-red-200 dark:border-red-900/50 text-red-600 dark:text-red-400 max-w-4xl">
-                    <AlertCircle className="size-5 shrink-0" />
-                    <p className="text-sm">Gagal memuat data: {error.message}</p>
+                <div className="va-alert" role="alert">
+                    <AlertCircle size={16} />
+                    <span>Gagal memuat data: {error.message}</span>
                 </div>
             </AdminPanelLayout>
         );
@@ -67,72 +64,33 @@ export default function Index() {
         <AdminPanelLayout>
             <UpdateHeroModal open={isOpen} onOpenChange={setIsOpen} data={heroContent} />
 
-            <div className="space-y-6 max-w-5xl relative">
-                <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 border-b border-slate-100 dark:border-zinc-800 pb-5">
-                    <div className="flex items-center gap-3">
-                        <div className="flex size-10 items-center justify-center rounded-xl bg-indigo-50 dark:bg-indigo-950/60 text-indigo-600 dark:text-indigo-400 border border-indigo-100 dark:border-indigo-900/40 shadow-xs">
-                            <LayoutTemplate className="size-5" />
-                        </div>
-                        <div>
-                            <h2 className="text-lg font-bold text-slate-900 dark:text-slate-100 tracking-tight">
-                                Manajemen Hero Section
-                            </h2>
-                            <p className="text-xs text-slate-500 dark:text-zinc-400">
-                                Atur dan kelola konten banner utama yang tampil di halaman depan website.
-                            </p>
-                        </div>
-                    </div>
+            <header className="va-adm-head">
+                <div>
+                    <h2 className="va-adm-title">Manajemen hero section</h2>
+                    <p className="va-text">Atur konten banner utama yang tampil di halaman depan website.</p>
                 </div>
-
-                <div className="relative pt-4 pb-2">
-                    <div className="absolute -top-2 right-6 text-indigo-500/10 dark:text-indigo-400/10 pointer-events-none select-none z-0">
-                        <ImageIcon className="size-36 stroke-[1.5]" />
-                    </div>
-
-                    <div className="absolute -bottom-2 -left-2 w-24 h-24 bg-[radial-gradient(#6366f1_1px,transparent_1px)] [background-size:10px_10px] opacity-15 pointer-events-none z-0 rounded-full blur-xs" />
-
-                    <div className="relative z-10 p-6 sm:p-8 rounded-3xl border border-slate-200/80 dark:border-zinc-800 bg-white dark:bg-zinc-900 shadow-sm transition-all backdrop-blur-sm">
-                        <div className="flex flex-col gap-6">
-                            
-                            <div className="rounded-2xl overflow-hidden border border-slate-200/80 dark:border-zinc-800 shadow-sm bg-slate-50 dark:bg-zinc-950">
-                                <div className="flex items-center px-4 py-3 bg-slate-100 dark:bg-zinc-800/80 border-b border-slate-200/80 dark:border-zinc-800">
-                                    <div className="flex gap-2 w-20">
-                                        <div className="size-3 rounded-full bg-red-400/90 shadow-sm"></div>
-                                        <div className="size-3 rounded-full bg-amber-400/90 shadow-sm"></div>
-                                        <div className="size-3 rounded-full bg-emerald-400/90 shadow-sm"></div>
-                                    </div>
-                                    <div className="flex-1 flex justify-center">
-                                        <div className="px-6 py-1.5 rounded-md bg-white dark:bg-zinc-900 border border-slate-200/80 dark:border-zinc-700 shadow-xs flex items-center justify-center min-w-[240px]">
-                                            <span className="text-[11px] font-medium text-slate-500 dark:text-zinc-400 font-mono tracking-tight">
-                                                villaarira.com
-                                            </span>
-                                        </div>
-                                    </div>
-                                    <div className="w-20"></div>
-                                </div>
-                                <div className="w-full h-[450px] overflow-y-auto overflow-x-hidden relative bg-white dark:bg-zinc-950">
-                                    <Hero />
-                                </div>
-                            </div>
-
-                            <div className="pt-2 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 border-t border-slate-100 dark:border-zinc-800/80">
-                                <div className="flex items-center gap-2 text-xs text-slate-400 dark:text-zinc-500 mt-2">
-                                    <Clock className="size-4" />
-                                    <span>Terakhir diperbarui: {formatTimeAgo(heroContent?.updatedAt)}</span>
-                                </div>
-
-                                <button
-                                    type="button"
-                                    onClick={() => setIsOpen(true)}
-                                    className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-indigo-600 hover:bg-indigo-700 text-white text-sm font-medium transition-all shadow-sm cursor-pointer self-end sm:self-auto mt-2 sm:mt-0"
-                                >
-                                    <Pencil className="size-4" />
-                                    <span>Edit Konten Hero</span>
-                                </button>
-                            </div>
-                        </div>
-                    </div>
+                <div className="va-adm-actions">
+                    <button type="button" className="va-btn va-btn--sm" onClick={() => setIsOpen(true)}>
+                        <Pencil size={16} /> Edit konten hero
+                    </button>
                 </div>
+            </header>
+
+            <div className="va-frame">
+                <div className="va-frame__bar">
+                    <span>villaarira.com</span>
+                    <span>Pratinjau</span>
+                </div>
+                <div className="va-frame__body">
+                    <Hero />
+                </div>
+            </div>
+
+            <div className="va-adm-foot">
+                <span>
+                    <Clock size={16} strokeWidth={1.5} />
+                    Terakhir diperbarui: {formatTimeAgo(heroContent?.updatedAt)}
+                </span>
             </div>
         </AdminPanelLayout>
     );

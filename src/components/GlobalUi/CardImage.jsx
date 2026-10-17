@@ -1,36 +1,44 @@
-import { Badge } from "@/components/ui/badge"
-import { Button } from "@/components/ui/button"
-import {
-  Card,
-  CardAction,
-  CardDescription,
-  CardFooter,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card"
+import '../../assets/styles/villa.css';
 
-export function GlobalCardImage() {
-  return (
-    <Card className="relative mx-auto w-full max-w-sm pt-0">
-      <div className="absolute inset-0 z-30 aspect-video bg-black/35" />
-      <img
-        src="https://avatar.vercel.sh/shadcn1"
-        alt="Event cover"
-        className="relative z-20 aspect-video w-full object-cover brightness-60 grayscale dark:brightness-40"
-      />
-      <CardHeader>
-        <CardAction>
-          <Badge variant="secondary">Featured</Badge>
-        </CardAction>
-        <CardTitle>Design systems meetup</CardTitle>
-        <CardDescription>
-          A practical talk on component APIs, accessibility, and shipping
-          faster.
-        </CardDescription>
-      </CardHeader>
-      <CardFooter>
-        <Button className="w-full">View Event</Button>
-      </CardFooter>
-    </Card>
-  )
+export function GlobalCardImage({
+    image = 'https://avatar.vercel.sh/shadcn1',
+    title = 'Design systems meetup',
+    description = 'A practical talk on component APIs, accessibility, and shipping faster.',
+    badge = 'Featured',
+    actionLabel = [
+        'Edit', 'Delete'
+    ],
+    onAction,
+    is_image = false
+}) {
+    console.log(image)
+    return (
+        <article className="va-adm-card" style={{ maxWidth: '24rem' }}>
+            <div className="va-adm-card__img">
+                <img src={image} alt={title} />
+                {
+                    !is_image ? <span className="va-adm-chip">{badge}</span> : null
+                }
+            </div>
+            <div className="va-adm-card__body">
+                {
+                    !is_image ? (
+                        <>
+                            <h3 className="va-h3">{title}</h3>
+                            <p className="va-text">{description}</p>
+                        </>
+                    ) : null
+                }
+            </div>
+            <div className="va-adm-card__foot">
+                {
+                    actionLabel?.map(item => (
+                        <button type="button" className="va-btn va-btn--block va-btn--sm" onClick={onAction}>
+                            {item}
+                        </button>
+                    ))
+                }
+            </div>
+        </article>
+    );
 }
