@@ -1,8 +1,8 @@
-import { useQuery } from '@tanstack/react-query';
-import { AlertCircle, Loader2, ChevronLeft, ChevronRight, Star } from 'lucide-react';
-import useFetch from '../hooks/useFetch';
+import { ChevronLeft, ChevronRight, Star } from 'lucide-react';
 import { Swiper, SwiperSlide } from 'swiper/react';
 import { Autoplay, Navigation, Pagination } from 'swiper/modules';
+import { useVillaList } from '../hooks/useVillaQuery';
+import SectionState from './SectionState';
 import '../assets/styles/villa.css';
 
 import 'swiper/css';
@@ -10,43 +10,14 @@ import 'swiper/css/navigation';
 import 'swiper/css/pagination';
 
 const getInitials = (name) =>
-    name
-        ? name.split(' ').map((w) => w.charAt(0)).join('').toUpperCase().slice(0, 2)
-        : 'VA';
+    name ? name.split(' ').map((w) => w.charAt(0)).join('').toUpperCase().slice(0, 2) : 'VA';
 
 export default function ReviewVilla() {
-    const { get } = useFetch();
+    const { data: reviewsData = [], isLoading, isError, error } = useVillaList('testimonies');
 
-    const fetchData = async () => {
-        const resp = await get('testimonies');
-        if (!resp.status) throw new Error(resp.error);
-        return resp.data;
-    };
-
-    const { data, isLoading, isError, error } = useQuery({
-        queryKey: ['admin-testimony-section'],
-        queryFn: fetchData,
-    });
-
-    if (isLoading) {
-        return (
-            <div className="va-ink va-state">
-                <Loader2 className="va-spin" size={26} />
-                <p>Memuat ulasan tamu…</p>
-            </div>
-        );
-    }
-
-    if (isError) {
-        return (
-            <div className="va-ink va-state">
-                <AlertCircle size={26} />
-                <p>Ulasan gagal dimuat: {error.message}</p>
-            </div>
-        );
-    }
-
-    const reviewsData = data?.data || data || [];
+    if (isLoading) return <SectionState tone="ink" label="Memuat ulasan tamu…" />;
+    if (isError) return <SectionState tone="ink" label="Ulasan gagal dimuat" error={error.message} />;
+    if (reviewsData.length === 0) return null;
 
     return (
         <section id="review" className="va-ink va-section va-review">
@@ -75,7 +46,7 @@ export default function ReviewVilla() {
                     }}
                 >
                     {reviewsData.map((item, index) => (
-                        <SwiperSlide key={item.id || index}>
+                        <SwiperSlide key={item.id ?? index}>
                             <figure className="va-review-card" style={{ margin: 0 }}>
                                 <div>
                                     <div className="va-stars" aria-label={`Rating ${Number(item.star) || 5} dari 5`}>

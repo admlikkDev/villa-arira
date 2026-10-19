@@ -1,27 +1,20 @@
+import { useVillaList, formatRupiah, formatCapacity } from '../hooks/useVillaQuery';
+import SectionState from './SectionState';
 import '../assets/styles/villa.css';
 
-const rentalOptions = [
-    {
-        title: 'Arira Private Wing',
-        subtitle: '3 kamar belakang',
-        desc: 'Pilihan hemat dan privat bagi rombongan santai keluarga yang ingin menikmati udara sejuk tanpa menyewa seluruh kompleks villa.',
-        image: '/images/15 (1).jpg',
-    },
-    {
-        title: 'Arira Main House',
-        subtitle: '3 kamar utama',
-        desc: 'Bangunan kayu etnik Sunda megah dengan ruang tengah super lapang, meja biliar, dan pemandangan langsung ke kolam teratai.',
-        image: '/images/16.jpg',
-    },
-    {
-        title: 'Arira Exclusive',
-        subtitle: 'Seluruh villa, 6 kamar',
-        desc: 'Seluruh properti Villa Arira eksklusif milik rombongan Anda. Tidak ada tamu lain, bebas berkumpul bersama keluarga besar & rekan.',
-        image: '/images/17.jpg',
-    },
-];
+// API belum menyediakan foto per tipe sewa, jadi foto dipasangkan berdasarkan urutan
+const RENTAL_IMAGES = ['/images/15 (1).jpg', '/images/16.jpg', '/images/17.jpg'];
+
+// Data tipe sewa diambil dari endpoint yang sama dengan pricelist (cache dipakai bersama)
+const byPrice = (a, b) => Number(a.weekday_price) - Number(b.weekday_price);
 
 export default function PilihanSewa() {
+    const { data: options = [], isLoading, isError, error } = useVillaList('pricelists', { query: '', sort: byPrice });
+
+    if (isLoading) return <SectionState tone="paper" label="Memuat pilihan sewa…" />;
+    if (isError) return <SectionState tone="paper" label="Pilihan sewa gagal dimuat" error={error.message} />;
+    if (options.length === 0) return null;
+
     return (
         <section id="pilihan-sewa" className="va-paper va-section">
             <div className="va-wrap">
@@ -33,19 +26,23 @@ export default function PilihanSewa() {
                 </div>
 
                 <div className="va-cells va-cells--3">
-                    {rentalOptions.map((item) => (
-                        <article key={item.title} className="va-rent">
+                    {options.map((item, index) => (
+                        <article key={item.id ?? item.title} className="va-rent">
                             <div className="va-rent__img">
-                                <img src={item.image} alt={item.title} />
+                                <img src={RENTAL_IMAGES[index % RENTAL_IMAGES.length]} alt={item.title} />
                             </div>
                             <div className="va-rent__body">
                                 <div>
                                     <h3 className="va-h3">{item.title}</h3>
                                     <p className="va-muted" style={{ margin: '0.35rem 0 0', fontSize: '0.88rem', fontWeight: 600 }}>
-                                        {item.subtitle}
+                                        Kapasitas {formatCapacity(item.min_capacity, item.max_capacity)}
                                     </p>
                                 </div>
-                                <p className="va-text">{item.desc}</p>
+                                <p className="va-text">{item.description}</p>
+                                <div>
+                                    <span className="va-price" style={{ fontSize: '1.6rem' }}>{formatRupiah(item.weekday_price)}</span>
+                                    <span className="va-price-note">mulai dari / malam (weekday)</span>
+                                </div>
                                 <button
                                     className="va-btn va-btn--ghost va-btn--block va-cell__push"
                                     onClick={() => alert(`Detail untuk ${item.title}`)}

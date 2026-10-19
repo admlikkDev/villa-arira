@@ -1,43 +1,16 @@
-import { useQuery } from '@tanstack/react-query';
 import { useState } from 'react';
-import { AlertCircle, Loader2, Plus } from 'lucide-react';
-import useFetch from '../hooks/useFetch';
+import { Plus } from 'lucide-react';
+import { useVillaList } from '../hooks/useVillaQuery';
+import SectionState from './SectionState';
 import '../assets/styles/villa.css';
 
 export default function FaqVilla() {
     const [activeIndex, setActiveIndex] = useState(null);
-    const { get } = useFetch();
+    const { data: faqData = [], isLoading, isError, error } = useVillaList('faqs');
 
-    const fetchData = async () => {
-        const resp = await get('faqs');
-        if (!resp.status) throw new Error(resp.error);
-        return resp.data;
-    };
-
-    const { data, isLoading, isError, error } = useQuery({
-        queryKey: ['admin-faqs-section'],
-        queryFn: fetchData,
-    });
-
-    if (isLoading) {
-        return (
-            <div className="va-paper va-state">
-                <Loader2 className="va-spin" size={26} />
-                <p>Memuat data FAQ…</p>
-            </div>
-        );
-    }
-
-    if (isError) {
-        return (
-            <div className="va-paper va-state">
-                <AlertCircle size={26} />
-                <p>Data FAQ gagal dimuat: {error.message}</p>
-            </div>
-        );
-    }
-
-    const faqData = data?.data || data || [];
+    if (isLoading) return <SectionState tone="paper" label="Memuat data FAQ…" />;
+    if (isError) return <SectionState tone="paper" label="Data FAQ gagal dimuat" error={error.message} />;
+    if (faqData.length === 0) return null;
 
     return (
         <section id="faq" className="va-paper va-section">
@@ -53,7 +26,7 @@ export default function FaqVilla() {
                     {faqData.map((item, index) => {
                         const isOpen = activeIndex === index;
                         return (
-                            <div key={item.id || index} className="va-acc__item" data-open={isOpen}>
+                            <div key={item.id ?? index} className="va-acc__item" data-open={isOpen}>
                                 <button
                                     className="va-acc__btn"
                                     aria-expanded={isOpen}

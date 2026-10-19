@@ -535,7 +535,12 @@ textarea.va-input { resize: vertical; line-height: 1.6; }
 .va-sb__mark { width: 36px; height: 36px; flex: none; display: grid; place-items: center; background: var(--fg); color: var(--bg); font-family: var(--font-display); font-size: 1.5rem; line-height: 1; }
 .va-sb__brand strong { display: block; font-family: var(--font-display); font-weight: 400; font-size: 1.5rem; line-height: 1; }
 .va-sb__brand small { color: var(--muted); font-size: 0.78rem; text-transform: capitalize; }
-.va-sb__nav { flex: 1; overflow-y: auto; overflow-x: hidden; list-style: none; margin: 0; padding: 0.75rem; display: grid; gap: 2px; align-content: start; }
+.va-sb__nav { flex: 1; overflow-y: auto; overflow-x: hidden; padding: 1rem 0.75rem; }
+.va-sb__list { list-style: none; margin: 0; padding: 0; display: grid; gap: 2px; }
+.va-sb__group + .va-sb__group { margin-top: 1.4rem; }
+.va-sb__grouplabel { margin: 0 0 0.45rem; padding: 0 0.75rem; font-size: 0.74rem; font-weight: 600; color: var(--muted); }
+.va-sb__mark { overflow: hidden; }
+.va-sb__mark img { width: 100%; height: 100%; object-fit: cover; display: block; }
 .va-sb__link { display: flex; align-items: center; gap: 0.8rem; height: 42px; padding: 0 0.75rem; color: var(--fg); text-decoration: none; font-size: 0.9rem; font-weight: 500; white-space: nowrap; transition: background-color 0.2s ease; }
 .va-sb__link svg { flex: none; }
 .va-sb__link:hover { background: color-mix(in srgb, var(--fg) 14%, transparent); }
@@ -553,6 +558,7 @@ textarea.va-input { resize: vertical; line-height: 1.6; }
 @media (min-width: 901px) {
     .va-sb[data-collapsed='true'] { width: 68px; }
     .va-sb[data-collapsed='true'] .va-sb__label { display: none; }
+    .va-sb[data-collapsed='true'] .va-sb__group + .va-sb__group { margin-top: 0.6rem; padding-top: 0.6rem; border-top: 1px solid var(--line); }
     .va-sb[data-collapsed='true'] .va-sb__head { justify-content: center; padding: 0; }
     .va-sb[data-collapsed='true'] .va-sb__link { justify-content: center; padding: 0; }
     .va-sb[data-collapsed='true'] .va-sb__user { justify-content: center; padding: 0.5rem 0; }
@@ -616,6 +622,12 @@ textarea.va-input { resize: vertical; line-height: 1.6; }
 .va-adm-foot { display: flex; justify-content: space-between; align-items: center; gap: 1rem; flex-wrap: wrap; margin-top: 1.5rem; font-size: 0.85rem; color: var(--muted); }
 .va-adm-foot span { display: inline-flex; align-items: center; gap: 0.5rem; }
 
+/* Tab bar (halaman dengan beberapa bagian) */
+.va-tabs { display: flex; gap: 0; margin-bottom: 2rem; border-bottom: 1px solid var(--line); overflow-x: auto; }
+.va-tab { padding: 0.9rem 1.4rem; margin-bottom: -1px; background: transparent; border: 0; border-bottom: 2px solid transparent; border-radius: 0; color: var(--muted); font: 600 0.92rem var(--font-body); white-space: nowrap; cursor: pointer; transition: color 0.2s ease, border-color 0.2s ease; }
+.va-tab:hover { color: var(--fg); }
+.va-tab[aria-selected='true'] { color: var(--fg); border-bottom-color: var(--fg); }
+
 /* Modal (shadcn Dialog) */
 .va-modal { width: min(640px, calc(100vw - 2rem)); max-width: none; max-height: 92vh; overflow-y: auto; padding: 0; gap: 0; border: 1px solid var(--fg); border-radius: 0; box-shadow: 0 24px 60px rgba(23, 37, 30, 0.3); }
 .va-modal--sm { width: min(440px, calc(100vw - 2rem)); }
@@ -636,6 +648,14 @@ textarea.va-input { resize: vertical; line-height: 1.6; }
 .va-drop__preview p { margin: 0 0 0.25rem; font-size: 0.82rem; }
 .va-current { display: flex; align-items: center; gap: 0.75rem; padding: 0.6rem; border: 1px solid var(--line); font-size: 0.82rem; }
 .va-current img { width: 48px; height: 48px; object-fit: cover; }
+
+/* Sembunyikan semua scrollbar di panel admin (konten tetap bisa di-scroll) */
+html:has(.va-shell),
+.va-shell, .va-shell *,
+.va-modal, .va-modal * { scrollbar-width: none; -ms-overflow-style: none; }
+html:has(.va-shell)::-webkit-scrollbar,
+.va-shell::-webkit-scrollbar, .va-shell *::-webkit-scrollbar,
+.va-modal::-webkit-scrollbar, .va-modal *::-webkit-scrollbar { display: none; width: 0; height: 0; }
 
 /* ---------- Reduced motion ---------- */
 @media (prefers-reduced-motion: reduce) {

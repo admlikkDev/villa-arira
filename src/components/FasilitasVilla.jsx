@@ -1,55 +1,15 @@
-import { BedDouble, Waves, Gamepad2, Flower2, Utensils, Flame, Trees, Wifi, Car } from 'lucide-react';
+import { useVillaList } from '../hooks/useVillaQuery';
+import { Sparkles } from 'lucide-react';
+import SectionState from './SectionState';
 import '../assets/styles/villa.css';
 
-const facilities = [
-    {
-        icon: BedDouble,
-        title: '6 kamar tidur & water heater',
-        desc: 'Kamar tidur luas dengan kasur berstandar hotel, selimut hangat untuk cuaca dingin Cisarua, serta kamar mandi dengan air panas stabil.',
-    },
-    {
-        icon: Waves,
-        title: 'Private pool & sunbeds',
-        desc: 'Kolam renang pribadi dengan air pegunungan yang segar dan bersih, dilengkapi tempat bersantai di pinggir kolam.',
-    },
-    {
-        icon: Gamepad2,
-        title: 'Meja biliar & hiburan',
-        desc: 'Area game privat dengan meja biliar terawat dan stik lengkap di dalam ruang santai keluarga yang nyaman beratap kaca.',
-    },
-    {
-        icon: Flower2,
-        title: 'Gazebo etnik & kolam teratai',
-        desc: 'Gazebo kayu di atas kolam teratai yang tenang, spot favorit untuk ngopi pagi dan relaksasi.',
-    },
-    {
-        icon: Utensils,
-        title: 'Dapur lengkap mandiri',
-        desc: 'Peralatan masak lengkap, rice cooker, kompor gas, kulkas besar, microwave, dispenser galon, piring, dan gelas saji melimpah.',
-    },
-    {
-        icon: Flame,
-        title: 'Area BBQ luar ruangan',
-        desc: 'Pemanggang BBQ outdoor gratis untuk pesta malam hari, dengan arang, kipas, dan jepitan daging siap pakai.',
-    },
-    {
-        icon: Trees,
-        title: 'Courtyard luas untuk games',
-        desc: 'Pelataran berumput yang cukup luas untuk ice breaking, senam pagi, fun games rombongan, atau anak-anak berlarian.',
-    },
-    {
-        icon: Wifi,
-        title: 'WiFi cepat & karaoke',
-        desc: 'Internet serat optik berkecepatan tinggi, Smart TV untuk streaming YouTube / Netflix, serta speaker karaoke.',
-    },
-    {
-        icon: Car,
-        title: 'Parkiran luas berpagar',
-        desc: 'Area parkir mandiri berpagar besi yang menampung 6–8 mobil pribadi atau bus mini HiAce.',
-    },
-];
-
 export default function FasilitasVilla() {
+    const { data: facilities = [], isLoading, isError, error } = useVillaList('facilities');
+
+    if (isLoading) return <SectionState tone="ink" label="Memuat fasilitas…" />;
+    if (isError) return <SectionState tone="ink" label="Fasilitas gagal dimuat" error={error.message} />;
+    if (facilities.length === 0) return null;
+
     return (
         <section id="fasilitas" className="va-ink va-section">
             <div className="va-wrap">
@@ -61,12 +21,21 @@ export default function FasilitasVilla() {
                 </div>
 
                 <div className="va-cells va-cells--3">
-                    {facilities.map(({ icon: Icon, title, desc }) => (
-                        <article key={title} className="va-cell va-fac">
-                            <Icon size={26} />
+                    {facilities.map((item, index) => (
+                        <article key={item.id ?? index} className="va-cell va-fac">
+                            {item.logo?.image ? (
+                                <img
+                                    src={item.logo.image}
+                                    alt={item.title}
+                                    loading="lazy"
+                                    style={{ width: 48, height: 48, objectFit: 'cover', display: 'block' }}
+                                />
+                            ) : (
+                                <Sparkles size={26} strokeWidth={1.5} />
+                            )}
                             <div style={{ display: 'grid', gap: '0.6rem' }}>
-                                <h3 className="va-h3">{title}</h3>
-                                <p className="va-text">{desc}</p>
+                                <h3 className="va-h3">{item.title}</h3>
+                                <p className="va-text">{item.description}</p>
                             </div>
                         </article>
                     ))}

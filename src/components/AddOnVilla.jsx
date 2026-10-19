@@ -1,42 +1,15 @@
 import { Check, Plus } from 'lucide-react';
+import { useVillaListWithLists, formatRupiah } from '../hooks/useVillaQuery';
+import SectionState from './SectionState';
 import '../assets/styles/villa.css';
 
-const addonData = [
-    {
-        title: 'Extra bed tambahan',
-        subtitle: 'Kenyamanan ekstra untuk rombongan besar',
-        price: 'Rp 150.000',
-        unit: 'per malam / unit',
-        description: 'Kasur ekstra lengkap dengan bantal, selimut hangat, dan seprai bersih untuk kapasitas tidur yang lebih longgar di kamar.',
-        features: ['Matras empuk berkualitas tinggi', 'Selimut tebal standar hotel', 'Termasuk bantal & sarung bersih'],
-    },
-    {
-        title: 'Paket BBQ & charcoal set',
-        subtitle: 'Malam keakraban lebih sempurna',
-        price: 'Rp 250.000',
-        unit: 'per set lengkap',
-        description: 'Peralatan pemanggang lengkap dengan arang siap bakar, kipas, dan perlengkapan oles bumbu untuk pesta BBQ malam hari.',
-        features: ['Panggang/grill set portable', 'Arang kayu bakar melimpah', 'Kuas, jepitan & kipas bambu'],
-    },
-    {
-        title: 'Sewa sound system & mic',
-        subtitle: 'Karaoke & acara makin meriah',
-        price: 'Rp 350.000',
-        unit: 'per hari / acara',
-        description: 'Pengeras suara portabel lengkap dengan mikrofon wireless untuk karaoke keluarga atau acara sambutan.',
-        features: ['Speaker aktif bluetooth & USB', '2 unit mic wireless jernih', 'Kabel koneksi & stand lengkap'],
-    },
-    {
-        title: 'Breakfast / catering menu Sunda',
-        subtitle: 'Kuliner khas pegunungan',
-        price: 'Rp 50.000',
-        unit: 'per pax / porsi',
-        description: 'Sarapan atau makan siang/malam prasmanan dengan cita rasa masakan Sunda otentik yang hangat dan segar.',
-        features: ['Menu prasmanan higienis', 'Pilihan masakan Sunda pilihan', 'Termasuk air mineral & buah'],
-    },
-];
-
 export default function AddOnVilla() {
+    const { data: addons = [], isLoading, isError, error } = useVillaListWithLists('addons');
+
+    if (isLoading) return <SectionState tone="paper" label="Memuat add-on…" />;
+    if (isError) return <SectionState tone="paper" label="Add-on gagal dimuat" error={error.message} />;
+    if (addons.length === 0) return null;
+
     return (
         <section id="add-on" className="va-paper va-section">
             <div className="va-wrap">
@@ -48,8 +21,8 @@ export default function AddOnVilla() {
                 </div>
 
                 <div className="va-addons">
-                    {addonData.map((item) => (
-                        <article key={item.title} className="va-addon">
+                    {addons.map((item, index) => (
+                        <article key={item.id ?? index} className="va-addon">
                             <div>
                                 <h3 className="va-h3">{item.title}</h3>
                                 <p className="va-muted" style={{ margin: '0.4rem 0 0', fontSize: '0.88rem' }}>{item.subtitle}</p>
@@ -57,17 +30,19 @@ export default function AddOnVilla() {
 
                             <div style={{ display: 'grid', gap: '1.25rem' }}>
                                 <p className="va-text">{item.description}</p>
-                                <ul className="va-checks">
-                                    {item.features.map((f) => (
-                                        <li key={f}><Check size={16} strokeWidth={2} />{f}</li>
-                                    ))}
-                                </ul>
+                                {item.lists.length > 0 && (
+                                    <ul className="va-checks">
+                                        {item.lists.map((f, i) => (
+                                            <li key={f.id ?? i}><Check size={16} strokeWidth={2} />{f.text}</li>
+                                        ))}
+                                    </ul>
+                                )}
                             </div>
 
                             <div className="va-addon__side">
                                 <div>
-                                    <span className="va-price">{item.price}</span>
-                                    <span className="va-price-note">{item.unit}</span>
+                                    <span className="va-price">{formatRupiah(item.price)}</span>
+                                    {item.unit && <span className="va-price-note">{item.unit}</span>}
                                 </div>
                                 <button
                                     className="va-btn va-btn--ghost va-btn--sm"

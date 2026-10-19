@@ -1,36 +1,17 @@
+import { useVillaList, formatRupiah, formatCapacity } from '../hooks/useVillaQuery';
+import SectionState from './SectionState';
 import '../assets/styles/villa.css';
 
-const pricelistData = [
-    {
-        title: 'Arira Private Wing',
-        subtitle: '3 kamar belakang + kamar mandi dalam & water heater',
-        capacity: '6 – 12 orang',
-        weekday: 'Rp 1.500.000',
-        weekend: 'Rp 2.200.000',
-        longWeekend: 'Rp 2.700.000',
-        highSeason: 'Rp 3.500.000',
-    },
-    {
-        title: 'Arira Main House',
-        subtitle: '3 kamar utama + billiard, living room, gazebo',
-        capacity: '15 – 20 orang',
-        weekday: 'Rp 2.800.000',
-        weekend: 'Rp 3.800.000',
-        longWeekend: 'Rp 4.500.000',
-        highSeason: 'Rp 5.500.000',
-    },
-    {
-        title: 'Arira Exclusive',
-        subtitle: 'Seluruh villa (6 kamar + pool privat + semua fasilitas)',
-        capacity: '15 – 30 orang',
-        weekday: 'Rp 4.000.000',
-        weekend: 'Rp 5.500.000',
-        longWeekend: 'Rp 6.800.000',
-        highSeason: 'Rp 8.500.000',
-    },
-];
+// Endpoint pricelists tidak memakai pagination; urutkan dari harga weekday terendah
+const byPrice = (a, b) => Number(a.weekday_price) - Number(b.weekday_price);
 
 export default function PricelistVilla() {
+    const { data: pricelist = [], isLoading, isError, error } = useVillaList('pricelists', { query: '', sort: byPrice });
+
+    if (isLoading) return <SectionState tone="ink" label="Memuat pricelist…" />;
+    if (isError) return <SectionState tone="ink" label="Pricelist gagal dimuat" error={error.message} />;
+    if (pricelist.length === 0) return null;
+
     return (
         <section id="pricelist" className="va-ink va-section">
             <div className="va-wrap">
@@ -54,17 +35,19 @@ export default function PricelistVilla() {
                             </tr>
                         </thead>
                         <tbody>
-                            {pricelistData.map((item) => (
-                                <tr key={item.title}>
+                            {pricelist.map((item) => (
+                                <tr key={item.id ?? item.title}>
                                     <td>
                                         <h3 className="va-table__title">{item.title}</h3>
-                                        <span className="va-muted" style={{ fontSize: '0.84rem' }}>{item.subtitle}</span>
+                                        <span className="va-muted" style={{ fontSize: '0.84rem' }}>{item.description}</span>
                                     </td>
-                                    <td style={{ fontWeight: 500, whiteSpace: 'nowrap' }}>{item.capacity}</td>
-                                    <td className="num">{item.weekday}</td>
-                                    <td className="num">{item.weekend}</td>
-                                    <td className="num">{item.longWeekend}</td>
-                                    <td className="num">{item.highSeason}</td>
+                                    <td style={{ fontWeight: 500, whiteSpace: 'nowrap' }}>
+                                        {formatCapacity(item.min_capacity, item.max_capacity)}
+                                    </td>
+                                    <td className="num">{formatRupiah(item.weekday_price)}</td>
+                                    <td className="num">{formatRupiah(item.weekend_price)}</td>
+                                    <td className="num">{formatRupiah(item.long_weekend_price)}</td>
+                                    <td className="num">{formatRupiah(item.high_season_price)}</td>
                                 </tr>
                             ))}
                         </tbody>

@@ -1,5 +1,5 @@
 import { AlertCircle, Eye, ImageOff, Pencil, Plus, Trash2 } from 'lucide-react';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { useNavigate } from 'react-router-dom';
 import useFetch from '../../hooks/useFetch';
@@ -29,7 +29,8 @@ function EmptyState({ title }) {
 export default function GlobalIndex({
     path, title, subtitle, tableHead, fields, initialValues,
     createButton = true, deleteButton = true, hasId = true, navigatePath = null, isCard = false,
-    is_paginate = false, is_logo = false, imageSpecification = false
+    is_paginate = false, is_logo = false, imageSpecification = false,
+    tabs = null, // opsional: elemen (mis. tab bar) yang ditampilkan di atas header halaman
 }) {
     const { get } = useFetch();
     const navigate = useNavigate();
@@ -41,6 +42,13 @@ export default function GlobalIndex({
     const [openDeleteModal, setOpenDeleteModal] = useState(false);
     const [deleteId, setDeleteId] = useState(null);
 
+    // Saat pindah data (mis. ganti tab), kembali ke halaman 1 dan tutup modal
+    useEffect(() => {
+        setPage(1);
+        setOpenModal(false);
+        setOpenDeleteModal(false);
+    }, [path]);
+
     const { data, isPending, isError, error } = useQuery({
         queryKey: [`admin-${path}-section`, page],
         queryFn: async () => {
@@ -49,8 +57,6 @@ export default function GlobalIndex({
             return resp.data;
         },
     });
-
-    // console.log(data?.data)
 
     let items = [];
     let itemPaginates;
@@ -65,32 +71,9 @@ export default function GlobalIndex({
         }
     }
 
-    // console.log(items)
-
-    // const { data: dataLogo, isLoading: loadingLogo } = useQuery({
-    //     queryKey: ['logos', items],
-    //     queryFn: async () => {
-    //         if (!items || items.length === 0) return [];
-
-    //         const promise = items.map(async (item) => {
-    //             const resp = await get(`logos/${item?.id}`);
-    //             console.log(resp.data.data)
-    //             if (!resp.status) throw resp.error;
-    //             items['logo_id'] = resp?.data?.data
-    //             return resp?.data?.data;
-    //         });
-
-    //         return await Promise.all(promise)
-    //     },
-    //     enabled: Boolean(items && items.length > 0)
-    // });
-
-    // console.log(dataLogo)
-
     const visibleFields = (fields ?? []).filter((f) => !f.hide_in_table);
 
     const renderCell = (field, value) => {
-        // console.log(field)
         if (field.is_image) {
             return value ? (
                 <img src={value} alt={field.label ?? field.name} className="va-adm-thumb" />
@@ -102,12 +85,10 @@ export default function GlobalIndex({
             return <span className="va-adm-price">{formatRupiah(value)}</span>;
         }
         if (field.name === 'logo' || field.name === 'icon' || field?.logo) {
-            // console.log(value)
             return <MasterIcon data={value} />;
         }
         if (field.name === 'logo_id') {
-            // console.log(value?.image)
-            return <img src={value?.image} alt="logo" height={50} width={50} />
+            return <img src={value?.image} alt="logo" height={50} width={50} />;
         }
         return <p className="va-clamp-2" style={{ maxWidth: '24rem' }}>{value ?? '-'}</p>;
     };
@@ -116,6 +97,8 @@ export default function GlobalIndex({
         <AdminPanelLayout>
             <GlobalCreateUpdateModal open={openModal} onOpenChange={setOpenModal} isCreate={isCreate} id={id} path={path} title={title} queryKey={path} fields={fields} initialValues={initialValues} hasId={hasId} />
             <GlobalDeleteModal open={openDeleteModal} onOpenChange={setOpenDeleteModal} id={deleteId} path={path} queryKey={`admin-${path}-section`} />
+
+            {tabs}
 
             <header className="va-adm-head">
                 <div>
@@ -158,13 +141,12 @@ export default function GlobalIndex({
             ) : isCard ? (
                 <div className="va-adm-cards">
                     {items.map((item, index) => {
-                        // console.log(imageSpecification, item?.image1)
                         if (imageSpecification) {
                             const itemImages = [item?.image1, item?.image2, item?.image3].filter(Boolean);
 
                             return itemImages.map((imgUrl, imgIndex) => (
                                 <GlobalCardImage
-                                    key={`${item?.id || itemIndex}-${imgIndex}`}
+                                    key={`${item?.id ?? index}-${imgIndex}`}
                                     image={imgUrl}
                                     title={`${title} #${imgIndex + 1}`}
                                     description={`Image source: ${imgUrl}`}
@@ -175,7 +157,7 @@ export default function GlobalIndex({
 
                         return (
                             <GlobalCardList key={item?.id || index} data={item} path={path} title={title} fields={fields} initialValues={initialValues} hasId={hasId} />
-                        )
+                        );
                     })}
                 </div>
             ) : (
@@ -192,9 +174,6 @@ export default function GlobalIndex({
                             {items.map((item, index) => (
                                 <tr key={item.id ?? index}>
                                     <td className="is-center is-index">{index + 1}</td>
-                                    {/* {visibleFields.map((field) => {
-                                        console.log(item['logo'])
-                                    })} */}
                                     {visibleFields.map((field) => (
                                         <td key={field.name}>{renderCell(field, item[field.name] || item['logo'])}</td>
                                     ))}

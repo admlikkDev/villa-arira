@@ -1,29 +1,40 @@
 import { useState, useEffect } from 'react';
-import { BedDouble, Users, Waves, Car, MapPin } from 'lucide-react';
+import { MapPin, Dot } from 'lucide-react';
+import { useVillaList, useVillaOne } from '../hooks/useVillaQuery';
+import SectionState from './SectionState';
 import '../assets/styles/villa.css';
 
-const images = ['/images/17.jpg', '/images/16.jpg', '/images/15 (1).jpg'];
-
-const specs = [
-    { icon: BedDouble, title: 'Tersedia 6 kamar tidur' },
-    { icon: Users, title: 'Kapasitas ±15–30 orang' },
-    { icon: Waves, title: 'Tersedia private pool' },
-    { icon: Car, title: 'Parkiran luas & aman' },
-];
-
+// Dipakai bila specification-gallery belum diisi dari panel admin
+const FALLBACK_IMAGES = ['/images/17.jpg', '/images/16.jpg', '/images/15 (1).jpg'];
 const altTexts = ['Villa Arira tampak utama', 'Fasilitas Villa Arira', 'Area Villa Arira'];
 
 export default function InformasiSingkat() {
     const [currentIndex, setCurrentIndex] = useState(0);
 
+    const specsQuery = useVillaList('specifications');
+    const galleryQuery = useVillaOne('specification-gallery');
+
+    const gallery = galleryQuery.data;
+    const apiImages = [gallery?.image1, gallery?.image2, gallery?.image3].filter(Boolean);
+    const images = apiImages.length > 0 ? apiImages : FALLBACK_IMAGES;
+
     // Rotasi foto setiap 4 detik
     useEffect(() => {
+        if (images.length < 2) return undefined;
         const interval = setInterval(() => {
             setCurrentIndex((prev) => (prev + 1) % images.length);
         }, 4000);
         return () => clearInterval(interval);
-    }, []);
+    }, [images.length]);
 
+    if (specsQuery.isLoading || galleryQuery.isLoading) {
+        return <SectionState tone="ink" label="Memuat informasi villa…" />;
+    }
+    if (specsQuery.isError) {
+        return <SectionState tone="ink" label="Informasi villa gagal dimuat" error={specsQuery.error.message} />;
+    }
+
+    const specs = specsQuery.data ?? [];
     const currentImages = [0, 1, 2].map((i) => images[(currentIndex + i) % images.length]);
 
     return (
@@ -41,10 +52,19 @@ export default function InformasiSingkat() {
                     <h2 className="va-h2">The Villa Experience</h2>
 
                     <ul className="va-rowlist">
-                        {specs.map(({ icon: Icon, title }) => (
-                            <li key={title}>
-                                <Icon size={20} strokeWidth={1.5} />
-                                {title}
+                        {specs.map((item, index) => (
+                            <li key={item.id ?? index}>
+                                {item.logo?.image ? (
+                                    <img
+                                        src={item.logo.image}
+                                        alt=""
+                                        loading="lazy"
+                                        style={{ width: 28, height: 28, objectFit: 'cover', flex: 'none', display: 'block' }}
+                                    />
+                                ) : (
+                                    <Dot size={28} />
+                                )}
+                                {item.text}
                             </li>
                         ))}
                     </ul>
