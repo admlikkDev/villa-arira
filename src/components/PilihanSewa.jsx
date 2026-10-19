@@ -1,4 +1,4 @@
-import { useVillaList, formatRupiah, formatCapacity } from '../hooks/useVillaQuery';
+import { useVillaList, formatRupiah, formatCapacity } from '../hooks/Usevillaquery';
 import SectionState from './SectionState';
 import '../assets/styles/villa.css';
 

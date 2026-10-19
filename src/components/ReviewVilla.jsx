@@ -1,8 +1,8 @@
 import { ChevronLeft, ChevronRight, Star } from 'lucide-react';
 import { Swiper, SwiperSlide } from 'swiper/react';
 import { Autoplay, Navigation, Pagination } from 'swiper/modules';
-import { useVillaList } from '../hooks/useVillaQuery';
 import SectionState from './SectionState';
+import { useVillaList } from '../hooks/Usevillaquery';
 import '../assets/styles/villa.css';
 
 import 'swiper/css';

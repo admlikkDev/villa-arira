@@ -1,4 +1,4 @@
-import { useVillaList } from '../hooks/useVillaQuery';
+import { useVillaList } from '../hooks/Usevillaquery';
 import { Sparkles } from 'lucide-react';
 import SectionState from './SectionState';
 import '../assets/styles/villa.css';

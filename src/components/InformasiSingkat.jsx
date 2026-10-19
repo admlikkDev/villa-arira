@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { MapPin, Dot } from 'lucide-react';
-import { useVillaList, useVillaOne } from '../hooks/useVillaQuery';
+import { useVillaList, useVillaOne } from '../hooks/Usevillaquery';
 import SectionState from './SectionState';
 import '../assets/styles/villa.css';
 

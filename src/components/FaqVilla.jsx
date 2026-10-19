@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { Plus } from 'lucide-react';
-import { useVillaList } from '../hooks/useVillaQuery';
+import { useVillaList } from '../hooks/Usevillaquery';
 import SectionState from './SectionState';
 import '../assets/styles/villa.css';
 
