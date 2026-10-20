@@ -26,6 +26,7 @@ import RentalOptionIndex from "./views/Admin/RentalOption/Index";
 import WisataIndex from "./views/Admin/Wisata/Index";
 import WisataListIndex from "./views/Admin/Wisata/List";
 import MessageIndex from "./views/Admin/Message/Index";
+import ReasonIndex from "./views/Admin/Reason/Index";
 
 export default function App() {
   const { get } = useFetch();
@@ -159,6 +160,10 @@ export default function App() {
     {
       path: '/admin/messages',
       element: <MessageIndex />
+    },
+    {
+      path: '/admin/reasons',
+      element: <ReasonIndex />
     },
   ]);
 }

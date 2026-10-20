@@ -325,6 +325,9 @@ export default function GlobalCreateUpdateModal({
                           <SelectGroup>
                             {logos?.map((item) => (
                               <SelectItem key={item.id} value={String(item.id)}>
+                                {
+                                  console.log(selectLogo)
+                                }
                                 {selectLogo ? (
                                   <img
                                     src={item?.image}

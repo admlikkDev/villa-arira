@@ -14,6 +14,8 @@ const PAGES = {
         subtitle: 'Kelola daftar spesifikasi.',
         tableHead: ['text', 'logo'],
         is_paginate: true,
+        pathDetail: 'logos',
+        selectLogo: true,
         fields: [
             { name: 'text', type: 'text', label: 'Text', placeholder: 'Input Text Here!' },
             { name: 'logo', type: 'select', label: 'Logo', placeholder: 'Input Logo Here!' },

@@ -41,10 +41,11 @@ const menuItems = {
                 { title: 'Package', icon: Package, url: '/admin/package' },
                 { title: 'Rental Options', icon: Tag, url: '/admin/rental-options' },
                 { title: 'Addon', icon: PlusCircle, url: '/admin/addon' },
+                { title: 'Logo', icon: Shapes, url: '/admin/logo' },
                 { title: 'Facility', icon: Sparkles, url: '/admin/facility' },
                 { title: 'Specification', icon: ClipboardList, url: '/admin/specification' },
-                { title: 'Logo', icon: Shapes, url: '/admin/logo' },
                 { title: 'Wisata Terdekat', icon: LocationEdit, url: '/admin/wisata-terdekat' },
+                { title: 'Kelola Alasan', icon: MessageCircleQuestion, url: '/admin/reasons' },
             ],
         },
         {

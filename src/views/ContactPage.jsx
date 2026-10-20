@@ -40,6 +40,7 @@ export default function ContactPage() {
     }
     setError("");
     toast.success("Pesan berhasil dikirim.");
+    setLoading(false);
   };
 
   return (

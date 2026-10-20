@@ -56,6 +56,7 @@ export default function GlobalIndex({
   tabs = null,
   pathDetail,
   editButton = true,
+  selectLogo = false,
 }) {
   const { get } = useFetch();
   const navigate = useNavigate();
@@ -155,6 +156,7 @@ export default function GlobalIndex({
         initialValues={initialValues}
         hasId={hasId}
         pathDetail={pathDetail}
+        selectLogo={selectLogo}
       />
       <GlobalDeleteModal
         open={openDeleteModal}
@@ -277,9 +279,9 @@ export default function GlobalIndex({
                       )}
                     </td>
                   ))}
-                  {/* {visibleFields.map((field) => {
-                    console.log(field, item.logo["image"]);
-                  })} */}
+                  {visibleFields.map((field) => {
+                    console.log(field, item[field]);
+                  })}
                   <td>
                     <div className="va-adm-actions">
                       {editButton && (

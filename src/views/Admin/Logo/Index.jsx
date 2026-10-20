@@ -13,6 +13,6 @@ export default function LogoIndex() {
     ]
 
     return (
-        <GlobalIndex path={'logos'} title={'Logo'} subtitle={'Kelola logo.'} tableHead={['logo']} fields={fields} hasId={false} />
+        <GlobalIndex path={'logos'} title={'Logo'} subtitle={'Kelola logo.'} tableHead={['image']} fields={fields} hasId={false} />
     )
 }
