@@ -17,6 +17,8 @@ import {
     Tag,
     ExternalLink,
     PanelLeft,
+    User,
+    LocationEdit,
 } from 'lucide-react';
 import { useAuth } from '../../hooks/useAuth';
 import '../../assets/styles/villa.css';
@@ -37,11 +39,19 @@ const menuItems = {
             label: 'Data villa',
             items: [
                 { title: 'Package', icon: Package, url: '/admin/package' },
-                { title: 'Pricelist', icon: Tag, url: '/admin/pricelist' },
+                { title: 'Rental Options', icon: Tag, url: '/admin/rental-options' },
                 { title: 'Addon', icon: PlusCircle, url: '/admin/addon' },
                 { title: 'Facility', icon: Sparkles, url: '/admin/facility' },
                 { title: 'Specification', icon: ClipboardList, url: '/admin/specification' },
                 { title: 'Logo', icon: Shapes, url: '/admin/logo' },
+                { title: 'Wisata Terdekat', icon: LocationEdit, url: '/admin/wisata-terdekat' },
+            ],
+        },
+        {
+            label: 'Data user',
+            items: [
+                { title: 'Users', icon: User, url: '/admin/users' },
+                { title: 'Messages', icon: MessageCircleQuestion, url: '/admin/messages' },
             ],
         },
         {
@@ -67,9 +77,9 @@ export default function AdminPanelLayout({ children, role = 'admin' }) {
     const { logout, user } = useAuth();
 
     const [currentTime, setCurrentTime] = useState(new Date());
-    const [collapsed, setCollapsed] = useState(false); // desktop: mode ikon
-    const [mobileOpen, setMobileOpen] = useState(false); // mobile: drawer
-    const [menuOpen, setMenuOpen] = useState(false); // menu akun
+    const [collapsed, setCollapsed] = useState(false); 
+    const [mobileOpen, setMobileOpen] = useState(false);
+    const [menuOpen, setMenuOpen] = useState(false); 
     const footRef = useRef(null);
 
     useEffect(() => {
@@ -81,7 +91,6 @@ export default function AdminPanelLayout({ children, role = 'admin' }) {
         return () => clearInterval(timer);
     }, []);
 
-    // Tutup menu akun saat klik di luar
     useEffect(() => {
         const onDown = (e) => {
             if (footRef.current && !footRef.current.contains(e.target)) setMenuOpen(false);
@@ -90,14 +99,12 @@ export default function AdminPanelLayout({ children, role = 'admin' }) {
         return () => document.removeEventListener('mousedown', onDown);
     }, []);
 
-    // Data profil dari user yang login
     const profile = user?.user ?? user ?? {};
     const displayName = profile.username || profile.name || 'Admin';
     const email = profile.email || '';
     const initials =
         displayName.split(' ').map((w) => w.charAt(0)).join('').toUpperCase().slice(0, 2) || 'AD';
 
-    // Menu aktif juga berlaku untuk halaman turunannya (mis. /admin/package/3)
     const isActive = (url) => location.pathname === url || location.pathname.startsWith(`${url}/`);
     const activeItem = menuItems[role]?.flatMap((g) => g.items).find((i) => isActive(i.url));
 

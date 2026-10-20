@@ -22,6 +22,10 @@ import AddonListIndex from "./views/Admin/Addon/List";
 import LogoIndex from "./views/Admin/Logo/Index";
 import ImageSpecification from "./views/Admin/Specification/Image";
 import PricelistIndex from "./views/Admin/Pricelist/Index";
+import RentalOptionIndex from "./views/Admin/RentalOption/Index";
+import WisataIndex from "./views/Admin/Wisata/Index";
+import WisataListIndex from "./views/Admin/Wisata/List";
+import MessageIndex from "./views/Admin/Message/Index";
 
 export default function App() {
   const { get } = useFetch();
@@ -139,6 +143,22 @@ export default function App() {
     {
       path: '/admin/addon/:idParam',
       element: <AddonListIndex />
+    },
+    {
+      path: '/admin/rental-options',
+      element: <RentalOptionIndex />
+    },
+    {
+      path: '/admin/wisata-terdekat',
+      element: <WisataIndex />
+    },
+    {
+      path: '/admin/wisata-terdekat/:idParam',
+      element: <WisataListIndex />
+    },
+    {
+      path: '/admin/messages',
+      element: <MessageIndex />
     },
   ]);
 }

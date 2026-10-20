@@ -662,3 +662,58 @@ html:has(.va-shell)::-webkit-scrollbar,
     html { scroll-behavior: auto; }
     *, *::before, *::after { animation: none !important; transition: none !important; }
 }
+
+/* ==========================================================
+   TAMBAHKAN DI AKHIR villa.css (sebelum blok "Reduced motion")
+   Page hero, Gallery, Contact
+   ========================================================== */
+
+.va-cells--1 { grid-template-columns: 1fr; }
+
+/* ---------- Page hero (Gallery & Contact) ---------- */
+.va-page-hero { padding: calc(var(--section-y) + 2.5rem) var(--gutter) var(--section-y); }
+.va-page-hero__inner {
+    display: grid;
+    grid-template-columns: minmax(0, 1.1fr) minmax(0, 0.9fr);
+    gap: 1.5rem 4rem;
+    align-items: end;
+    animation: va-rise 0.9s var(--ease) both;
+}
+.va-eyebrow { display: block; font-size: 0.82rem; font-weight: 500; color: var(--muted); margin-bottom: 1.25rem; }
+.va-page-hero__title {
+    font-family: var(--font-display);
+    font-weight: 400;
+    font-size: clamp(3rem, 8vw, 6.5rem);
+    line-height: 0.95;
+    letter-spacing: -0.02em;
+    margin: 0;
+}
+@media (max-width: 860px) { .va-page-hero__inner { grid-template-columns: 1fr; } }
+
+/* ---------- Gallery ---------- */
+.va-gal { display: flex; flex-direction: column; width: 100%; padding: 0; border: 0; border-radius: 0; background: var(--bg); color: var(--fg); font: inherit; text-align: left; cursor: pointer; }
+.va-gal__img { position: relative; aspect-ratio: 4 / 3; overflow: hidden; background: var(--soft); }
+.va-gal__img img, .va-gal__img video { width: 100%; height: 100%; object-fit: cover; display: block; transition: transform 0.6s var(--ease); }
+.va-gal:hover .va-gal__img img, .va-gal:hover .va-gal__img video { transform: scale(1.04); }
+.va-gal__body { padding: clamp(1.25rem, 2.5vw, 1.75rem); display: grid; gap: 0.6rem; }
+.va-gal__body .va-h3 { font-size: 1.5rem; }
+.va-gal__more { display: inline-flex; align-items: center; gap: 0.4rem; font-size: 0.85rem; font-weight: 600; margin-top: 0.4rem; }
+
+.va-lightbox {
+    position: fixed; inset: 0; z-index: 2000; display: grid; place-items: center; padding: var(--gutter);
+    background: color-mix(in srgb, var(--ink) 88%, transparent);
+    animation: va-fade 0.2s ease both;
+}
+.va-lightbox__panel { position: relative; width: min(960px, 100%); max-height: 92vh; overflow-y: auto; display: grid; }
+.va-lightbox__close { position: absolute; top: 1rem; right: 1rem; z-index: 2; background: var(--bg); }
+.va-lightbox__media { background: var(--ink); display: grid; place-items: center; max-height: 60vh; }
+.va-lightbox__media img, .va-lightbox__media video { width: 100%; max-height: 60vh; object-fit: contain; display: block; }
+.va-lightbox__body { padding: clamp(1.5rem, 3vw, 2.25rem); display: grid; gap: 0.6rem; }
+
+/* ---------- Contact ---------- */
+.va-contact { display: grid; grid-template-columns: minmax(0, 1.25fr) minmax(0, 1fr); gap: clamp(2rem, 5vw, 4rem); align-items: start; }
+.va-contact__form { border: 1px solid var(--line); padding: clamp(1.5rem, 4vw, 3rem); display: grid; gap: 1.5rem; }
+.va-contact__row { display: grid; grid-template-columns: 1fr 1fr; gap: 1.25rem; }
+.va-contact__side { display: grid; gap: 2rem; }
+@media (max-width: 1024px) { .va-contact { grid-template-columns: 1fr; } }
+@media (max-width: 560px) { .va-contact__row { grid-template-columns: 1fr; } }

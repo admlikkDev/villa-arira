@@ -31,6 +31,6 @@ export default function FacilityIndex() {
     ]
 
     return (
-        <GlobalIndex path={'facilities'} title={'Facilities'} subtitle={'Kelola daftar fasilitas.'} tableHead={['title', 'description', 'logo']} fields={fields} is_paginate={true} is_selection={true} is_logo={true}/>
+        <GlobalIndex path={'facilities'} title={'Facilities'} subtitle={'Kelola daftar fasilitas.'} tableHead={['title', 'description', 'logo']} fields={fields} is_paginate={true} is_selection={true} is_logo={true} selectLogo={true}/>
     )
 }

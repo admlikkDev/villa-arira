@@ -22,12 +22,6 @@ export default function PricelistIndex() {
             placeholder: 'Input Max Capacity Here!',
         },
         {
-            name: 'min_capacity',
-            type: 'number',
-            label: 'min_capacity',
-            placeholder: 'Input Min Capacity Here!',
-        },
-        {
             name: 'weekday_price',
             type: 'number',
             label: 'Weekday Price',
@@ -54,6 +48,6 @@ export default function PricelistIndex() {
     ]
 
     return (
-        <GlobalIndex path={'pricelists'} title={'Pricelists'} subtitle={'Kelola daftar harga.'} tableHead={['title', 'description', 'max_capacity', 'max_capacity', 'weekday_price', 'weekend_price', 'long_weekday_price', 'high_season_price']} fields={fields} is_paginate={true}/>
+        <GlobalIndex path={'pricelists'} title={'Pricelists'} subtitle={'Kelola daftar harga.'} tableHead={['title', 'description', 'max_capacity', 'weekday_price', 'weekend_price', 'long_weekday_price', 'high_season_price']} fields={fields} is_paginate={true}/>
     )
 }
