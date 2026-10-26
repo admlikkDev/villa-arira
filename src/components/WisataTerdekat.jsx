@@ -1,63 +1,38 @@
 import { useState } from 'react';
-import { ArrowUpRight, ImageOff } from 'lucide-react';
+import { ArrowUpRight, ImageOff, Car, Bike, MapPin } from 'lucide-react';
+import { useVillaList, formatRupiah } from '../hooks/Usevillaquery';
+import SectionState from './SectionState';
 import '../assets/styles/villa.css';
 
-// Urut dari yang paling dekat. Waktu tempuh adalah perkiraan berkendara
-// dari villa — silakan sesuaikan bila perlu.
-// Simpan foto di public/images/wisata/ dengan nama file sesuai `image` di bawah.
-const places = [
-    {
-        name: 'Curug Cimahi',
-        tag: 'Alam',
-        minutes: 5,
-        image: '/images/wisata/curug-cimahi.jpg',
-        desc: 'Air terjun yang berada satu desa dengan villa, di Jl. Kolonel Masturi, Kertawangi. Cocok untuk jalan pagi sebelum sarapan.',
-    },
-    {
-        name: 'Dusun Bambu',
-        tag: 'Kuliner & keluarga',
-        minutes: 20,
-        image: '/images/wisata/dusun-bambu.jpg',
-        desc: 'Kawasan hijau dengan restoran saung di tepi danau dan area bermain anak. Praktis untuk makan siang rombongan.',
-    },
-    {
-        name: 'Floating Market Lembang',
-        tag: 'Kuliner',
-        minutes: 30,
-        image: '/images/wisata/floating-market.jpg',
-        desc: 'Pasar terapung dengan jajanan Sunda, wahana perahu, dan spot foto di tepi danau.',
-    },
-    {
-        name: 'Farmhouse Susu Lembang',
-        tag: 'Keluarga',
-        minutes: 30,
-        image: '/images/wisata/farmhouse.jpg',
-        desc: 'Bangunan bergaya Eropa dengan peternakan kecil dan susu segar. Ramai untuk foto keluarga.',
-    },
-    {
-        name: 'Orchid Forest Cikole',
-        tag: 'Alam',
-        minutes: 40,
-        image: '/images/wisata/orchid-forest.jpg',
-        desc: 'Hutan pinus dengan koleksi anggrek dan jembatan gantung. Nyaman untuk berjalan santai.',
-    },
-    {
-        name: 'Gunung Tangkuban Perahu',
-        tag: 'Alam',
-        minutes: 50,
-        image: '/images/wisata/tangkuban-perahu.jpg',
-        desc: 'Kawah gunung berapi dengan udara dingin dan pemandangan luas. Berangkat pagi agar tidak berkabut dan antre.',
-    },
-];
+const bySortOrder = (a, b) => Number(a.sort_order) - Number(b.sort_order);
 
-const mapsUrl = (name) =>
-    `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(`${name} Lembang`)}`;
+// Waktu dalam menit -> "45 menit" / "2 jam" / "1 jam 30 menit"
+const formatDuration = (minutes) => {
+    const m = Number(minutes);
+    if (!Number.isFinite(m) || m <= 0) return '-';
+    if (m < 60) return `${m} menit`;
+    const h = Math.floor(m / 60);
+    const rest = m % 60;
+    return rest ? `${h} jam ${rest} menit` : `${h} jam`;
+};
 
-// Jika file foto belum ada, tampilkan penanda kosong alih-alih ikon gambar rusak
+const formatDistance = (km) => {
+    const d = Number(km);
+    return Number.isFinite(d) ? `${d} km` : '-';
+};
+
+const vehicleIcon = (vehicle = '') => {
+    const v = vehicle.toLowerCase();
+    if (v.includes('motor')) return Bike;
+    if (v.includes('mobil')) return Car;
+    return MapPin;
+};
+
+// Jika foto gagal dimuat, tampilkan penanda kosong alih-alih ikon gambar rusak
 function PlaceImage({ src, alt }) {
     const [failed, setFailed] = useState(false);
 
-    if (failed) {
+    if (!src || failed) {
         return (
             <div className="va-img-fallback">
                 <ImageOff size={24} strokeWidth={1.25} />
@@ -70,6 +45,15 @@ function PlaceImage({ src, alt }) {
 }
 
 export default function WisataTerdekat() {
+    const { data: places = [], isLoading, isError, error } = useVillaList('attractions', {
+        query: 'unpage=true',
+        sort: bySortOrder,
+    });
+
+    if (isLoading) return <SectionState tone="paper" label="Memuat wisata terdekat…" />;
+    if (isError) return <SectionState tone="paper" label="Wisata terdekat gagal dimuat" error={error.message} />;
+    if (places.length === 0) return null;
+
     return (
         <section id="wisata-terdekat" className="va-paper va-section">
             <div className="va-wrap">
@@ -81,31 +65,64 @@ export default function WisataTerdekat() {
                 </div>
 
                 <div className="va-cells va-cells--3">
-                    {places.map((p) => (
-                        <article key={p.name} className="va-rent">
-                            <div className="va-rent__img">
-                                <PlaceImage src={p.image} alt={p.name} />
-                                <span className="va-chip">±{p.minutes} menit</span>
-                            </div>
+                    {places.map((p) => {
+                        const transports = [...(p.transports ?? [])].sort(bySortOrder);
+                        const fastest = transports.length
+                            ? Math.min(...transports.map((t) => Number(t.time_required)))
+                            : null;
 
-                            <div className="va-rent__body">
-                                <div>
-                                    <h3 className="va-h3">{p.name}</h3>
-                                    <p className="va-place-meta">{p.tag} · berkendara dari villa</p>
+                        return (
+                            <article key={p.id} className="va-rent">
+                                <div className="va-rent__img">
+                                    <PlaceImage src={p.image} alt={p.title} />
+                                    {fastest !== null && Number.isFinite(fastest) && (
+                                        <span className="va-chip">±{formatDuration(fastest)}</span>
+                                    )}
                                 </div>
-                                <p className="va-text">{p.desc}</p>
-                                <a
-                                    className="va-link va-cell__push"
-                                    href={mapsUrl(p.name)}
-                                    target="_blank"
-                                    rel="noopener noreferrer"
-                                    style={{ alignSelf: 'flex-start' }}
-                                >
-                                    Lihat peta <ArrowUpRight size={15} />
-                                </a>
-                            </div>
-                        </article>
-                    ))}
+
+                                <div className="va-rent__body">
+                                    <div>
+                                        <h3 className="va-h3">{p.title}</h3>
+                                        {p.subtitle && <p className="va-place-meta">{p.subtitle}</p>}
+                                    </div>
+
+                                    <p className="va-text">
+                                        Tiket masuk{' '}
+                                        <strong>{Number(p.price) > 0 ? formatRupiah(p.price) : 'Gratis'}</strong>
+                                    </p>
+
+                                    {transports.length > 0 && (
+                                        <ul className="va-transport">
+                                            {transports.map((t) => {
+                                                const Icon = vehicleIcon(t.vehicle);
+                                                return (
+                                                    <li key={t.id}>
+                                                        <Icon size={15} />
+                                                        <span className="va-transport__name">{t.vehicle}</span>
+                                                        <span>
+                                                            {formatDistance(t.distance)} · {formatDuration(t.time_required)}
+                                                        </span>
+                                                    </li>
+                                                );
+                                            })}
+                                        </ul>
+                                    )}
+
+                                    {p.map && (
+                                        <a
+                                            className="va-link va-cell__push"
+                                            href={p.map}
+                                            target="_blank"
+                                            rel="noopener noreferrer"
+                                            style={{ alignSelf: 'flex-start' }}
+                                        >
+                                            Lihat peta <ArrowUpRight size={15} />
+                                        </a>
+                                    )}
+                                </div>
+                            </article>
+                        );
+                    })}
                 </div>
 
                 <p className="va-note">

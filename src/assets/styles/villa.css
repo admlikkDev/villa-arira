@@ -525,6 +525,12 @@ textarea.va-input { resize: vertical; line-height: 1.6; }
 .va-adm-main { flex: 1; min-width: 0; min-height: 100vh; display: flex; flex-direction: column; }
 .va-adm-top { position: sticky; top: 0; z-index: 10; height: 60px; padding: 0 clamp(1rem, 3vw, 2rem); display: flex; align-items: center; justify-content: space-between; gap: 1rem; background: var(--bg); border-bottom: 1px solid var(--line); }
 .va-adm-top__left { display: flex; align-items: center; gap: 0.9rem; font-weight: 600; font-size: 0.92rem; }
+.va-crumb { display: flex; align-items: center; gap: 0.5rem; font-size: 0.9rem; min-width: 0; }
+.va-crumb > span { color: var(--muted); font-weight: 500; white-space: nowrap; }
+.va-crumb > strong { font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.va-adm-top__right { display: flex; align-items: center; gap: 1.25rem; }
+.va-adm-date { color: var(--muted); font-size: 0.85rem; white-space: nowrap; }
+@media (max-width: 900px) { .va-crumb > span, .va-hide-sm { display: none; } }
 .va-adm-clock { font-variant-numeric: tabular-nums; font-size: 0.9rem; font-weight: 600; display: flex; align-items: center; gap: 0.5rem; }
 .va-adm-body { width: 100%; max-width: 1280px; margin: 0 auto; padding: clamp(1.25rem, 3vw, 2.5rem); flex: 1; }
 
@@ -535,10 +541,18 @@ textarea.va-input { resize: vertical; line-height: 1.6; }
 .va-sb__mark { width: 36px; height: 36px; flex: none; display: grid; place-items: center; background: var(--fg); color: var(--bg); font-family: var(--font-display); font-size: 1.5rem; line-height: 1; }
 .va-sb__brand strong { display: block; font-family: var(--font-display); font-weight: 400; font-size: 1.5rem; line-height: 1; }
 .va-sb__brand small { color: var(--muted); font-size: 0.78rem; text-transform: capitalize; }
-.va-sb__nav { flex: 1; overflow-y: auto; overflow-x: hidden; padding: 1rem 0.75rem; }
+.va-sb__nav { flex: 1; overflow-y: auto; overflow-x: hidden; padding: 1rem 0.75rem 2rem;
+    -webkit-mask-image: linear-gradient(to bottom, transparent 0, #000 12px, #000 calc(100% - 28px), transparent 100%);
+    mask-image: linear-gradient(to bottom, transparent 0, #000 12px, #000 calc(100% - 28px), transparent 100%); }
 .va-sb__list { list-style: none; margin: 0; padding: 0; display: grid; gap: 2px; }
 .va-sb__group + .va-sb__group { margin-top: 1.4rem; }
-.va-sb__grouplabel { margin: 0 0 0.45rem; padding: 0 0.75rem; font-size: 0.74rem; font-weight: 600; color: var(--muted); }
+.va-sb__grouphead { display: flex; justify-content: space-between; align-items: center; width: 100%; margin: 0 0 0.35rem; padding: 0.25rem 0.75rem; background: transparent; border: 0; border-radius: 0; color: var(--muted); font: 600 0.74rem var(--font-body); cursor: pointer; transition: color 0.2s ease; }
+.va-sb__grouphead:hover { color: var(--fg); }
+.va-sb__grouphead svg { transition: transform 0.25s var(--ease); }
+.va-sb__group[data-open='false'] .va-sb__grouphead svg { transform: rotate(-90deg); }
+.va-sb__listwrap { display: grid; grid-template-rows: 1fr; transition: grid-template-rows 0.25s var(--ease); }
+.va-sb__group[data-open='false'] .va-sb__listwrap { grid-template-rows: 0fr; }
+.va-sb__listwrap > ul { overflow: hidden; min-height: 0; }
 .va-sb__mark { overflow: hidden; }
 .va-sb__mark img { width: 100%; height: 100%; object-fit: cover; display: block; }
 .va-sb__link { display: flex; align-items: center; gap: 0.8rem; height: 42px; padding: 0 0.75rem; color: var(--fg); text-decoration: none; font-size: 0.9rem; font-weight: 500; white-space: nowrap; transition: background-color 0.2s ease; }
@@ -558,6 +572,7 @@ textarea.va-input { resize: vertical; line-height: 1.6; }
 @media (min-width: 901px) {
     .va-sb[data-collapsed='true'] { width: 68px; }
     .va-sb[data-collapsed='true'] .va-sb__label { display: none; }
+    .va-sb[data-collapsed='true'] .va-sb__group[data-open='false'] .va-sb__listwrap { grid-template-rows: 1fr; }
     .va-sb[data-collapsed='true'] .va-sb__group + .va-sb__group { margin-top: 0.6rem; padding-top: 0.6rem; border-top: 1px solid var(--line); }
     .va-sb[data-collapsed='true'] .va-sb__head { justify-content: center; padding: 0; }
     .va-sb[data-collapsed='true'] .va-sb__link { justify-content: center; padding: 0; }
@@ -606,10 +621,18 @@ textarea.va-input { resize: vertical; line-height: 1.6; }
 .va-adm-card__foot > * { flex: 1; }
 .va-adm-list { max-height: 7.5rem; overflow-y: auto; padding-right: 0.5rem; scrollbar-width: thin; }
 
-.va-pager { display: flex; justify-content: flex-end; gap: 0.25rem; margin-top: 2rem; flex-wrap: wrap; }
-.va-pager button { width: 40px; height: 40px; border: 1px solid var(--line); border-radius: 0; background: transparent; color: var(--fg); font: 600 0.88rem var(--font-body); cursor: pointer; transition: background-color 0.2s ease, color 0.2s ease; }
-.va-pager button:hover { border-color: var(--fg); }
+/* Ganti blok ".va-pager" yang lama di villa.css dengan ini */
+.va-pager-wrap { display: flex; justify-content: space-between; align-items: center; gap: 1rem; flex-wrap: wrap; margin-top: 2rem; }
+.va-pager { display: flex; justify-content: flex-end; gap: 0.25rem; flex-wrap: wrap; }
+.va-pager button { width: 40px; height: 40px; display: inline-grid; place-items: center; border: 1px solid var(--line); border-radius: 0; background: transparent; color: var(--fg); font: 600 0.88rem var(--font-body); cursor: pointer; transition: background-color 0.2s ease, color 0.2s ease, border-color 0.2s ease; }
+.va-pager button:hover:not(:disabled) { border-color: var(--fg); }
 .va-pager button[aria-current='page'] { background: var(--fg); color: var(--bg); border-color: var(--fg); }
+.va-pager button:disabled { opacity: 0.3; cursor: not-allowed; }
+.va-pager__dots { width: 32px; height: 40px; display: grid; place-items: center; color: var(--muted); }
+@media (max-width: 560px) {
+    .va-pager-wrap { justify-content: center; }
+    .va-pager button { width: 36px; height: 36px; }
+}
 
 .va-empty { border: 1px dashed var(--line); padding: 4rem 1.5rem; text-align: center; display: grid; gap: 0.4rem; justify-items: center; }
 .va-empty strong { font-family: var(--font-display); font-weight: 400; font-size: 1.6rem; }
@@ -657,17 +680,9 @@ html:has(.va-shell)::-webkit-scrollbar,
 .va-shell::-webkit-scrollbar, .va-shell *::-webkit-scrollbar,
 .va-modal::-webkit-scrollbar, .va-modal *::-webkit-scrollbar { display: none; width: 0; height: 0; }
 
-/* ---------- Reduced motion ---------- */
-@media (prefers-reduced-motion: reduce) {
-    html { scroll-behavior: auto; }
-    *, *::before, *::after { animation: none !important; transition: none !important; }
-}
-
 /* ==========================================================
-   TAMBAHKAN DI AKHIR villa.css (sebelum blok "Reduced motion")
-   Page hero, Gallery, Contact
+   PAGE HERO, GALLERY, CONTACT
    ========================================================== */
-
 .va-cells--1 { grid-template-columns: 1fr; }
 
 /* ---------- Page hero (Gallery & Contact) ---------- */
@@ -691,6 +706,9 @@ html:has(.va-shell)::-webkit-scrollbar,
 @media (max-width: 860px) { .va-page-hero__inner { grid-template-columns: 1fr; } }
 
 /* ---------- Gallery ---------- */
+/* Grid dengan jarak (bukan garis) agar baris terakhir yang tidak penuh tetap rapi */
+.va-gal-grid { display: grid; gap: 1.5rem; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); }
+.va-gal-grid .va-gal { border: 1px solid var(--line); }
 .va-gal { display: flex; flex-direction: column; width: 100%; padding: 0; border: 0; border-radius: 0; background: var(--bg); color: var(--fg); font: inherit; text-align: left; cursor: pointer; }
 .va-gal__img { position: relative; aspect-ratio: 4 / 3; overflow: hidden; background: var(--soft); }
 .va-gal__img img, .va-gal__img video { width: 100%; height: 100%; object-fit: cover; display: block; transition: transform 0.6s var(--ease); }
@@ -709,6 +727,8 @@ html:has(.va-shell)::-webkit-scrollbar,
 .va-lightbox__media { background: var(--ink); display: grid; place-items: center; max-height: 60vh; }
 .va-lightbox__media img, .va-lightbox__media video { width: 100%; max-height: 60vh; object-fit: contain; display: block; }
 .va-lightbox__body { padding: clamp(1.5rem, 3vw, 2.25rem); display: grid; gap: 0.6rem; }
+.va-lightbox__nav { display: flex; justify-content: space-between; align-items: center; gap: 1rem; margin-top: 0.75rem; padding-top: 1rem; border-top: 1px solid var(--line); }
+.va-lightbox__count { font-size: 0.82rem; color: var(--muted); font-variant-numeric: tabular-nums; }
 
 /* ---------- Contact ---------- */
 .va-contact { display: grid; grid-template-columns: minmax(0, 1.25fr) minmax(0, 1fr); gap: clamp(2rem, 5vw, 4rem); align-items: start; }
@@ -717,3 +737,84 @@ html:has(.va-shell)::-webkit-scrollbar,
 .va-contact__side { display: grid; gap: 2rem; }
 @media (max-width: 1024px) { .va-contact { grid-template-columns: 1fr; } }
 @media (max-width: 560px) { .va-contact__row { grid-template-columns: 1fr; } }
+
+/* ---------- Reduced motion ---------- */
+@media (prefers-reduced-motion: reduce) {
+    html { scroll-behavior: auto; }
+    *, *::before, *::after { animation: none !important; transition: none !important; }
+}
+
+.va-slider {
+    position: relative;
+}
+
+.va-slider__track {
+    display: flex;
+    gap: 1.25rem;
+    overflow-x: auto;
+    scroll-snap-type: x mandatory;
+    scroll-behavior: smooth;
+    -webkit-overflow-scrolling: touch;
+    padding: 0.25rem 0 1rem;
+    /* sembunyikan scrollbar */
+    scrollbar-width: none;
+}
+.va-slider__track::-webkit-scrollbar {
+    display: none;
+}
+
+.va-slider__item {
+    flex: 0 0 85%;            /* mobile: 1 kartu + intip kartu berikutnya */
+    scroll-snap-align: start;
+}
+
+@media (min-width: 640px) {
+    .va-slider__item { flex-basis: calc((100% - 1.25rem) / 2); }   /* 2 kartu */
+}
+@media (min-width: 1024px) {
+    .va-slider__item { flex-basis: calc((100% - 2.5rem) / 3); }    /* 3 kartu */
+}
+
+.va-slider__btn {
+    position: absolute;
+    top: 40%;
+    transform: translateY(-50%);
+    z-index: 2;
+    width: 44px;
+    height: 44px;
+    border-radius: 50%;
+    border: 1px solid rgba(0, 0, 0, 0.12);
+    background: #fff;
+    color: #222;
+    font-size: 1.6rem;
+    line-height: 1;
+    cursor: pointer;
+    box-shadow: 0 4px 14px rgba(0, 0, 0, 0.12);
+    transition: opacity 0.2s, transform 0.2s;
+}
+.va-slider__btn:hover:not(:disabled) { transform: translateY(-50%) scale(1.06); }
+.va-slider__btn:disabled { opacity: 0; pointer-events: none; }
+.va-slider__btn--prev { left: -12px; }
+.va-slider__btn--next { right: -12px; }
+
+/* di layar sentuh, panah tidak perlu karena bisa swipe */
+@media (hover: none) {
+    .va-slider__btn { display: none; }
+}
+
+.va-chat__tpls-list {
+    display: grid;
+    gap: 0.4rem;
+    max-height: 180px;      /* atur tinggi area scroll sesuai selera */
+    overflow-y: auto;
+    overscroll-behavior: contain;  /* scroll tidak menembus ke halaman di belakang */
+    padding-right: 0.25rem;
+    scrollbar-width: thin;
+}
+.va-chat__tpls-list::-webkit-scrollbar {
+    width: 6px;
+}
+.va-chat__tpls-list::-webkit-scrollbar-thumb {
+    background: rgba(0, 0, 0, 0.2);
+    border-radius: 3px;
+}

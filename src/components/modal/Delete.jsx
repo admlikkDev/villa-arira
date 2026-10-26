@@ -11,6 +11,7 @@ import {
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import useFetch from '../../hooks/useFetch';
 import '../../assets/styles/villa.css';
+import { toast } from 'sonner';
 
 export default function GlobalDeleteModal({ open, onOpenChange, id, queryKey, path }) {
     const { destroy } = useFetch();
@@ -27,8 +28,10 @@ export default function GlobalDeleteModal({ open, onOpenChange, id, queryKey, pa
             queryClient.invalidateQueries({ queryKey: [queryKey] });
             onOpenChange(false);
             setErrorMsg('');
+            toast.success('Data berhasil dihapus!');
         },
         onError: (err) => {
+            toast.error('Gagal menghapus data.');
             setErrorMsg(err.toString() || 'Gagal menghapus data.');
         },
     });
@@ -39,9 +42,16 @@ export default function GlobalDeleteModal({ open, onOpenChange, id, queryKey, pa
         if (id) deleteMutation.mutate();
     };
 
+    const handleKeyDown = (e) => {
+        if(e.key === 'Enter') {
+            e.preventDefault()
+            handleDelete(e)
+        }
+    }
+
     return (
         <Dialog open={open} onOpenChange={onOpenChange}>
-            <DialogContent className="va-paper va-modal va-modal--sm">
+            <DialogContent className="va-paper va-modal va-modal--sm" onKeyDown={handleKeyDown}>
                 <DialogHeader className="va-modal__head">
                     <DialogTitle className="va-modal__title">Hapus data?</DialogTitle>
                     <DialogDescription className="va-modal__desc">

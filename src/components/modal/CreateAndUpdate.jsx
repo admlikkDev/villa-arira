@@ -19,6 +19,7 @@ import {
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import useFetch from "../../hooks/useFetch";
 import "../../assets/styles/villa.css";
+import { toast } from "sonner";
 
 // Field select yang menyimpan pilihan logo dan dikirim ke API sebagai `logo_id`
 const LOGO_FIELDS = ["logo", "logo_id"];
@@ -48,6 +49,7 @@ export default function GlobalCreateUpdateModal({
   nameId = null,
   selectLogo = false,
   pathDetail = null,
+  is_imageSpecification = false
 }) {
   const [formData, setFormData] = useState(initialValues);
   const [errors, setErrors] = useState({});
@@ -85,7 +87,6 @@ export default function GlobalCreateUpdateModal({
     staleTime: 5 * 60 * 1000,
   });
 
-  console.log(pathDetail);
 
   // Selama edit, tampilkan spinner sampai data TERBARU tiba (bukan cache lama)
   const showLoading = !isCreate && isFetchingDetail;
@@ -121,14 +122,16 @@ export default function GlobalCreateUpdateModal({
 
   const handleMutationSuccess = () => {
     queryClient.invalidateQueries({ queryKey: [`admin-${path}-section`] });
-    // Buang cache detail agar saat dibuka lagi yang tampil selalu data terbaru
     queryClient.removeQueries({ queryKey: [`${path}-detail`] });
+    toast.success(isCreate ? `${title} berhasil ditambahkan!` : `${title} berhasil diperbarui!`);
     onOpenChange(false);
   };
 
   const handleMutationError = (errData) => {
     if (typeof errData === "object" && errData !== null) setErrors(errData);
     else setErrors({ general: errData.toString() });
+
+    toast.error(isCreate ? `Gagal menambahkan ${title}.` : `Gagal memperbarui ${title}.`);
   };
 
   const createMutation = useMutation({
@@ -167,7 +170,7 @@ export default function GlobalCreateUpdateModal({
         const field = fields.find((f) => f.name === key);
         const value = formData[key];
 
-        if (field && isLogoField(field)) return; // dikirim sebagai logo_id di bawah
+        if (field && isLogoField(field)) return; 
         if (field?.type === "file" && typeof value === "string") return;
 
         if (value !== null && value !== undefined && value !== "") {
@@ -187,7 +190,6 @@ export default function GlobalCreateUpdateModal({
         if (field.type === "number") {
           payload[field.name] = Number(payload[field.name]);
         }
-        // select non-logo (rental_option_id, dll.) dikirim sebagai angka
         if (field.type === "select" && !isLogoField(field)) {
           payload[field.name] = Number(payload[field.name]);
         }
@@ -199,8 +201,6 @@ export default function GlobalCreateUpdateModal({
         payload.logo_id = logoValue ? Number(logoValue) : null;
       }
     }
-
-    // console.log("payload", payload);
 
     if (isCreate) createMutation.mutate(payload);
     else updateMutation.mutate(payload);
@@ -275,7 +275,6 @@ export default function GlobalCreateUpdateModal({
                       />
                     ) : field.type === "file" ? (
                       <>
-                        {/* Pratinjau jika sudah ada file tersimpan dari database */}
                         {typeof formData[field.name] === "string" &&
                           formData[field.name] && (
                             <div className="va-current">

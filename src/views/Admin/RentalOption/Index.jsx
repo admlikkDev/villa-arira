@@ -17,7 +17,7 @@ const PAGES = {
       "description",
       "max_capacity",
       "room_count",
-      "image",
+      // "image",
     ],
     is_paginate: true,
     pathDetail: "rental-options2",

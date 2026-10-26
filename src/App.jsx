@@ -27,6 +27,8 @@ import WisataIndex from "./views/Admin/Wisata/Index";
 import WisataListIndex from "./views/Admin/Wisata/List";
 import MessageIndex from "./views/Admin/Message/Index";
 import ReasonIndex from "./views/Admin/Reason/Index";
+import WhatsappTemplateIndex from "./views/Admin/WhatsappTemplate/Index";
+import UserIndex from "./views/Admin/User/Index";
 
 export default function App() {
   const { get } = useFetch();
@@ -164,6 +166,14 @@ export default function App() {
     {
       path: '/admin/reasons',
       element: <ReasonIndex />
+    },
+    {
+      path: '/admin/whatsapp-template',
+      element: <WhatsappTemplateIndex />
+    },
+    {
+      path: '/admin/users',
+      element: <UserIndex />
     },
   ]);
 }

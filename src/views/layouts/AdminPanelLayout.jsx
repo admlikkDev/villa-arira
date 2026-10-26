@@ -2,36 +2,40 @@ import { useEffect, useRef, useState } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import {
     LayoutTemplate,
+    Images,
+    MessageSquareQuote,
     MessageCircleQuestion,
+    Package,
+    BedDouble,
+    PackagePlus,
+    Shapes,
+    ConciergeBell,
+    ClipboardList,
+    MapPinned,
+    BadgeCheck,
+    Users,
+    Inbox,
+    Settings,
+    MessageSquareText,
+    ExternalLink,
     LogOut,
     ChevronsUpDown,
+    ChevronDown,
     Clock,
-    Image,
-    Quote,
-    Sliders,
-    Package,
-    ClipboardList,
-    Shapes,
-    Sparkles,
-    PlusCircle,
-    Tag,
-    ExternalLink,
     PanelLeft,
-    User,
-    LocationEdit,
 } from 'lucide-react';
 import { useAuth } from '../../hooks/useAuth';
 import '../../assets/styles/villa.css';
 
-// Menu dikelompokkan agar mudah dipindai. Tiap menu punya ikon yang berbeda.
+// Menu dikelompokkan; setiap menu punya ikon yang berbeda dan sesuai fungsinya.
 const menuItems = {
     admin: [
         {
             label: 'Konten halaman',
             items: [
                 { title: 'Hero section', icon: LayoutTemplate, url: '/admin/hero-section' },
-                { title: 'Gallery', icon: Image, url: '/admin/gallery' },
-                { title: 'Testimony', icon: Quote, url: '/admin/testimony' },
+                { title: 'Gallery', icon: Images, url: '/admin/gallery' },
+                { title: 'Testimony', icon: MessageSquareQuote, url: '/admin/testimony' },
                 { title: 'Faq section', icon: MessageCircleQuestion, url: '/admin/faq-section' },
             ],
         },
@@ -39,27 +43,40 @@ const menuItems = {
             label: 'Data villa',
             items: [
                 { title: 'Package', icon: Package, url: '/admin/package' },
-                { title: 'Rental Options', icon: Tag, url: '/admin/rental-options' },
-                { title: 'Addon', icon: PlusCircle, url: '/admin/addon' },
-                { title: 'Logo', icon: Shapes, url: '/admin/logo' },
-                { title: 'Facility', icon: Sparkles, url: '/admin/facility' },
+                { title: 'Rental Options', icon: BedDouble, url: '/admin/rental-options' },
+                { title: 'Addon', icon: PackagePlus, url: '/admin/addon' },
+                { title: 'Facility', icon: ConciergeBell, url: '/admin/facility' },
                 { title: 'Specification', icon: ClipboardList, url: '/admin/specification' },
-                { title: 'Wisata Terdekat', icon: LocationEdit, url: '/admin/wisata-terdekat' },
-                { title: 'Kelola Alasan', icon: MessageCircleQuestion, url: '/admin/reasons' },
+                { title: 'Logo', icon: Shapes, url: '/admin/logo' },
+                { title: 'Wisata Terdekat', icon: MapPinned, url: '/admin/wisata-terdekat' },
+                { title: 'Kelola Alasan', icon: BadgeCheck, url: '/admin/reasons' },
             ],
         },
         {
             label: 'Data user',
             items: [
-                { title: 'Users', icon: User, url: '/admin/users' },
-                { title: 'Messages', icon: MessageCircleQuestion, url: '/admin/messages' },
+                { title: 'Users', icon: Users, url: '/admin/users' },
+                { title: 'Messages', icon: Inbox, url: '/admin/messages' },
             ],
         },
         {
             label: 'Pengaturan',
-            items: [{ title: 'Application Setting', icon: Sliders, url: '/admin/application' }],
+            items: [
+                { title: 'Application Setting', icon: Settings, url: '/admin/application' },
+                { title: 'Whatsapp Template Setting', icon: MessageSquareText, url: '/admin/whatsapp-template' },
+            ],
         },
     ],
+};
+
+const GROUPS_KEY = 'va_sb_groups';
+
+const readGroupState = () => {
+    try {
+        return JSON.parse(localStorage.getItem(GROUPS_KEY)) ?? {};
+    } catch {
+        return {};
+    }
 };
 
 // Logo villa; jika file belum ada, tampilkan huruf "V"
@@ -77,27 +94,61 @@ export default function AdminPanelLayout({ children, role = 'admin' }) {
     const navigate = useNavigate();
     const { logout, user } = useAuth();
 
-    const [currentTime, setCurrentTime] = useState(new Date());
-    const [collapsed, setCollapsed] = useState(false); 
-    const [mobileOpen, setMobileOpen] = useState(false);
-    const [menuOpen, setMenuOpen] = useState(false); 
+    const [now, setNow] = useState(new Date());
+    const [collapsed, setCollapsed] = useState(false); // desktop: mode ikon
+    const [mobileOpen, setMobileOpen] = useState(false); // mobile: drawer
+    const [menuOpen, setMenuOpen] = useState(false); // menu akun
+    const [groupState, setGroupState] = useState(readGroupState); // grup yang dilipat
     const footRef = useRef(null);
+
+    const groups = menuItems[role] ?? [];
+
+    // Menu aktif juga berlaku untuk halaman turunannya (mis. /admin/package/3)
+    const isActive = (url) => location.pathname === url || location.pathname.startsWith(`${url}/`);
+    const activeGroup = groups.find((g) => g.items.some((i) => isActive(i.url)));
+    const activeItem = activeGroup?.items.find((i) => isActive(i.url));
+
+    const isGroupOpen = (label) => groupState[label] !== false;
+
+    const toggleGroup = (label) => {
+        setGroupState((prev) => {
+            const next = { ...prev, [label]: prev[label] === false };
+            try {
+                localStorage.setItem(GROUPS_KEY, JSON.stringify(next));
+            } catch { /* abaikan jika storage penuh / dinonaktifkan */ }
+            return next;
+        });
+    };
 
     useEffect(() => {
         if (!user) navigate('/');
     }, [user, navigate]);
 
     useEffect(() => {
-        const timer = setInterval(() => setCurrentTime(new Date()), 1000);
+        const timer = setInterval(() => setNow(new Date()), 1000);
         return () => clearInterval(timer);
     }, []);
+
+    useEffect(() => {
+        if (activeGroup && groupState[activeGroup.label] === false) toggleGroup(activeGroup.label);
+    }, [location.pathname]);
 
     useEffect(() => {
         const onDown = (e) => {
             if (footRef.current && !footRef.current.contains(e.target)) setMenuOpen(false);
         };
+        const onKey = (e) => {
+            if (e.key === 'Escape') {
+                setMenuOpen(false);
+                setMobileOpen(false);
+            }
+        };
         document.addEventListener('mousedown', onDown);
-        return () => document.removeEventListener('mousedown', onDown);
+        document.addEventListener('keydown', onKey);
+        return () => {
+            document.removeEventListener('mousedown', onDown);
+            document.removeEventListener('keydown', onKey);
+        };
     }, []);
 
     const profile = user?.user ?? user ?? {};
@@ -105,9 +156,6 @@ export default function AdminPanelLayout({ children, role = 'admin' }) {
     const email = profile.email || '';
     const initials =
         displayName.split(' ').map((w) => w.charAt(0)).join('').toUpperCase().slice(0, 2) || 'AD';
-
-    const isActive = (url) => location.pathname === url || location.pathname.startsWith(`${url}/`);
-    const activeItem = menuItems[role]?.flatMap((g) => g.items).find((i) => isActive(i.url));
 
     const toggleSidebar = () => {
         if (window.innerWidth <= 900) setMobileOpen((o) => !o);
@@ -142,28 +190,43 @@ export default function AdminPanelLayout({ children, role = 'admin' }) {
                 </div>
 
                 <nav className="va-sb__nav" aria-label="Menu admin">
-                    {menuItems[role]?.map((group) => (
-                        <div key={group.label} className="va-sb__group">
-                            <p className="va-sb__grouplabel va-sb__label">{group.label}</p>
-                            <ul className="va-sb__list">
-                                {group.items.map((item) => (
-                                    <li key={item.url}>
-                                        <Link
-                                            to={item.url}
-                                            className="va-sb__link"
-                                            data-active={isActive(item.url)}
-                                            aria-current={isActive(item.url) ? 'page' : undefined}
-                                            title={item.title}
-                                            onClick={() => setMobileOpen(false)}
-                                        >
-                                            <item.icon size={18} strokeWidth={1.6} />
-                                            <span className="va-sb__label">{item.title}</span>
-                                        </Link>
-                                    </li>
-                                ))}
-                            </ul>
-                        </div>
-                    ))}
+                    {groups.map((group) => {
+                        const open = isGroupOpen(group.label);
+                        return (
+                            <div key={group.label} className="va-sb__group" data-open={open}>
+                                <button
+                                    type="button"
+                                    className="va-sb__grouphead va-sb__label"
+                                    aria-expanded={open}
+                                    onClick={() => toggleGroup(group.label)}
+                                >
+                                    {group.label}
+                                    <ChevronDown size={14} />
+                                </button>
+
+                                <div className="va-sb__listwrap">
+                                    <ul className="va-sb__list">
+                                        {group.items.map((item) => (
+                                            <li key={item.url}>
+                                                <Link
+                                                    to={item.url}
+                                                    className="va-sb__link"
+                                                    data-active={isActive(item.url)}
+                                                    aria-current={isActive(item.url) ? 'page' : undefined}
+                                                    title={item.title}
+                                                    tabIndex={open ? 0 : -1}
+                                                    onClick={() => setMobileOpen(false)}
+                                                >
+                                                    <item.icon size={18} strokeWidth={1.6} />
+                                                    <span className="va-sb__label">{item.title}</span>
+                                                </Link>
+                                            </li>
+                                        ))}
+                                    </ul>
+                                </div>
+                            </div>
+                        );
+                    })}
                 </nav>
 
                 <div className="va-sb__foot" ref={footRef}>
@@ -197,13 +260,25 @@ export default function AdminPanelLayout({ children, role = 'admin' }) {
                         <button type="button" className="va-icon-btn va-icon-btn--sm" onClick={toggleSidebar} aria-label="Buka/tutup sidebar">
                             <PanelLeft size={18} strokeWidth={1.6} />
                         </button>
-                        <span>{activeItem?.title ?? 'Admin dashboard'}</span>
+                        <div className="va-crumb">
+                            {activeGroup && <span>{activeGroup.label} /</span>}
+                            <strong>{activeItem?.title ?? 'Admin dashboard'}</strong>
+                        </div>
                     </div>
-                    <div className="va-adm-clock">
-                        <Clock size={16} strokeWidth={1.5} />
-                        {currentTime
-                            .toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit', second: '2-digit' })
-                            .replace(/\./g, ':')}
+
+                    <div className="va-adm-top__right">
+                        <a className="va-btn va-btn--ghost va-btn--sm va-hide-sm" href="/" target="_blank" rel="noopener noreferrer">
+                            Lihat website <ExternalLink size={14} />
+                        </a>
+                        <div className="va-adm-clock">
+                            <Clock size={16} strokeWidth={1.5} />
+                            <span className="va-adm-date va-hide-sm">
+                                {now.toLocaleDateString('id-ID', { weekday: 'short', day: 'numeric', month: 'short' })}
+                            </span>
+                            {now
+                                .toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit', second: '2-digit' })
+                                .replace(/\./g, ':')}
+                        </div>
                     </div>
                 </header>
 

@@ -42,9 +42,6 @@ export const formatCapacity = (a, b) => {
     return `${nums[0]} – ${nums[1]} orang`;
 };
 
-// ---------- Hooks ----------
-// Key memakai prefix `admin-${path}-section` agar otomatis ikut ter-refresh
-// saat panel admin memanggil invalidateQueries pada resource yang sama.
 export function useVillaList(path, { query = ALL, sort = bySortOrder } = {}) {
     const { get } = useFetch();
 

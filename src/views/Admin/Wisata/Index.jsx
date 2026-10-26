@@ -6,14 +6,14 @@ export default function WisataIndex() {
         {
             name: 'title',
             type: 'text',
-            label: 'Title Rental Option',
-            placeholder: 'Input Title Rental Option Here!',
+            label: 'Title Attraction',
+            placeholder: 'Input Title Attraction Here!',
         },
         {
             name: 'subtitle',
             type: 'text',
-            label: 'Subtitle Rental Option',
-            placeholder: 'Input Subtitle Rental Option Here!',
+            label: 'Subtitle Attraction',
+            placeholder: 'Input Subtitle Attraction Here!',
         },
         {
             name: 'price',
@@ -37,7 +37,7 @@ export default function WisataIndex() {
         {
             name: 'image',
             type: 'file',
-            label: 'Image Rental Option',
+            label: 'Image Attraction',
             placeholder: 'Insert Your Image Here!',
             is_image: true
         },

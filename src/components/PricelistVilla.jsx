@@ -38,11 +38,11 @@ export default function PricelistVilla() {
                             {pricelist.map((item) => (
                                 <tr key={item.id ?? item.title}>
                                     <td>
-                                        <h3 className="va-table__title">{item.title}</h3>
-                                        <span className="va-muted" style={{ fontSize: '0.84rem' }}>{item.description}</span>
+                                        <h3 className="va-table__title">{item?.rental_option?.title}</h3>
+                                        <span className="va-muted" style={{ fontSize: '0.84rem' }}>{item?.rental_option?.description}</span>
                                     </td>
                                     <td style={{ fontWeight: 500, whiteSpace: 'nowrap' }}>
-                                        {formatCapacity(item.min_capacity, item.max_capacity)}
+                                        {formatCapacity(item?.rental_option?.max_capacity)}
                                     </td>
                                     <td className="num">{formatRupiah(item.weekday_price)}</td>
                                     <td className="num">{formatRupiah(item.weekend_price)}</td>

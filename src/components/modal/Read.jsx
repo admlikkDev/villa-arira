@@ -1,6 +1,15 @@
-import { AlertCircle, Eye, ImageOff, Pencil, Plus, Trash2 } from "lucide-react";
+import {
+  AlertCircle,
+  ChevronLeft,
+  ChevronRight,
+  Eye,
+  ImageOff,
+  Pencil,
+  Plus,
+  Trash2,
+} from "lucide-react";
 import { useEffect, useState } from "react";
-import { useQuery } from "@tanstack/react-query";
+import { useQuery, keepPreviousData } from "@tanstack/react-query";
 import { useNavigate } from "react-router-dom";
 import useFetch from "../../hooks/useFetch";
 import AdminPanelLayout from "../../views/layouts/AdminPanelLayout";
@@ -27,6 +36,25 @@ const formatRupiah = (value) => {
   }).format(number);
 };
 
+const range = (from, to) =>
+  Array.from({ length: to - from + 1 }, (_, i) => from + i);
+
+// Contoh hasil: [1, 'dots-l', 4, 5, 6, 'dots-r', 20]
+const getPageItems = (current, total, siblings = 1) => {
+  const maxShown = siblings * 2 + 5;
+  if (total <= maxShown) return range(1, total);
+
+  const left = Math.max(current - siblings, 2);
+  const right = Math.min(current + siblings, total - 1);
+  const showLeftDots = left > 2;
+  const showRightDots = right < total - 1;
+  const edge = 3 + siblings * 2;
+
+  if (!showLeftDots) return [...range(1, edge), "dots-r", total];
+  if (!showRightDots) return [1, "dots-l", ...range(total - edge + 1, total)];
+  return [1, "dots-l", ...range(left, right), "dots-r", total];
+};
+
 function EmptyState({ title }) {
   return (
     <div className="va-empty">
@@ -34,6 +62,55 @@ function EmptyState({ title }) {
       <p className="va-text">
         Tekan tombol tambah untuk membuat {title} pertama.
       </p>
+    </div>
+  );
+}
+
+function Pagination({ page, totalPages, onChange }) {
+  if (!totalPages || totalPages <= 1) return null;
+
+  return (
+    <div className="va-pager-wrap">
+      <p className="va-text">
+        Halaman {page} dari {totalPages}
+      </p>
+
+      <nav className="va-pager" aria-label="Pagination">
+        <button
+          type="button"
+          aria-label="Halaman sebelumnya"
+          disabled={page === 1}
+          onClick={() => onChange(Math.max(1, page - 1))}
+        >
+          <ChevronLeft size={16} />
+        </button>
+
+        {getPageItems(page, totalPages).map((item) =>
+          typeof item === "string" ? (
+            <span key={item} className="va-pager__dots" aria-hidden="true">
+              …
+            </span>
+          ) : (
+            <button
+              key={item}
+              type="button"
+              aria-current={page === item ? "page" : undefined}
+              onClick={() => onChange(item)}
+            >
+              {item}
+            </button>
+          ),
+        )}
+
+        <button
+          type="button"
+          aria-label="Halaman berikutnya"
+          disabled={page === totalPages}
+          onClick={() => onChange(Math.min(totalPages, page + 1))}
+        >
+          <ChevronRight size={16} />
+        </button>
+      </nav>
     </div>
   );
 }
@@ -57,6 +134,7 @@ export default function GlobalIndex({
   pathDetail,
   editButton = true,
   selectLogo = false,
+  param = null,
 }) {
   const { get } = useFetch();
   const navigate = useNavigate();
@@ -76,9 +154,10 @@ export default function GlobalIndex({
 
   const { data, isPending, isError, error } = useQuery({
     queryKey: [`admin-${path}-section`, page],
+    placeholderData: keepPreviousData,
     queryFn: async () => {
       const resp = await get(
-        is_paginate ? `${path}?page=${String(page)}&size=6` : path,
+        is_paginate ? `${path}?page=${page}&size=6${param ?? ""}` : path,
       );
       if (!resp.status) throw new Error(resp.error);
       return resp.data;
@@ -116,18 +195,18 @@ export default function GlobalIndex({
       return <span className="va-adm-price">{formatRupiah(value)}</span>;
     }
     if (name === "logo" || name === "icon" || field?.logo) {
-      // value dari API: { id, image, created_at, updated_at }
-      if (value && typeof value === "object") {
-        return <img src={value.image} alt="logo" className="va-adm-thumb" />;
+      if (value?.image) {
+        return <img src={value?.image} alt="logo" className="va-adm-thumb" />;
       }
-      return <MasterIcon data={value} />;
+      return <img src={value} alt="logo" className="va-adm-thumb" />;
     }
+
     if (name === "logo_id") {
       return <img src={value?.image} alt="logo" height={50} width={50} />;
     }
 
-    if(name === 'image') {
-        return <img src={value} alt="image" className="va-adm-thumb" />;
+    if (name === "image") {
+      return <img src={value} alt="image" className="va-adm-thumb" />;
     }
     // pengaman: jangan pernah render object langsung
     if (value !== null && typeof value === "object") {
@@ -139,8 +218,6 @@ export default function GlobalIndex({
       </p>
     );
   };
-
-  // console.log(navigatePath);
 
   return (
     <AdminPanelLayout>
@@ -157,6 +234,7 @@ export default function GlobalIndex({
         hasId={hasId}
         pathDetail={pathDetail}
         selectLogo={selectLogo}
+        is_imageSpecification={imageSpecification}
       />
       <GlobalDeleteModal
         open={openDeleteModal}
@@ -178,6 +256,26 @@ export default function GlobalIndex({
             )}
           </p>
         </div>
+        {
+          // is_notSpecificationGallery
+          imageSpecification && (
+            <div className="va-adm-actions">
+              <button
+                type="button"
+                title="Edit"
+                aria-label="Edit"
+                className="va-btn va-btn--sm"
+                onClick={() => {
+                  setOpenModal(true);
+                  setIsCreate(false);
+                }}
+              >
+                <Pencil size={15} /> Edit Images
+              </button>
+            </div>
+          )
+        }
+        
         {createButton && (
           <div className="va-adm-actions">
             <button
@@ -263,9 +361,12 @@ export default function GlobalIndex({
               </tr>
             </thead>
             <tbody>
+              {/* {console.log(items)} */}
               {items.map((item, index) => (
                 <tr key={item.id ?? index}>
-                  <td className="is-center is-index">{index + 1}</td>
+                  <td className="is-center is-index">
+                    {(page - 1) * 6 + index + 1}
+                  </td>
                   {visibleFields.map((field) => (
                     <td key={field.name}>
                       {renderCell(
@@ -275,13 +376,10 @@ export default function GlobalIndex({
                           item["logo"] ||
                           item?.rental_option[field] ||
                           item?.logo[field],
-                          item?.image
+                        item?.image,
                       )}
                     </td>
                   ))}
-                  {visibleFields.map((field) => {
-                    console.log(field, item[field]);
-                  })}
                   <td>
                     <div className="va-adm-actions">
                       {editButton && (
@@ -335,23 +433,13 @@ export default function GlobalIndex({
         </div>
       )}
 
-      <div className="va-pager">
-        {Array.from({ length: itemPaginates?.total_pages || 0 }).map(
-          (_, index) => {
-            const pageNumber = index + 1;
-            return (
-              <button
-                key={pageNumber}
-                type="button"
-                aria-current={page === pageNumber ? "page" : undefined}
-                onClick={() => setPage(pageNumber)}
-              >
-                {pageNumber}
-              </button>
-            );
-          },
-        )}
-      </div>
+      {is_paginate && (
+        <Pagination
+          page={page}
+          totalPages={itemPaginates?.total_pages || 0}
+          onChange={setPage}
+        />
+      )}
     </AdminPanelLayout>
   );
 }

@@ -30,6 +30,8 @@ const PAGES = {
         is_paginate: true,
         isCard: true,
         imageSpecification: true,
+        createButton: false,
+        hasId: false,
         fields: [
             { name: 'image1', type: 'file', label: 'Image 1', placeholder: 'Input First Here!' },
             { name: 'image2', type: 'file', label: 'Image 2', placeholder: 'Input Second Here!' },

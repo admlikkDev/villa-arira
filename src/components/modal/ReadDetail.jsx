@@ -62,13 +62,15 @@ export default function GlobalDetailIndex({
     const rawData = data?.data || data;
     if (Array.isArray(rawData)) {
         items = rawData;
-        itemLists = rawData?.lists;
+        itemLists = rawData?.lists || rawData?.transports;
     } else if (typeof rawData === 'object' && rawData !== null) {
         items = [rawData];
-        itemLists = rawData?.lists;
+        itemLists = rawData?.lists || rawData?.transports;
     }
 
     const visibleFields = fields.filter((f) => !f.hide_in_table);
+
+    console.log(itemLists)
 
     return (
         <AdminPanelLayout>
@@ -106,6 +108,9 @@ export default function GlobalDetailIndex({
                 </div>
             ) : (
                 <div className="va-adm-tablewrap">
+                    {
+                        console.log(itemLists)
+                    }
                     <table className="va-adm-table">
                         <thead>
                             <tr>

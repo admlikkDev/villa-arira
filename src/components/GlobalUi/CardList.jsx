@@ -13,6 +13,7 @@ const formatRupiah = (value) => {
 
 export function GlobalCardList({ data = null, path, title, fields, initialValues, hasId }) {
     const navigate = useNavigate();
+    console.log(hasId)
 
     // Hooks harus dipanggil sebelum early return
     const [openModal, setOpenModal] = useState(false);
@@ -26,6 +27,7 @@ export function GlobalCardList({ data = null, path, title, fields, initialValues
 
     const price = formatRupiah(data?.price);
     const lists = Array.isArray(data?.lists) ? data.lists : [];
+    const transports = Array.isArray(data?.transports) ? data.transports : [];
 
     return (
         <article className="va-adm-card">
@@ -80,6 +82,21 @@ export function GlobalCardList({ data = null, path, title, fields, initialValues
                         )}
                     </ul>
                 )}
+
+                {data?.transports !== undefined && (
+                    <ul className="va-checks va-adm-list">
+                        {transports.length > 0 ? (
+                            transports.map((item, index) => (
+                                <li key={item?.id ?? index}>
+                                    <Check size={16} strokeWidth={2} />
+                                    <span>{item?.vehicle ?? '-'}</span>
+                                </li>
+                            ))
+                        ) : (
+                            <li className="va-muted">Tidak ada paket</li>
+                        )}
+                    </ul>
+                )}
             </div>
 
             <div className="va-adm-card__foot">
@@ -95,6 +112,15 @@ export function GlobalCardList({ data = null, path, title, fields, initialValues
                         type="button"
                         className="va-btn va-btn--sm"
                         onClick={() => navigate(`/admin/package/${data?.id}`)}
+                    >
+                        Detail
+                    </button>
+                )}
+                {data?.transports !== undefined && (
+                    <button
+                        type="button"
+                        className="va-btn va-btn--sm"
+                        onClick={() => navigate(`/admin/wisata-terdekat/${data?.id}`)}
                     >
                         Detail
                     </button>

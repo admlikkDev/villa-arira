@@ -8,17 +8,18 @@ export default function WisataListIndex() {
             type: 'select',
             label: 'Attraction',
             placeholder: 'Select Attraction',
+            hide_in_table: true
         },
         {
             name: 'distance',
             type: 'number',
-            label: 'Distance',
+            label: 'Distance (Km)',
             placeholder: 'Input Distance Here!',
         },
         {
             name: 'time_required',
             type: 'number',
-            label: 'Time Required',
+            label: 'Time Required (/menit)',
             placeholder: 'Input Time Required Here!',
         },
         {
