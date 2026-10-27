@@ -818,3 +818,9 @@ html:has(.va-shell)::-webkit-scrollbar,
     background: rgba(0, 0, 0, 0.2);
     border-radius: 3px;
 }
+
+.va-divider {
+    border: none;
+    border-top: 3px solid var(--ink); /* Ganti 3px untuk ketebalan, dan #333 untuk warna */
+    opacity: 1;                 /* Menjaga warna tidak samar (opsional) */
+}

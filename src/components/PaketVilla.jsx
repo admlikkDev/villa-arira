@@ -11,7 +11,7 @@ export default function PaketVilla() {
     if (packages.length === 0) return null;
 
     return (
-        <section id="paket" className="va-paper va-section">
+        <section id="paket" className="va-ink va-section">
             <div className="va-wrap">
                 <div className="va-head">
                     <h2 className="va-h2">Paket gathering, wedding & photoshoot</h2>

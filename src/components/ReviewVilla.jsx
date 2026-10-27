@@ -20,7 +20,7 @@ export default function ReviewVilla() {
     if (reviewsData.length === 0) return null;
 
     return (
-        <section id="review" className="va-ink va-section va-review">
+        <section id="review" className="va-paper va-section va-review">
             <div className="va-wrap">
                 <div className="va-head">
                     <h2 className="va-h2">Apa kata tamu tentang Villa Arira</h2>

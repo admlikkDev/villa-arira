@@ -51,7 +51,7 @@ export default function PilihanSewa() {
     if (options.length === 0) return null;
 
     return (
-        <section id="pilihan-sewa" className="va-paper va-section">
+        <section id="pilihan-sewa" className="va-ink va-section">
             <div className="va-wrap">
                 <div className="va-head">
                     <h2 className="va-h2">Pilihan sewa Villa Arira</h2>

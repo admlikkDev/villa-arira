@@ -51,7 +51,7 @@ export default function Hero() {
             <div className="va-hero__body">
                 <h1 className="va-hero__title">{heroContent?.title}</h1>
                 <p className="va-hero__sub">{heroContent?.subtitle}</p>
-                <a className="va-btn" href="#pricelist">Cek harga & ketersediaan</a>
+                <a className="va-btn" href="/booking#cek-jadwal">Cek harga & ketersediaan</a>
             </div>
 
             <a className="va-hero__scroll" href="#informasi" aria-label="Gulir ke bawah">Gulir</a>

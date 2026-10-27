@@ -38,7 +38,7 @@ export default function InformasiSingkat() {
     const currentImages = [0, 1, 2].map((i) => images[(currentIndex + i) % images.length]);
 
     return (
-        <section id="informasi" className="va-ink va-section">
+        <section id="informasi" className="va-paper va-section">
             <div className="va-wrap va-info">
                 <div className="va-collage">
                     {currentImages.map((src, i) => (

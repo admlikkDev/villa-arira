@@ -374,8 +374,8 @@ export default function GlobalIndex({
                         item[field] ||
                           item?.logo?.image ||
                           item["logo"] ||
-                          item?.rental_option[field] ||
-                          item?.logo[field],
+                          item?.rental_option?.[field] ||
+                          item?.logo?.[field],
                         item?.image,
                       )}
                     </td>

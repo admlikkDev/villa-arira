@@ -13,7 +13,7 @@ export default function FaqVilla() {
     if (faqData.length === 0) return null;
 
     return (
-        <section id="faq" className="va-paper va-section">
+        <section id="faq" className="va-ink va-section">
             <div className="va-wrap">
                 <div className="va-head">
                     <h2 className="va-h2">Pertanyaan yang sering diajukan</h2>

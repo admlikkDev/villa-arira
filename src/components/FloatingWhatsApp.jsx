@@ -32,6 +32,9 @@ export default function FloatingWhatsApp() {
     sort: (a, b) => new Date(b.created_at) - new Date(a.created_at),
   });
 
+  const {data: appData} = useVillaList('application')
+  // console.log(appData)
+
   //   const templates = [...new Set(rawTemplates.map((t) => t.text?.trim()))];
 
   // Tutup popup saat klik di luar area
@@ -48,7 +51,7 @@ export default function FloatingWhatsApp() {
     e.preventDefault();
     const text = message.trim() || templates[0] || FALLBACK_TEMPLATE;
     window.open(
-      `https://wa.me/6281234567890?text=${encodeURIComponent(text)}`,
+      `https://wa.me/${appData[0]?.phone_number || '0895123123'}?text=${encodeURIComponent(text)}`,
       "_blank",
     );
   };

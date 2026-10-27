@@ -98,7 +98,7 @@ export default function CekJadwal() {
             : 'Pilih check-in & check-out';
 
     return (
-        <section id="cek-jadwal" className="va-ink va-section">
+        <section id="cek-jadwal" className="va-paper va-section">
             <div className="va-wrap">
                 <div className="va-head">
                     <h2 className="va-h2">Cek ketersediaan villa</h2>

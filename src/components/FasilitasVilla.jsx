@@ -11,7 +11,7 @@ export default function FasilitasVilla() {
     if (facilities.length === 0) return null;
 
     return (
-        <section id="fasilitas" className="va-ink va-section">
+        <section id="fasilitas" className="va-paper va-section">
             <div className="va-wrap">
                 <div className="va-head">
                     <h2 className="va-h2">Fasilitas villa</h2>

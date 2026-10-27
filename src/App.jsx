@@ -29,6 +29,7 @@ import MessageIndex from "./views/Admin/Message/Index";
 import ReasonIndex from "./views/Admin/Reason/Index";
 import WhatsappTemplateIndex from "./views/Admin/WhatsappTemplate/Index";
 import UserIndex from "./views/Admin/User/Index";
+import BookingPage from "./views/BookingPage";
 
 export default function App() {
   const { get } = useFetch();
@@ -79,6 +80,10 @@ export default function App() {
         {
           path: '/',
           element: <Homepage />
+        },
+        {
+          path: '/booking',
+          element: <BookingPage />
         },
         {
           path: '/gallery',

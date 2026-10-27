@@ -55,7 +55,7 @@ export default function WisataTerdekat() {
     if (places.length === 0) return null;
 
     return (
-        <section id="wisata-terdekat" className="va-paper va-section">
+        <section id="wisata-terdekat" className="va-ink va-section">
             <div className="va-wrap">
                 <div className="va-head">
                     <h2 className="va-h2">Wisata terdekat dari villa</h2>
@@ -96,7 +96,7 @@ export default function WisataTerdekat() {
                                             {transports.map((t) => {
                                                 const Icon = vehicleIcon(t.vehicle);
                                                 return (
-                                                    <li key={t.id}>
+                                                    <li key={t.id} className='flex flex-row gap-2 items-center'>
                                                         <Icon size={15} />
                                                         <span className="va-transport__name">{t.vehicle}</span>
                                                         <span>
