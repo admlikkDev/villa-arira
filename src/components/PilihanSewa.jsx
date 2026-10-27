@@ -76,7 +76,7 @@ export default function PilihanSewa() {
                             <article key={item.id ?? item.title} className="va-rent va-slider__item">
                                 <div className="va-rent__img">
                                     <img
-                                        src={RENTAL_IMAGES[index % RENTAL_IMAGES.length]}
+                                        src={item?.rental_option?.image}
                                         alt={item?.rental_option?.title}
                                         draggable={false}
                                     />
@@ -98,7 +98,7 @@ export default function PilihanSewa() {
                                     </div>
                                     <button
                                         className="va-btn va-btn--ghost va-btn--block va-cell__push"
-                                        onClick={() => alert(`Detail untuk ${item?.rental_option?.title}`)}
+                                        onClick={() => location.href=`/tipe-villa/${item?.id}`}
                                     >
                                         Lihat detail
                                     </button>

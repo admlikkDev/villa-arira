@@ -30,6 +30,7 @@ import ReasonIndex from "./views/Admin/Reason/Index";
 import WhatsappTemplateIndex from "./views/Admin/WhatsappTemplate/Index";
 import UserIndex from "./views/Admin/User/Index";
 import BookingPage from "./views/BookingPage";
+import RentalDetailPage from "./views/RentalDetailPage";
 
 export default function App() {
   const { get } = useFetch();
@@ -92,6 +93,10 @@ export default function App() {
         {
           path: '/contact',
           element: <ContactPage />
+        },
+        {
+          path: '/tipe-villa/:id',
+          element: <RentalDetailPage />
         },
       ]
     },
