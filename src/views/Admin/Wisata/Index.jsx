@@ -44,6 +44,6 @@ export default function WisataIndex() {
     ]
 
     return (
-        <GlobalIndex path={'attractions'} title={'Wisata'} subtitle={'Kelola Wisata Terdekat villa.'} tableHead={['tite', 'subtitle', 'price', 'image']} fields={fields} navigatePath={'/admin/attractions'} isCard={true}/>
+        <GlobalIndex path={'attractions'} title={'Wisata'} subtitle={'Kelola Wisata Terdekat villa.'} tableHead={['tite', 'subtitle', 'price', 'image']} fields={fields} navigatePath={'/admin/attractions'} isCard={true} isWisataTerdekatPage={true}/>
     )
 }

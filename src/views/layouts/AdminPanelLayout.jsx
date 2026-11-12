@@ -23,6 +23,7 @@ import {
     ChevronDown,
     Clock,
     PanelLeft,
+    CalendarCheck,
 } from 'lucide-react';
 import { useAuth } from '../../hooks/useAuth';
 import '../../assets/styles/villa.css';
@@ -43,11 +44,12 @@ const menuItems = {
             label: 'Data villa',
             items: [
                 { title: 'Package', icon: Package, url: '/admin/package' },
+                { title: 'Logo', icon: Shapes, url: '/admin/logo' },
+                { title: 'Season', icon: Clock, url: '/admin/seasons' },
                 { title: 'Rental Options', icon: BedDouble, url: '/admin/rental-options' },
                 { title: 'Addon', icon: PackagePlus, url: '/admin/addon' },
                 { title: 'Facility', icon: ConciergeBell, url: '/admin/facility' },
                 { title: 'Specification', icon: ClipboardList, url: '/admin/specification' },
-                { title: 'Logo', icon: Shapes, url: '/admin/logo' },
                 { title: 'Wisata Terdekat', icon: MapPinned, url: '/admin/wisata-terdekat' },
                 { title: 'Kelola Alasan', icon: BadgeCheck, url: '/admin/reasons' },
             ],
@@ -55,6 +57,7 @@ const menuItems = {
         {
             label: 'Data user',
             items: [
+                { title: 'Bookings', icon: CalendarCheck, url: '/admin/bookings' },
                 { title: 'Users', icon: Users, url: '/admin/users' },
                 { title: 'Messages', icon: Inbox, url: '/admin/messages' },
             ],

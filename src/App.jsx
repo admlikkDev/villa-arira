@@ -31,6 +31,13 @@ import WhatsappTemplateIndex from "./views/Admin/WhatsappTemplate/Index";
 import UserIndex from "./views/Admin/User/Index";
 import BookingPage from "./views/BookingPage";
 import RentalDetailPage from "./views/RentalDetailPage";
+import SeasonIndex from "./views/Admin/Season/Index";
+import AdminRentalPrices from "./views/layouts/AdminRentalPrices";
+import BookingAddonPage from "./components/BookingAddonPage";
+import BookingResultPage from "./views/BookingResultPage";
+import MyBookingsPage from "./views/MyBookingPage";
+import NotFoundPage from "./views/NotFoundPage";
+import AdminBookingsIndex from "./views/Admin/Bookings/Index";
 
 export default function App() {
   const { get } = useFetch();
@@ -43,6 +50,20 @@ export default function App() {
     },
     staleTime: 1000 * 60 * 5, 
   });
+
+  {useEffect(() => {
+      const clientKey = import.meta.env.VITE_MIDTRANS_CLIENT_KEY;
+      const scriptId = 'midtrans-snap-script';
+    
+      if (!document.getElementById(scriptId)) {
+        const script = document.createElement('script');
+        script.id = scriptId;
+        script.src = "https://app.sandbox.midtrans.com/snap/snap.js"; 
+        script.setAttribute('data-client-key', clientKey);
+        document.body.appendChild(script);
+      }
+    }, []);
+}  
 
   useEffect(() => {
     if (data) {
@@ -87,6 +108,10 @@ export default function App() {
           element: <BookingPage />
         },
         {
+          path: '/booking/addon',
+          element: <BookingAddonPage />
+        },
+        {
           path: '/gallery',
           element: <GalleryPage />
         },
@@ -98,6 +123,26 @@ export default function App() {
           path: '/tipe-villa/:id',
           element: <RentalDetailPage />
         },
+        {
+          path: '/booking/success',
+          element: <BookingResultPage variant="success"/>
+        },
+        {
+          path: '/booking/pending',
+          element: <BookingResultPage variant="pending"/>
+        },
+        {
+          path: '/booking/failed',
+          element: <BookingResultPage variant="failed"/>
+        },
+        {
+          path: '/riwayat-pesanan',
+          element: <MyBookingsPage/>
+        },
+        {
+          path: '*',
+          element: <NotFoundPage />
+        }
       ]
     },
     // admin panel
@@ -184,6 +229,18 @@ export default function App() {
     {
       path: '/admin/users',
       element: <UserIndex />
+    },
+    {
+      path: '/admin/seasons',
+      element: <SeasonIndex />
+    },
+    {
+      path: '/admin/rental-options/:id',
+      element: <AdminRentalPrices />
+    },
+    {
+      path: '/admin/bookings',
+      element: <AdminBookingsIndex />
     },
   ]);
 }

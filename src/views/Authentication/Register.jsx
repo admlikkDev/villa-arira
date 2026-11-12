@@ -24,7 +24,7 @@ export default function Register() {
             return false;
         }
 
-        register(resp.data);
+        register(resp.data.data);
         navigate('/');
     };
 

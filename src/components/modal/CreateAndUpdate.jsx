@@ -33,6 +33,8 @@ const selectValueFrom = (itemData, field) => {
   return v && typeof v === "object" ? (v.id ?? "") : (v ?? "");
 };
 
+const isBlank = (v) => v === null || v === undefined || v === "";
+
 export default function GlobalCreateUpdateModal({
   open,
   onOpenChange,
@@ -49,8 +51,11 @@ export default function GlobalCreateUpdateModal({
   nameId = null,
   selectLogo = false,
   pathDetail = null,
-  is_imageSpecification = false
+  is_imageSpecification = false,
+  is_price = false,
 }) {
+
+  console.log(initialValues)
   const [formData, setFormData] = useState(initialValues);
   const [errors, setErrors] = useState({});
 
@@ -155,6 +160,31 @@ export default function GlobalCreateUpdateModal({
     onError: handleMutationError,
   });
 
+  // Payload khusus harga. Nilai dari form diutamakan; yang tidak ada di form
+  // (season, day_type, rental_option_id) diambil dari `initialValues` yang dikirim halaman.
+  // Mengembalikan null jika harga belum valid (error sudah ditampilkan di field `price`).
+  const buildPricePayload = (current) => {
+    const ctx = initialValues ?? {};
+    const price = Number(current.price);
+
+    if (isBlank(current.price) || Number.isNaN(price) || price < 0) {
+      setErrors({ price: "Harga wajib diisi dengan angka yang valid." });
+      return null;
+    }
+
+    const rentalOptionId = current.rental_option_id ?? ctx.rental_option_id;
+
+    const body = {
+      rental_option_id: isBlank(rentalOptionId) ? undefined : Number(rentalOptionId),
+      season: current.season ?? ctx.season,
+      day_type: current.day_type ?? ctx.day_type,
+      price,
+    };
+
+    // buang key yang kosong agar tidak terkirim sebagai null
+    return Object.fromEntries(Object.entries(body).filter(([, v]) => !isBlank(v)));
+  };
+
   const submit = (e) => {
     e.preventDefault();
     setErrors({});
@@ -200,8 +230,14 @@ export default function GlobalCreateUpdateModal({
         delete payload[logoField.name];
         payload.logo_id = logoValue ? Number(logoValue) : null;
       }
+
+      if (is_price) {
+        payload = buildPricePayload(payload);
+        if (!payload) return; // harga belum valid
+      }
     }
 
+    console.log(payload)
     if (isCreate) createMutation.mutate(payload);
     else updateMutation.mutate(payload);
 
@@ -324,9 +360,6 @@ export default function GlobalCreateUpdateModal({
                           <SelectGroup>
                             {logos?.map((item) => (
                               <SelectItem key={item.id} value={String(item.id)}>
-                                {
-                                  console.log(selectLogo)
-                                }
                                 {selectLogo ? (
                                   <img
                                     src={item?.image}

@@ -8,7 +8,7 @@ const RENTAL_IMAGES = ['/images/15 (1).jpg', '/images/16.jpg', '/images/17.jpg']
 
 const byPrice = (a, b) => Number(a.weekday_price) - Number(b.weekday_price);
 
-export default function PilihanSewa() {
+export default function PilihanSewa({is_booking = false}) {
     const { data: options = [], isLoading, isError, error } = useVillaList('pricelists', {
         query: 'unpage=true',
         sort: byPrice,

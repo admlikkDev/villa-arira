@@ -55,6 +55,20 @@ const getPageItems = (current, total, siblings = 1) => {
   return [1, "dots-l", ...range(left, right), "dots-r", total];
 };
 
+const dateConverter = (dateString) => {
+  const date = new Date(dateString)
+  const year = date.getFullYear()
+  const month = date.getMonth()
+  const day = date.getDate()
+  const hours = date.getHours()
+  const minutes = date.getMinutes()
+  const seconds = date.getSeconds()
+
+  const monthName = ['Januari', 'Februari', 'Maret', 'April', 'Mei', 'Juni', 'Juli', 'Agustus', 'September', 'Oktober', 'November', 'Desember'][month]
+
+  return `${day} ${monthName} ${year}   ${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`
+}
+
 function EmptyState({ title }) {
   return (
     <div className="va-empty">
@@ -135,6 +149,10 @@ export default function GlobalIndex({
   editButton = true,
   selectLogo = false,
   param = null,
+  isDetail = false,
+  isPackagePage = false,
+  isRentalOptionPage = false,
+  isWisataTerdekatPage = false
 }) {
   const { get } = useFetch();
   const navigate = useNavigate();
@@ -212,6 +230,10 @@ export default function GlobalIndex({
     if (value !== null && typeof value === "object") {
       return <p className="va-clamp-2">{value.name ?? value.title ?? "-"}</p>;
     }
+
+    if(name === 'start_date' || name === 'end_date') {
+      return <p className="va-clamp-2">{dateConverter(value)}</p>
+    }
     return (
       <p className="va-clamp-2" style={{ maxWidth: "24rem" }}>
         {value ?? "-"}
@@ -275,7 +297,7 @@ export default function GlobalIndex({
             </div>
           )
         }
-        
+
         {createButton && (
           <div className="va-adm-actions">
             <button
@@ -337,6 +359,10 @@ export default function GlobalIndex({
 
             return (
               <GlobalCardList
+                isDetail={isDetail}
+                isPackagePage={isPackagePage}
+                isRentalOptionPage={isRentalOptionPage}
+                isWisataTerdekatPage={isWisataTerdekatPage}
                 key={item?.id || index}
                 data={item}
                 path={path}

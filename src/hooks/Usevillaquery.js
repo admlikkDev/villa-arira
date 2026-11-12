@@ -7,13 +7,13 @@ export const ALL = 'page=1&size=50&sort=asc';
 const errMsg = (e) => (typeof e === 'string' ? e : e?.message || JSON.stringify(e) || 'Terjadi kesalahan');
 
 // Respons API bisa berlapis ({ data: { data: ... } }); kupas sampai isi sebenarnya
-const unwrap = (body) => {
+export const unwrap = (body) => {
     let d = body;
     while (d && !Array.isArray(d) && typeof d === 'object' && 'data' in d) d = d.data;
     return d;
 };
 
-const toArray = (body) => {
+export const toArray = (body) => {
     const d = unwrap(body);
     if (Array.isArray(d)) return d;
     return d ? [d] : [];
@@ -42,6 +42,9 @@ export const formatCapacity = (a, b) => {
     return `${nums[0]} – ${nums[1]} orang`;
 };
 
+// ---------- Hooks ----------
+// Key memakai prefix `admin-${path}-section` agar otomatis ikut ter-refresh
+// saat panel admin memanggil invalidateQueries pada resource yang sama.
 export function useVillaList(path, { query = ALL, sort = bySortOrder } = {}) {
     const { get } = useFetch();
 

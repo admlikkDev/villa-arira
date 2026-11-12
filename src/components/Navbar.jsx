@@ -1,8 +1,11 @@
 import { useState, useEffect } from "react";
-import { Menu, ShoppingBag, X } from "lucide-react";
+import { History, Menu, ShoppingBag, X } from "lucide-react";
+import { useQuery } from "@tanstack/react-query";
 import Cart from "./Cart";
 import "../assets/styles/villa.css";
 import { useAuth } from "../hooks/useAuth";
+import useFetch from "../hooks/useFetch";
+import { useNavigate } from "react-router-dom";
 
 const menuItems = [
   { name: "Home", href: "/" },
@@ -11,6 +14,10 @@ const menuItems = [
   { name: "Contact", href: "/contact" },
 ];
 
+// Booking milik user yang sedang login (GET /api/my-bookings)
+const MY_BOOKINGS_ENDPOINT = "my-bookings";
+const HISTORY_PATH = "/riwayat-pesanan";
+
 // Ganti dengan jumlah item keranjang yang sebenarnya
 const cartCount = 2;
 
@@ -18,7 +25,30 @@ export default function Navbar() {
   const [showNav, setShowNav] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [cartOpen, setCartOpen] = useState(false);
-  const { user } = useAuth();
+  const { user, logout } = useAuth();
+  const { get } = useFetch();
+  const navigate = useNavigate();
+
+  // console.log(user?.user?.username)
+
+  // Cek apakah user pernah booking (hanya saat login)
+  const { data: bookingData } = useQuery({
+    queryKey: ["my-bookings-exists", user?.data?.user?.id ?? user?.data?.user?.username],
+    enabled: Boolean(user),
+    retry: false,
+    staleTime: 5 * 60 * 1000,
+    queryFn: async () => {
+      const resp = await get(`${MY_BOOKINGS_ENDPOINT}?page=1&size=1`);
+      if (!resp.status) throw new Error(resp.error);
+      return resp.data;
+    },
+  });
+
+  const bookingList = bookingData?.data ?? bookingData;
+  const totalBookings =
+    bookingData?.pagination?.total_items ??
+    (Array.isArray(bookingList) ? bookingList.length : 0);
+  const hasBooked = Boolean(user) && totalBookings > 0;
 
   // Navbar muncul setelah scroll 80px
   useEffect(() => {
@@ -66,6 +96,13 @@ export default function Navbar() {
     }
   };
 
+  const exit = () => {
+    logout();
+    setTimeout(() => {
+      navigate("/");
+    }, 1000);
+  };
+
   return (
     <nav className="va-nav" data-visible={showNav}>
       <a
@@ -92,12 +129,26 @@ export default function Navbar() {
 
       <div className="va-nav__actions">
         {user ? (
-          <button
-            className="va-btn va-btn--sm"
-            onClick={() => (location.href = "/booking#cek-jadwal")}
-          >
-            Booking
-          </button>
+          <>
+            <p>{user?.user?.username}</p>
+            {hasBooked && (
+              <button
+                className="va-btn va-btn--ghost va-btn--sm"
+                onClick={() => navigate(HISTORY_PATH)}
+              >
+                <History size={15} /> Riwayat Booking
+              </button>
+            )}
+            <button
+              className="va-btn va-btn--sm"
+              onClick={() => (location.href = "/booking#cek-jadwal")}
+            >
+              Booking
+            </button>
+            <button className="va-btn va-btn--sm" onClick={exit}>
+              Logout
+            </button>
+          </>
         ) : (
           <>
             <button
@@ -141,6 +192,11 @@ export default function Navbar() {
               {item.name}
             </a>
           ))}
+          {hasBooked && (
+            <a href={HISTORY_PATH} onClick={() => setMobileMenuOpen(false)}>
+              Riwayat Booking
+            </a>
+          )}
         </div>
       )}
 

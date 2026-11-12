@@ -70,8 +70,6 @@ export default function GlobalDetailIndex({
 
     const visibleFields = fields.filter((f) => !f.hide_in_table);
 
-    console.log(itemLists)
-
     return (
         <AdminPanelLayout>
             <GlobalCreateUpdateModal open={openModal} onOpenChange={setOpenModal} isCreate={isCreate} id={id} idParam={idParam} path={pathDetail} title={title} queryKey={pathDetail} fields={fields} initialValues={initialValues} hasId={hasId} isVillaList={true} nameId={nameId} selectLogo={selectLogo} pathDetail={path} />
@@ -108,9 +106,6 @@ export default function GlobalDetailIndex({
                 </div>
             ) : (
                 <div className="va-adm-tablewrap">
-                    {
-                        console.log(itemLists)
-                    }
                     <table className="va-adm-table">
                         <thead>
                             <tr>

@@ -738,6 +738,51 @@ html:has(.va-shell)::-webkit-scrollbar,
 @media (max-width: 1024px) { .va-contact { grid-template-columns: 1fr; } }
 @media (max-width: 560px) { .va-contact__row { grid-template-columns: 1fr; } }
 
+/* ==========================================================
+   TAMBAHKAN DI villa.css (sebelum blok "Reduced motion")
+   Halaman checkout add-on
+   ========================================================== */
+.va-co { display: grid; grid-template-columns: minmax(0, 1.3fr) minmax(0, 1fr); gap: clamp(2rem, 5vw, 4rem); align-items: start; }
+.va-co__head { display: flex; justify-content: space-between; align-items: baseline; gap: 1rem; padding-bottom: 1.25rem; margin-bottom: 1.5rem; border-bottom: 1px solid var(--fg); }
+.va-co__list { display: grid; gap: 1rem; }
+
+/* Kartu add-on (bisa dicentang) */
+.va-addon-card {
+    display: grid; grid-template-columns: auto minmax(0, 1fr) auto; gap: 1.25rem; align-items: start;
+    width: 100%; padding: clamp(1.25rem, 3vw, 1.75rem);
+    border: 1px solid var(--line); border-radius: 0; background: var(--bg); color: var(--fg);
+    font: inherit; text-align: left; cursor: pointer;
+    transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+.va-addon-card:hover { border-color: var(--fg); }
+.va-addon-card[aria-checked='true'] { border-color: var(--fg); box-shadow: inset 0 0 0 1px var(--fg); }
+.va-addon-card__box { width: 24px; height: 24px; display: grid; place-items: center; border: 1px solid var(--fg); margin-top: 0.2rem; transition: background-color 0.2s ease, color 0.2s ease; }
+.va-addon-card[aria-checked='true'] .va-addon-card__box { background: var(--fg); color: var(--bg); }
+.va-addon-card__main { display: grid; gap: 0.4rem; min-width: 0; }
+.va-addon-card__price { text-align: right; }
+.va-addon-card__price .va-price { font-size: 1.5rem; }
+@media (max-width: 560px) {
+    .va-addon-card { grid-template-columns: auto minmax(0, 1fr); }
+    .va-addon-card__price { grid-column: 2; text-align: left; }
+}
+
+/* Ringkasan pesanan */
+.va-co__summary { position: sticky; top: 5.5rem; border: 1px solid var(--fg); padding: clamp(1.5rem, 3vw, 2rem); display: grid; gap: 1.5rem; background: var(--bg); }
+.va-sum { margin: 0; display: grid; gap: 0.85rem; font-size: 0.92rem; }
+.va-sum > div { display: flex; justify-content: space-between; align-items: baseline; gap: 1rem; }
+.va-sum dt { color: var(--muted); }
+.va-sum dt small { display: block; font-size: 0.78rem; margin-top: 0.15rem; }
+.va-sum dd { margin: 0; font-weight: 600; text-align: right; }
+.va-sum__block { display: grid; gap: 0.9rem; padding-top: 1.25rem; border-top: 1px solid var(--line); }
+.va-sum__total { display: flex; justify-content: space-between; align-items: baseline; gap: 1rem; padding-top: 1.25rem; border-top: 1px solid var(--fg); font-weight: 600; }
+.va-sum__total .va-price { font-size: 2rem; }
+.va-co__actions { display: grid; gap: 0.6rem; }
+
+@media (max-width: 1024px) {
+    .va-co { grid-template-columns: 1fr; }
+    .va-co__summary { position: static; }
+}
+
 /* ---------- Reduced motion ---------- */
 @media (prefers-reduced-motion: reduce) {
     html { scroll-behavior: auto; }
@@ -871,3 +916,102 @@ html:has(.va-shell)::-webkit-scrollbar,
 .va-detail__info { display: grid; gap: 1.75rem; }
 .va-detail__cta { display: grid; gap: 0.6rem; }
 @media (max-width: 1024px) { .va-detail { grid-template-columns: 1fr; } }
+
+/* Container gambar untuk menjaga rasio (misal 16:9) */
+.va-adm-card__img-wrapper {
+  width: 100%;
+  aspect-ratio: 16 / 9; /* Menjaga proporsi gambar responsif */
+  overflow: hidden;
+  border-radius: 8px 8px 0 0; /* Sesuaikan dengan sudut card jika ada */
+  background-color: var(--line, #f0f0f0); /* Placeholder warna saat memuat */
+}
+
+/* Memastikan gambar memenuhi area tanpa terdistorsi/gepeng */
+.va-adm-card__img-wrapper img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover; /* Memotong rapi tanpa mengubah rasio asli */
+  object-position: center; /* Fokus di tengah gambar */
+  display: block;
+  transition: transform 0.3s ease; /* Bonus efek smooth saat hover */
+}
+
+/* Opsional: Efek zoom halus saat card di-hover */
+.va-adm-card:hover .va-adm-card__img-wrapper img {
+  transform: scale(1.03);
+}
+
+/* ==========================================================
+   TAMBAHKAN DI villa.css (setelah blok ADMIN PANEL)
+   Halaman admin: harga per rental option
+   Pager (.va-pager-wrap dst.) diambil dari pager.css yang sudah ada.
+   ========================================================== */
+
+/* Ringkasan */
+.va-stats { grid-template-columns: repeat(4, minmax(0, 1fr)); margin-bottom: 2.5rem; }
+.va-stat { padding: 1.25rem 1.5rem; display: grid; gap: 0.4rem; align-content: start; }
+.va-stat .va-price { font-size: 1.7rem; }
+@media (max-width: 900px) { .va-stats { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+
+/* Matriks musim x tipe hari */
+.va-pm-scroll { overflow-x: auto; }
+.va-pm { min-width: 640px; }
+.va-cells > .va-pm__head { padding: 0.9rem 1.25rem; background: var(--soft); font-size: 0.82rem; font-weight: 600; color: var(--muted); }
+.va-pm__rowhead { padding: 1.5rem 1.25rem; display: grid; gap: 0.25rem; align-content: center; }
+.va-pm__rowhead strong { font-family: var(--font-display); font-weight: 400; font-size: 1.5rem; line-height: 1.1; }
+.va-pm__rowhead small { color: var(--muted); font-size: 0.78rem; }
+.va-pm__cell { padding: 1.25rem; display: grid; gap: 0.75rem; align-content: center; min-height: 7.5rem; transition: background-color 0.2s ease; }
+.va-pm__cell:hover { background: var(--soft); }
+.va-pm__entry { display: flex; justify-content: space-between; align-items: center; gap: 1rem; }
+.va-pm__entry + .va-pm__entry { border-top: 1px solid var(--line); padding-top: 0.75rem; }
+.va-pm__add {
+    justify-self: start;
+    display: inline-flex; align-items: center; gap: 0.5rem;
+    padding: 0.7rem 1rem; border: 1px dashed var(--line); border-radius: 0;
+    background: transparent; color: var(--muted); font: 600 0.85rem var(--font-body); cursor: pointer;
+    transition: border-color 0.2s ease, color 0.2s ease;
+}
+.va-pm__add:hover { border-style: solid; border-color: var(--fg); color: var(--fg); }
+/* Aksi muncul saat hover di perangkat dengan mouse; selalu terlihat di layar sentuh */
+@media (hover: hover) {
+    .va-pm__acts { opacity: 0; transition: opacity 0.2s ease; }
+    .va-pm__cell:hover .va-pm__acts, .va-pm__acts:focus-within { opacity: 1; }
+}
+
+/* Filter musim (tampilan daftar) */
+.va-filter { display: flex; gap: 0.5rem; flex-wrap: wrap; margin-bottom: 1.5rem; }
+.va-filter button {
+    padding: 0.5rem 0.9rem; border: 1px solid var(--line); border-radius: 0;
+    background: transparent; color: var(--fg); font: 600 0.82rem var(--font-body); cursor: pointer;
+    transition: background-color 0.2s ease, color 0.2s ease, border-color 0.2s ease;
+}
+.va-filter button:hover { border-color: var(--fg); }
+.va-filter button[aria-pressed='true'] { background: var(--fg); color: var(--bg); border-color: var(--fg); }
+
+/* ==========================================================
+   TAMBAHKAN DI villa.css (setelah blok ".va-adm-card ...")
+   ========================================================== */
+
+.va-adm-card { transition: border-color 0.2s ease; }
+.va-adm-card:hover { border-color: var(--fg); }
+.va-adm-card__img img { transition: transform 0.6s var(--ease); }
+.va-adm-card:hover .va-adm-card__img img { transform: scale(1.04); }
+
+.va-clamp-3 { display: -webkit-box; -webkit-box-orient: vertical; overflow: hidden; margin: 0; -webkit-line-clamp: 3; }
+
+/* Fakta singkat (kamar, kapasitas) */
+.va-adm-card__facts { display: flex; flex-wrap: wrap; gap: 0.5rem 1.25rem; font-size: 0.88rem; font-weight: 500; }
+.va-adm-card__facts span { display: inline-flex; align-items: center; gap: 0.45rem; }
+
+/* Harga */
+.va-adm-card__price { padding: 0.9rem 0; border-block: 1px solid var(--line); display: grid; gap: 0.3rem; }
+
+/* Daftar centang (paket / transportasi) */
+.va-adm-card__group { display: grid; gap: 0.75rem; padding-top: 0.9rem; border-top: 1px solid var(--line); }
+.va-adm-card__grouphead { display: flex; justify-content: space-between; align-items: center; font-size: 0.78rem; font-weight: 600; color: var(--muted); }
+.va-adm-card__more { font-size: 0.82rem; color: var(--muted); }
+
+/* Footer: Detail penuh satu baris, Edit & Hapus berdampingan */
+.va-adm-card__foot { margin-top: auto; }
+.va-adm-card__foot .va-adm-card__detail { flex: 1 1 100%; }
+
