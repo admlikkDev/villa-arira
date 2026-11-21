@@ -9,6 +9,12 @@ import { Toaster } from "@/components/ui/sonner";
 
 const queryClient = new QueryClient();
 
+const THEMES = ["hutan", "kayu", "kabut", "logo"];
+const q = new URLSearchParams(location.search).get("theme");
+if (THEMES.includes(q)) sessionStorage.setItem("theme", q);
+const theme = sessionStorage.getItem("theme") ?? "hutan";
+if (theme !== "hutan") document.documentElement.dataset.theme = theme;
+
 createRoot(document.getElementById("root")).render(
   <StrictMode>
     <BrowserRouter>
