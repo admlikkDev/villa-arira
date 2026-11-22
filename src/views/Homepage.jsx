@@ -6,6 +6,7 @@ import WisataTerdekat from '../components/WisataTerdekat';
 import ReviewVilla from '../components/ReviewVilla';
 import FaqVilla from '../components/FaqVilla';
 import CtaBooking from '../components/CtaBooking';
+import AturanVilla from '../components/AturanVilla';
 
 // Navbar, Footer, FloatingWhatsApp, dan FloatingToTop dirender oleh layout publik (lihat routes).
 export default function Homepage() {
@@ -13,6 +14,7 @@ export default function Homepage() {
         <>
             <Hero />
             <InformasiSingkat />
+            <AturanVilla />
             <PilihanSewa />
             <FasilitasVilla />
             <WisataTerdekat />

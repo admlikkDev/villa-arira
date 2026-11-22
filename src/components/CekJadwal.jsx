@@ -23,8 +23,18 @@ import "../assets/styles/villa.css";
 import SectionState from "./SectionState";
 
 const monthNames = [
-  "Januari", "Februari", "Maret", "April", "Mei", "Juni",
-  "Juli", "Agustus", "September", "Oktober", "November", "Desember",
+  "Januari",
+  "Februari",
+  "Maret",
+  "April",
+  "Mei",
+  "Juni",
+  "Juli",
+  "Agustus",
+  "September",
+  "Oktober",
+  "November",
+  "Desember",
 ];
 const dayNames = ["Sen", "Sel", "Rab", "Kam", "Jum", "Sab", "Min"];
 
@@ -41,7 +51,9 @@ const countNights = (start, end) =>
     (new Date(`${end}T00:00:00`) - new Date(`${start}T00:00:00`)) / 86400000,
   );
 const humanize = (s) =>
-  String(s ?? "").replace(/[_-]+/g, " ").replace(/^./, (c) => c.toUpperCase());
+  String(s ?? "")
+    .replace(/[_-]+/g, " ")
+    .replace(/^./, (c) => c.toUpperCase());
 
 const getDaysInMonth = (year, month) => new Date(year, month + 1, 0).getDate();
 const getFirstDayOfMonth = (year, month) => {
@@ -56,7 +68,10 @@ const BLOCKING_STATUS = ["pending", "paid"];
 // ini hanya menyaring jika server menyertakan penanda ketersediaan / daftar booking unit.
 const isUnitAvailable = (unit, start, end) => {
   if (unit?.is_available === false || unit?.available === false) return false;
-  if (["booked", "unavailable"].includes(String(unit?.status ?? "").toLowerCase())) return false;
+  if (
+    ["booked", "unavailable"].includes(String(unit?.status ?? "").toLowerCase())
+  )
+    return false;
 
   const bookings = unit?.bookings ?? unit?.booked_dates;
   if (Array.isArray(bookings)) {
@@ -75,7 +90,11 @@ const isUnitAvailable = (unit, start, end) => {
 
 export default function CekJadwal() {
   const today = new Date();
-  const todayISO = toISO(today.getFullYear(), today.getMonth(), today.getDate());
+  const todayISO = toISO(
+    today.getFullYear(),
+    today.getMonth(),
+    today.getDate(),
+  );
 
   const [startDate, setStartDate] = useState("");
   const [endDate, setEndDate] = useState("");
@@ -95,7 +114,8 @@ export default function CekJadwal() {
 
   useEffect(() => {
     const handleClickOutside = (e) => {
-      if (dropdownRef.current && !dropdownRef.current.contains(e.target)) setIsOpen(false);
+      if (dropdownRef.current && !dropdownRef.current.contains(e.target))
+        setIsOpen(false);
     };
     document.addEventListener("mousedown", handleClickOutside);
     return () => document.removeEventListener("mousedown", handleClickOutside);
@@ -103,15 +123,28 @@ export default function CekJadwal() {
 
   // Gulir ke hasil setiap kali pencarian baru dijalankan
   useEffect(() => {
-    if (result) resultsRef.current?.scrollIntoView({ behavior: "smooth", block: "start" });
+    if (result)
+      resultsRef.current?.scrollIntoView({
+        behavior: "smooth",
+        block: "start",
+      });
   }, [result]);
 
-  const { data: rentalOptionItems, isLoading, isError, error } = useVillaList("rental-options", {
+  const {
+    data: rentalOptionItems,
+    isLoading,
+    isError,
+    error,
+  } = useVillaList("rental-options", {
     query: "unpage=true",
   });
 
-  const { data: reasonItems, isLoading: loadingReason, isError: isErrorReason, error: errorReason } =
-    useVillaList("reasons", { query: "unpage=true" });
+  const {
+    data: reasonItems,
+    isLoading: loadingReason,
+    isError: isErrorReason,
+    error: errorReason,
+  } = useVillaList("reasons", { query: "unpage=true" });
 
   // Ketersediaan SELALU diambil baru dari server (tanpa cache). Jika di-cache, unit yang baru saja
   // dipesan orang lain (atau oleh Anda sendiri) masih tampil tersedia sampai cache kedaluwarsa.
@@ -122,7 +155,13 @@ export default function CekJadwal() {
     error: resultErrorMsg,
   } = useQuery({
     // `searchedAt` membuat setiap klik "Cek jadwal" menghasilkan request baru
-    queryKey: ["rental-available", result?.startDate, result?.endDate, result?.guestCount, result?.searchedAt],
+    queryKey: [
+      "rental-available",
+      result?.startDate,
+      result?.endDate,
+      result?.guestCount,
+      result?.searchedAt,
+    ],
     enabled: Boolean(result),
     staleTime: 0,
     gcTime: 0,
@@ -133,7 +172,8 @@ export default function CekJadwal() {
         check_in_date: result.startDate,
         check_out_date: result.endDate,
       });
-      if (result.guestCount > 0) params.set("guest_count", String(result.guestCount));
+      if (result.guestCount > 0)
+        params.set("guest_count", String(result.guestCount));
 
       const resp = await get(`rental-options/available?${params.toString()}`);
       if (!resp.status) throw new Error(errorText(resp.error));
@@ -143,9 +183,18 @@ export default function CekJadwal() {
   });
 
   // Nilai default keperluan = alasan pertama dari API
+  const [customPurpose, setCustomPurpose] = useState("");
+  const [overnightGuestCount, setOvernightGuestCount] = useState("");
+
+  // Nilai default keperluan = alasan pertama dari API
   const purposeValue = purpose || String(reasonItems?.[0]?.id ?? "");
-  const purposeLabel = reasonItems?.find((r) => String(r.id) === purposeValue)?.text ?? "";
-  const villaLabel = rentalOptionItems?.find((o) => String(o.id) === villaType)?.title ?? "";
+  const isOtherPurpose = purposeValue === "lainnya";
+
+  const purposeLabel = isOtherPurpose
+    ? customPurpose.trim() || "Lainnya"
+    : (reasonItems?.find((r) => String(r.id) === purposeValue)?.text ?? "");
+  const villaLabel =
+    rentalOptionItems?.find((o) => String(o.id) === villaType)?.title ?? "";
 
   const handleCekJadwal = (e) => {
     e.preventDefault();
@@ -162,14 +211,21 @@ export default function CekJadwal() {
       setFormError("Pilih keperluan menginap.");
       return;
     }
+    if (isOtherPurpose && !customPurpose.trim()) {
+      setFormError("Tuliskan keperluan menginap Anda.");
+      return;
+    }
+
     setFormError("");
     setResult({
       startDate,
       endDate,
       villaType, // id tipe villa ("" = semua)
-      purpose: purposeValue, // id alasan, dibaca halaman booking sebagai reason_id
+      purpose: purposeValue, // id alasan atau "lainnya"
+      customPurpose: isOtherPurpose ? customPurpose.trim() : "",
       purposeLabel,
       guestCount: Number(guestCount),
+      overnightGuestCount: Number(overnightGuestCount) || 0,
       nights: countNights(startDate, endDate),
       searchedAt: Date.now(),
     });
@@ -193,20 +249,28 @@ export default function CekJadwal() {
   };
 
   const shiftMonth = (delta) =>
-    setCurrentMonth(new Date(currentMonth.getFullYear(), currentMonth.getMonth() + delta, 1));
+    setCurrentMonth(
+      new Date(currentMonth.getFullYear(), currentMonth.getMonth() + delta, 1),
+    );
 
   const months = [0, 1].map((i) => {
-    const d = new Date(currentMonth.getFullYear(), currentMonth.getMonth() + i, 1);
+    const d = new Date(
+      currentMonth.getFullYear(),
+      currentMonth.getMonth() + i,
+      1,
+    );
     return { year: d.getFullYear(), month: d.getMonth() };
   });
 
   const renderDays = ({ year, month }) => {
     const cells = [];
-    for (let i = 0; i < getFirstDayOfMonth(year, month); i++) cells.push(<span key={`e-${i}`} />);
+    for (let i = 0; i < getFirstDayOfMonth(year, month); i++)
+      cells.push(<span key={`e-${i}`} />);
     for (let d = 1; d <= getDaysInMonth(year, month); d++) {
       const dateStr = toISO(year, month, d);
       const isSel = dateStr === startDate || dateStr === endDate;
-      const inRange = startDate && endDate && dateStr > startDate && dateStr < endDate;
+      const inRange =
+        startDate && endDate && dateStr > startDate && dateStr < endDate;
       cells.push(
         <button
           key={dateStr}
@@ -234,25 +298,44 @@ export default function CekJadwal() {
         ? `${formatDate(startDate)} – pilih check-out`
         : "Pilih check-in & check-out";
 
-  if (isLoading || loadingReason) return <SectionState tone="paper" label="Memuat pilihan sewa…" />;
-  if (isError) return <SectionState tone="paper" label="Pilihan sewa gagal dimuat" error={error.message} />;
+  if (isLoading || loadingReason)
+    return <SectionState tone="paper" label="Memuat pilihan sewa…" />;
+  if (isError)
+    return (
+      <SectionState
+        tone="paper"
+        label="Pilihan sewa gagal dimuat"
+        error={error.message}
+      />
+    );
   if (isErrorReason)
-    return <SectionState tone="paper" label="Pilihan keperluan gagal dimuat" error={errorReason.message} />;
+    return (
+      <SectionState
+        tone="paper"
+        label="Pilihan keperluan gagal dimuat"
+        error={errorReason.message}
+      />
+    );
 
   // Hasil akhir: server menyaring tanggal; di sini ditambah filter tipe villa & pengaman klien
   const resultItems = result
     ? availableItems
-        .filter((item) => !result.villaType || String(item?.id) === String(result.villaType))
-        .filter((item) => isUnitAvailable(item, result.startDate, result.endDate))
+        .filter(
+          (item) =>
+            !result.villaType || String(item?.id) === String(result.villaType),
+        )
+        .filter((item) =>
+          isUnitAvailable(item, result.startDate, result.endDate),
+        )
     : [];
-
   return (
-    <section id="cek-jadwal" className="va-paper va-section">
+    <section id="cek-jadwal" className="va-ink va-section">
       <div className="va-wrap">
         <div className="va-head">
           <h2 className="va-h2">Cek ketersediaan villa</h2>
           <p className="va-lead">
-            Pilih tanggal dan tipe unit untuk melihat ketersediaan sebelum melakukan pemesanan.
+            Pilih tanggal dan tipe unit untuk melihat ketersediaan sebelum
+            melakukan pemesanan.
           </p>
         </div>
 
@@ -267,7 +350,9 @@ export default function CekJadwal() {
           <div className="va-form-grid">
             {/* Tanggal */}
             <div className="va-field" ref={dropdownRef}>
-              <label className="va-label" htmlFor="cj-date">Tanggal menginap</label>
+              <label className="va-label" htmlFor="cj-date">
+                Tanggal menginap
+              </label>
               <button
                 id="cj-date"
                 type="button"
@@ -284,10 +369,20 @@ export default function CekJadwal() {
               {isOpen && (
                 <div className="va-pop va-cal">
                   <div className="va-cal__bar">
-                    <button type="button" className="va-icon-btn" onClick={() => shiftMonth(-1)} aria-label="Bulan sebelumnya">
+                    <button
+                      type="button"
+                      className="va-icon-btn"
+                      onClick={() => shiftMonth(-1)}
+                      aria-label="Bulan sebelumnya"
+                    >
                       <ChevronLeft size={18} />
                     </button>
-                    <button type="button" className="va-icon-btn" onClick={() => shiftMonth(1)} aria-label="Bulan berikutnya">
+                    <button
+                      type="button"
+                      className="va-icon-btn"
+                      onClick={() => shiftMonth(1)}
+                      aria-label="Bulan berikutnya"
+                    >
                       <ChevronRight size={18} />
                     </button>
                   </div>
@@ -295,9 +390,13 @@ export default function CekJadwal() {
                   <div className="va-cal__months">
                     {months.map((m) => (
                       <div key={`${m.year}-${m.month}`}>
-                        <div className="va-cal__title">{monthNames[m.month]} {m.year}</div>
+                        <div className="va-cal__title">
+                          {monthNames[m.month]} {m.year}
+                        </div>
                         <div className="va-cal__dow">
-                          {dayNames.map((n) => <span key={n}>{n}</span>)}
+                          {dayNames.map((n) => (
+                            <span key={n}>{n}</span>
+                          ))}
                         </div>
                         <div className="va-cal__days">{renderDays(m)}</div>
                       </div>
@@ -311,10 +410,20 @@ export default function CekJadwal() {
                         : "Pilih tanggal check-in dan check-out"}
                     </span>
                     <div className="va-cal__actions">
-                      <button type="button" className="va-btn va-btn--ghost va-btn--sm" disabled={!startDate} onClick={resetDates}>
+                      <button
+                        type="button"
+                        className="va-btn va-btn--ghost va-btn--sm"
+                        disabled={!startDate}
+                        onClick={resetDates}
+                      >
                         Hapus
                       </button>
-                      <button type="button" className="va-btn va-btn--sm" disabled={!startDate || !endDate} onClick={() => setIsOpen(false)}>
+                      <button
+                        type="button"
+                        className="va-btn va-btn--sm"
+                        disabled={!startDate || !endDate}
+                        onClick={() => setIsOpen(false)}
+                      >
                         Terapkan
                       </button>
                     </div>
@@ -325,12 +434,21 @@ export default function CekJadwal() {
 
             {/* Tipe villa */}
             <div className="va-field">
-              <label className="va-label" htmlFor="cj-villa">Tipe villa</label>
+              <label className="va-label" htmlFor="cj-villa">
+                Tipe villa
+              </label>
               <div className="va-select">
-                <select id="cj-villa" className="va-input" value={villaType} onChange={(e) => setVillaType(e.target.value)}>
+                <select
+                  id="cj-villa"
+                  className="va-input"
+                  value={villaType}
+                  onChange={(e) => setVillaType(e.target.value)}
+                >
                   <option value="">Semua tipe</option>
                   {rentalOptionItems?.map((item) => (
-                    <option key={item?.id} value={String(item?.id)}>{item?.title}</option>
+                    <option key={item?.id} value={String(item?.id)}>
+                      {item?.title}
+                    </option>
                   ))}
                 </select>
                 <ChevronDown size={18} strokeWidth={1.5} />
@@ -339,20 +457,51 @@ export default function CekJadwal() {
 
             {/* Keperluan (value = id alasan, dikirim sebagai reason_id) */}
             <div className="va-field">
-              <label className="va-label" htmlFor="cj-purpose">Keperluan</label>
+              <label className="va-label" htmlFor="cj-purpose">
+                Keperluan
+              </label>
               <div className="va-select">
-                <select id="cj-purpose" className="va-input" value={purposeValue} onChange={(e) => setPurpose(e.target.value)}>
+                <select
+                  id="cj-purpose"
+                  className="va-input"
+                  value={purposeValue}
+                  onChange={(e) => {
+                    setPurpose(e.target.value);
+                    if (e.target.value !== "lainnya") setCustomPurpose("");
+                  }}
+                >
                   {reasonItems?.map((item) => (
-                    <option key={item?.id} value={String(item?.id)}>{item?.text}</option>
+                    <option key={item?.id} value={String(item?.id)}>
+                      {item?.text}
+                    </option>
                   ))}
+                  <option value="lainnya">Lainnya</option>
                 </select>
                 <ChevronDown size={18} strokeWidth={1.5} />
               </div>
             </div>
 
+            {isOtherPurpose && (
+              <div className="va-field">
+                <label className="va-label" htmlFor="cj-other-purpose">
+                  Detail keperluan
+                </label>
+                <input
+                  id="cj-other-purpose"
+                  type="text"
+                  placeholder="Contoh: Family Gathering"
+                  className="va-input"
+                  value={customPurpose}
+                  onChange={(e) => setCustomPurpose(e.target.value)}
+                />
+              </div>
+            )}
+
             {/* Jumlah tamu */}
             <div className="va-field">
-              <label className="va-label" htmlFor="cj-guest">Estimasi tamu</label>
+              <label className="va-label" htmlFor="cj-guest">
+                Estimasi tamu
+              </label>
               <input
                 id="cj-guest"
                 type="number"
@@ -364,15 +513,49 @@ export default function CekJadwal() {
                 onChange={(e) => setGuestCount(e.target.value)}
               />
             </div>
+
+            {/* Tamu menginap */}
+            <div className="va-field">
+              <label className="va-label" htmlFor="cj-overnight-guest">
+                Tamu Menginap
+              </label>
+              <input
+                id="cj-overnight-guest"
+                type="number"
+                min="0"
+                max="50"
+                placeholder="Contoh: 10"
+                className="va-input"
+                value={overnightGuestCount}
+                onChange={(e) => setOvernightGuestCount(e.target.value)}
+              />
+              <small
+                className="va-muted"
+                style={{
+                  display: "block",
+                  marginTop: "0.35rem",
+                  fontSize: "0.8rem",
+                }}
+              >
+                *Tidak semua tamu mendapatkan kasur jika jumlah tamu melebihi
+                kapasitas villa.
+              </small>
+            </div>
           </div>
 
           <div className="va-booking__foot">
             <div className="va-booking__sum" aria-live="polite">
-              {nights > 0 && <span className="va-tag">{stayLabel(nights)}</span>}
+              {nights > 0 && (
+                <span className="va-tag">{stayLabel(nights)}</span>
+              )}
               {villaLabel && <span className="va-tag">{villaLabel}</span>}
-              {Number(guestCount) > 0 && <span className="va-tag">{guestCount} tamu</span>}
+              {Number(guestCount) > 0 && (
+                <span className="va-tag">{guestCount} tamu</span>
+              )}
               {!nights && !villaType && !guestCount && (
-                <span className="va-text">Lengkapi tanggal untuk melihat ketersediaan.</span>
+                <span className="va-text">
+                  Lengkapi tanggal untuk melihat ketersediaan.
+                </span>
               )}
             </div>
             <button type="submit" className="va-btn">
@@ -396,7 +579,11 @@ export default function CekJadwal() {
                   {result.purposeLabel && ` · ${result.purposeLabel}`}
                 </p>
               </div>
-              <button type="button" className="va-btn va-btn--ghost va-btn--sm" onClick={() => setResult(null)}>
+              <button
+                type="button"
+                className="va-btn va-btn--ghost va-btn--sm"
+                onClick={() => setResult(null)}
+              >
                 Tutup hasil
               </button>
             </header>
@@ -406,47 +593,82 @@ export default function CekJadwal() {
             ) : resultError ? (
               <div className="va-alert" role="alert">
                 <AlertCircle size={16} />
-                <span>Gagal memuat ketersediaan: {resultErrorMsg?.message}</span>
+                <span>
+                  Gagal memuat ketersediaan: {resultErrorMsg?.message}
+                </span>
               </div>
             ) : resultItems.length === 0 ? (
               <div className="va-empty">
                 <strong>Belum ada unit tersedia</strong>
-                <p className="va-text">Semua unit sudah terpesan pada tanggal ini. Coba ubah tanggal atau tipe villa.</p>
+                <p className="va-text">
+                  Semua unit sudah terpesan pada tanggal ini. Coba ubah tanggal
+                  atau tipe villa.
+                </p>
               </div>
             ) : (
               <div className="va-results__grid">
                 {resultItems.map((item) => {
                   const max = Number(item?.max_capacity);
-                  const tooSmall = result.guestCount > 0 && Number.isFinite(max) && result.guestCount > max;
-                  const selected = result.villaType && String(item?.id) === String(result.villaType);
+                  const effectiveGuests =
+                    result.overnightGuestCount > 0
+                      ? result.overnightGuestCount
+                      : result.guestCount;
+                  const tooSmall =
+                    effectiveGuests > 0 &&
+                    Number.isFinite(max) &&
+                    effectiveGuests > max;
+                  const selected =
+                    result.villaType &&
+                    String(item?.id) === String(result.villaType);
 
                   const prices = Array.isArray(item?.prices) ? item.prices : [];
-                  const numeric = prices.map((p) => Number(p.price)).filter((n) => Number.isFinite(n));
+                  const numeric = prices
+                    .map((p) => Number(p.price))
+                    .filter((n) => Number.isFinite(n));
                   const minPrice = numeric.length ? Math.min(...numeric) : null;
 
                   return (
-                    <article key={item.id ?? item?.title} className="va-rent" data-full={tooSmall}>
+                    <article
+                      key={item.id ?? item?.title}
+                      className="va-rent"
+                      data-full={tooSmall}
+                    >
                       <div className="va-rent__img">
-                        <img src={item?.image} alt={item?.title} draggable={false} />
+                        <img
+                          src={item?.image}
+                          alt={item?.title}
+                          draggable={false}
+                        />
                         {(tooSmall || selected) && (
-                          <span className="va-chip">{tooSmall ? "Melebihi kapasitas" : "Pilihan Anda"}</span>
+                          <span className="va-chip">
+                            {tooSmall ? "Melebihi kapasitas" : "Pilihan Anda"}
+                          </span>
                         )}
                       </div>
                       <div className="va-rent__body">
                         <div>
                           <h3 className="va-h3">{item?.title}</h3>
-                          <p className="va-meta" style={{ marginTop: "0.9rem" }}>
+                          <p
+                            className="va-meta"
+                            style={{ marginTop: "0.9rem" }}
+                          >
                             <Users size={16} strokeWidth={1.5} />
                             Kapasitas {formatCapacity(item?.max_capacity)}
                           </p>
                         </div>
-                        <p className="va-text va-clamp-2">{item?.description}</p>
+                        <p className="va-text va-clamp-2">
+                          {item?.description}
+                        </p>
 
                         <div>
                           {minPrice !== null ? (
                             <>
-                              <span className="va-price">{formatRupiah(minPrice)}</span>
-                              <span className="va-price-note">mulai dari / malam</span>
+                              <span className="va-price">
+                                {formatRupiah(minPrice)}
+                              </span>
+                              <span className="va-price-note">
+                                mulai dari / malam
+                              </span>
                             </>
                           ) : (
                             <span className="va-muted">Harga belum diatur</span>
@@ -454,11 +676,20 @@ export default function CekJadwal() {
                         </div>
 
                         {prices.length > 1 && (
-                          <ul className="va-checks" style={{ fontSize: "0.82rem", gap: "0.35rem" }}>
+                          <ul
+                            className="va-checks"
+                            style={{ fontSize: "0.82rem", gap: "0.35rem" }}
+                          >
                             {prices.map((p) => (
-                              <li key={p.id} style={{ justifyContent: "space-between" }}>
+                              <li
+                                key={p.id}
+                                style={{ justifyContent: "space-between" }}
+                              >
                                 <span className="va-muted">
-                                  {humanize(p.season)}{p.day_type ? ` · ${humanize(p.day_type)}` : ""}
+                                  {humanize(p.season)}
+                                  {p.day_type
+                                    ? ` · ${humanize(p.day_type)}`
+                                    : ""}
                                 </span>
                                 <strong>{formatRupiah(p.price)}</strong>
                               </li>
@@ -466,13 +697,33 @@ export default function CekJadwal() {
                           </ul>
                         )}
 
+                        {tooSmall && (
+                          <div
+                            className="va-alert"
+                            style={{
+                              fontSize: "0.8rem",
+                              padding: "0.5rem 0.75rem",
+                            }}
+                          >
+                            <AlertCircle size={15} style={{ flexShrink: 0 }} />
+                            <span>
+                              Melebihi kapasitas (
+                              {formatCapacity(item?.max_capacity)}). Tidak semua
+                              tamu akan mendapatkan kasur.
+                            </span>
+                          </div>
+                        )}
+
                         <button
                           type="button"
                           className="va-btn va-btn--ghost va-btn--block va-cell__push"
-                          disabled={tooSmall}
-                          onClick={() => navigate("/booking/addon", { state: { unit: item, search: result } })}
+                          onClick={() =>
+                            navigate("/booking/addon", {
+                              state: { unit: item, search: result },
+                            })
+                          }
                         >
-                          {tooSmall ? "Kapasitas tidak cukup" : "Sewa Villa"}
+                          Sewa Villa
                         </button>
                       </div>
                     </article>

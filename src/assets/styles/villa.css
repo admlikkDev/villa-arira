@@ -1,5 +1,5 @@
 @import url("https://fonts.googleapis.com/css2?family=Hanken+Grotesk:wght@400;500;600;700&family=Instrument+Serif:ital@0;1&display=swap");
-@import url('https://fonts.googleapis.com/css2?family=Hanken+Grotesk:wght@400;500;600;700&family=Instrument+Serif:ital@0;1&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap');
+@import url("https://fonts.googleapis.com/css2?family=Hanken+Grotesk:wght@400;500;600;700&family=Instrument+Serif:ital@0;1&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap");
 /* ==========================================================
    VILLA ARIRA — design system
    Dua warna saja: --ink (hijau tua) dan --paper (putih gading).
@@ -10,8 +10,13 @@
 :root {
   --ink: #17251e;
   --paper: #f3eee4;
-  --font-display: "Instrument Serif", "Times New Roman", serif;
+    --accent: #17251e;
+
+  /* --font-display: "Instrument Serif", "Times New Roman", serif;
   --font-body: "Hanken Grotesk", system-ui, -apple-system, sans-serif;
+   */
+   --font-display: 'Plus Jakarta Sans', system-ui, -apple-system, sans-serif;
+    --font-body: 'Plus Jakarta Sans', system-ui, -apple-system, sans-serif;
   --gutter: clamp(1.25rem, 4vw, 3rem);
   --section-y: clamp(4.5rem, 9vw, 8rem);
   --ease: cubic-bezier(0.2, 0.8, 0.2, 1);
@@ -21,60 +26,136 @@
 :root[data-theme="kayu"] {
   --ink: #2a1b14;
   --paper: #f5ede0;
+    --accent: #2a1b14;
+  --font-display:
+    "Plus Jakarta Sans",
+    system-ui,
+    -apple-system,
+    sans-serif;
+  --font-body: "Plus Jakarta Sans", system-ui, -apple-system, sans-serif;
 }
 
 /* Opsi 3: KABUT (biru slate gelap + putih kabut) */
 :root[data-theme="kabut"] {
   --ink: #14232f;
   --paper: #eef1ec;
+  --accent: #14232f;
+  --font-display:
+    "Plus Jakarta Sans",
+    system-ui,
+    -apple-system,
+    sans-serif;
+  --font-body: "Plus Jakarta Sans", system-ui, -apple-system, sans-serif;
 }
 
-:root[data-theme='logo'] {
-    --ink: #3B2A22;     /* cokelat tua huruf logo */
-    --paper: #F3EFE6;   /* krem latar logo */
-    --accent: #9A4F2E;  /* terakota atap (opsional, aman dipakai di atas --paper saja) */
- 
-    --font-display: 'Plus Jakarta Sans', system-ui, -apple-system, sans-serif;
-    --font-body: 'Plus Jakarta Sans', system-ui, -apple-system, sans-serif;
+:root[data-theme="logo"] {
+  --ink: #3b2a22; /* cokelat tua huruf logo */
+  --paper: #f3efe6; /* krem latar logo */
+  --accent: #9a4f2e; /* terakota atap (opsional, aman dipakai di atas --paper saja) */
+
+  --font-display: "Plus Jakarta Sans", system-ui, -apple-system, sans-serif;
+  --font-body: "Plus Jakarta Sans", system-ui, -apple-system, sans-serif;
 }
 
 /* ---------- Judul: font sans perlu bobot, bukan 400 seperti serif ---------- */
-:where([data-theme='logo']) :is(
-    .va-h2, .va-h3, .va-hero__title, .va-page-hero__title, .va-auth__title, .va-adm-title,
-    .va-table__title, .va-modal__title, .va-footer__brand, .va-results__title, .va-empty strong,
-    .va-pm__rowhead strong, .va-brand, .va-sb__brand strong, .va-cart__title, .va-chat__head h4,
-    .va-cal__title, .va-cart__item h4
-) {
-    font-weight: 600;
-    letter-spacing: -0.02em;
+:where([data-theme="logo"])
+  :is(
+    .va-h2,
+    .va-h3,
+    .va-hero__title,
+    .va-page-hero__title,
+    .va-auth__title,
+    .va-adm-title,
+    .va-table__title,
+    .va-modal__title,
+    .va-footer__brand,
+    .va-results__title,
+    .va-empty strong,
+    .va-pm__rowhead strong,
+    .va-brand,
+    .va-sb__brand strong,
+    .va-cart__title,
+    .va-chat__head h4,
+    .va-cal__title,
+    .va-cart__item h4
+  ) {
+  font-weight: 600;
+  letter-spacing: -0.02em;
 }
-:where([data-theme='logo']) :is(.va-acc__btn, .va-nav__panel a, .va-auth__quote) { font-weight: 500; letter-spacing: -0.015em; }
- 
+:where([data-theme="logo"])
+  :is(.va-acc__btn, .va-nav__panel a, .va-auth__quote) {
+  font-weight: 500;
+  letter-spacing: -0.015em;
+}
+
 /* Angka harga */
-:where([data-theme='logo']) :is(.va-price, .va-adm-price, .va-table td.num) {
-    font-weight: 600;
-    letter-spacing: -0.02em;
-    font-variant-numeric: tabular-nums;
+:where([data-theme="logo"]) :is(.va-price, .va-adm-price, .va-table td.num) {
+  font-weight: 600;
+  letter-spacing: -0.02em;
+  font-variant-numeric: tabular-nums;
 }
- 
+
 /* Kutipan review: tidak miring, lebih tenang */
-:where([data-theme='logo']) .va-quote { font-style: normal; font-weight: 500; font-size: 1.2rem; line-height: 1.5; }
- 
+:where([data-theme="logo"]) .va-quote {
+  font-style: normal;
+  font-weight: 500;
+  font-size: 1.2rem;
+  line-height: 1.5;
+}
+
 /* ---------- Ukuran: sans lebih lebar dari Instrument Serif, kecilkan sedikit agar tidak meluap ---------- */
-:where([data-theme='logo']) .va-hero__title { font-size: clamp(2.6rem, 8vw, 6.2rem); line-height: 1.02; letter-spacing: -0.03em; }
-:where([data-theme='logo']) .va-page-hero__title { font-size: clamp(2.4rem, 6.5vw, 4.8rem); line-height: 1.05; letter-spacing: -0.03em; }
-:where([data-theme='logo']) .va-h2 { font-size: clamp(2rem, 4.2vw, 3.2rem); line-height: 1.1; }
-:where([data-theme='logo']) .va-h3 { font-size: 1.4rem; line-height: 1.2; }
-:where([data-theme='logo']) .va-auth__title { font-size: 2.2rem; }
-:where([data-theme='logo']) .va-auth__quote { font-size: clamp(1.6rem, 2.6vw, 2.3rem); line-height: 1.25; }
-:where([data-theme='logo']) .va-adm-title { font-size: clamp(1.7rem, 3vw, 2.4rem); line-height: 1.1; }
-:where([data-theme='logo']) .va-brand { font-size: 1.5rem; }
-:where([data-theme='logo']) .va-footer__brand { font-size: clamp(2.2rem, 5vw, 3.8rem); line-height: 1; }
-:where([data-theme='logo']) .va-table__title { font-size: 1.4rem; }
-:where([data-theme='logo']) .va-table td.num { font-size: 1.2rem; }
-:where([data-theme='logo']) .va-acc__btn { font-size: clamp(1.15rem, 2vw, 1.45rem); }
-:where([data-theme='logo']) .va-pm__rowhead strong { font-size: 1.25rem; }
-:where([data-theme='logo']) .va-paper .va-link { color: var(--accent); border-bottom-color: var(--accent); }
+:where([data-theme="logo"]) .va-hero__title {
+  font-size: clamp(2.6rem, 8vw, 6.2rem);
+  line-height: 1.02;
+  letter-spacing: -0.03em;
+}
+:where([data-theme="logo"]) .va-page-hero__title {
+  font-size: clamp(2.4rem, 6.5vw, 4.8rem);
+  line-height: 1.05;
+  letter-spacing: -0.03em;
+}
+:where([data-theme="logo"]) .va-h2 {
+  font-size: clamp(2rem, 4.2vw, 3.2rem);
+  line-height: 1.1;
+}
+:where([data-theme="logo"]) .va-h3 {
+  font-size: 1.4rem;
+  line-height: 1.2;
+}
+:where([data-theme="logo"]) .va-auth__title {
+  font-size: 2.2rem;
+}
+:where([data-theme="logo"]) .va-auth__quote {
+  font-size: clamp(1.6rem, 2.6vw, 2.3rem);
+  line-height: 1.25;
+}
+:where([data-theme="logo"]) .va-adm-title {
+  font-size: clamp(1.7rem, 3vw, 2.4rem);
+  line-height: 1.1;
+}
+:where([data-theme="logo"]) .va-brand {
+  font-size: 1.5rem;
+}
+:where([data-theme="logo"]) .va-footer__brand {
+  font-size: clamp(2.2rem, 5vw, 3.8rem);
+  line-height: 1;
+}
+:where([data-theme="logo"]) .va-table__title {
+  font-size: 1.4rem;
+}
+:where([data-theme="logo"]) .va-table td.num {
+  font-size: 1.2rem;
+}
+:where([data-theme="logo"]) .va-acc__btn {
+  font-size: clamp(1.15rem, 2vw, 1.45rem);
+}
+:where([data-theme="logo"]) .va-pm__rowhead strong {
+  font-size: 1.25rem;
+}
+:where([data-theme="logo"]) .va-paper .va-link {
+  color: var(--accent);
+  border-bottom-color: var(--accent);
+}
 
 html {
   scroll-behavior: smooth;
@@ -3166,4 +3247,743 @@ html:has(.va-shell)::-webkit-scrollbar,
 }
 .va-adm-card__foot .va-adm-card__detail {
   flex: 1 1 100%;
+}
+
+/* ==========================================================
+   TAMBAHKAN DI AKHIR villa.css
+   Halaman Wedding (.vw-*) + section Aturan Villa (.va-rules*)
+   Semua warna memakai token --ink / --paper, jadi ikut 4 tema.
+   ========================================================== */
+
+/* ---------- Aturan villa ---------- */
+.va-rules-wrap {
+  display: grid;
+  grid-template-columns: minmax(0, 0.9fr) minmax(0, 1.1fr);
+  gap: clamp(2rem, 6vw, 6rem);
+  align-items: start;
+}
+.va-rules-side {
+  position: sticky;
+  top: 6rem;
+}
+.va-times {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  margin-top: 2.5rem;
+  border: 1px solid var(--line);
+}
+.va-times > div {
+  padding: 1.5rem;
+  display: grid;
+  gap: 0.5rem;
+}
+.va-times > div + div {
+  border-left: 1px solid var(--line);
+}
+.va-times strong {
+  font-family: var(--font-display);
+  font-weight: 400;
+  font-size: clamp(2.2rem, 4vw, 3.2rem);
+  line-height: 1;
+}
+.va-rules {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  border-bottom: 1px solid var(--line);
+}
+.va-rules li {
+  display: grid;
+  grid-template-columns: 3.5rem minmax(0, 1fr);
+  gap: 1rem;
+  padding: 1.6rem 0;
+  border-top: 1px solid var(--line);
+}
+.va-rules__n {
+  font-family: var(--font-display);
+  font-style: italic;
+  font-size: 1.4rem;
+  line-height: 1.2;
+  color: var(--muted);
+}
+@media (max-width: 1024px) {
+  .va-rules-wrap {
+    grid-template-columns: 1fr;
+  }
+  .va-rules-side {
+    position: static;
+  }
+}
+
+/* ---------- Wedding: tipografi bersama ---------- */
+.vw-eyebrow {
+  display: inline-flex;
+  align-items: center;
+  gap: 1.25rem;
+  font-size: 0.78rem;
+  font-weight: 600;
+  letter-spacing: 0.26em;
+  text-transform: uppercase;
+}
+.vw-eyebrow::before,
+.vw-eyebrow::after {
+  content: "";
+  width: clamp(2rem, 8vw, 5rem);
+  height: 1px;
+  background: currentColor;
+  opacity: 0.7;
+}
+.vw-title {
+  font-family: var(--font-display);
+  font-weight: 400;
+  font-size: clamp(2.4rem, 6vw, 4.8rem);
+  line-height: 1;
+  letter-spacing: -0.02em;
+  margin: 0;
+}
+.vw-title em,
+.vw-hero__title em,
+.vw-statement em,
+.vw-cta__title em {
+  font-style: italic;
+}
+
+/* ---------- Hero ---------- */
+.vw-hero {
+  position: relative;
+  min-height: 100vh;
+  display: grid;
+  place-items: center;
+  text-align: center;
+  overflow: hidden;
+  padding: 7rem var(--gutter) 6rem;
+}
+.vw-hero__bg {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+.vw-hero__shade {
+  position: absolute;
+  inset: 0;
+  background: color-mix(in srgb, var(--ink) 62%, transparent);
+}
+.vw-hero__body {
+  position: relative;
+  display: grid;
+  gap: 1.75rem;
+  justify-items: center;
+  max-width: 1100px;
+  animation: va-rise 1s var(--ease) both;
+}
+.vw-hero__title {
+  font-family: var(--font-display);
+  font-weight: 400;
+  font-size: clamp(3rem, 10.5vw, 9rem);
+  line-height: 0.94;
+  letter-spacing: -0.03em;
+  margin: 0;
+}
+.vw-hero__sub {
+  margin: 0;
+  max-width: 50ch;
+  font-size: 1.1rem;
+  line-height: 1.6;
+  opacity: 0.9;
+}
+.vw-hero__cta {
+  display: flex;
+  gap: 0.75rem;
+  flex-wrap: wrap;
+  justify-content: center;
+  margin-top: 0.5rem;
+}
+.vw-hero__scroll {
+  position: absolute;
+  bottom: 1.75rem;
+  left: 50%;
+  transform: translateX(-50%);
+  display: grid;
+  justify-items: center;
+  gap: 0.6rem;
+  color: inherit;
+  text-decoration: none;
+  font-size: 0.72rem;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+}
+.vw-hero__scroll::after {
+  content: "";
+  width: 1px;
+  height: 40px;
+  background: currentColor;
+}
+
+/* ---------- Pernyataan + statistik ---------- */
+.vw-statement {
+  font-family: var(--font-display);
+  font-weight: 400;
+  font-size: clamp(1.9rem, 4.2vw, 3.4rem);
+  line-height: 1.2;
+  letter-spacing: -0.01em;
+  text-align: center;
+  max-width: 24em;
+  margin: 0 auto;
+}
+.vw-stats {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  margin-top: clamp(2.5rem, 6vw, 4.5rem);
+  border-top: 1px solid var(--line);
+}
+.vw-stat {
+  padding: 2rem 1rem;
+  text-align: center;
+  display: grid;
+  gap: 0.5rem;
+}
+.vw-stat + .vw-stat {
+  border-left: 1px solid var(--line);
+}
+.vw-stat strong {
+  font-family: var(--font-display);
+  font-weight: 400;
+  font-size: clamp(2rem, 5vw, 3.6rem);
+  line-height: 1;
+}
+.vw-stat span {
+  font-size: 0.85rem;
+  color: var(--muted);
+}
+
+/* ---------- Galeri ---------- */
+.vw-gallery {
+  padding: var(--section-y) var(--gutter);
+}
+.vw-gallery__head {
+  display: grid;
+  grid-template-columns: minmax(0, 1.1fr) minmax(0, 0.9fr);
+  gap: 1.5rem 4rem;
+  align-items: end;
+}
+@media (max-width: 860px) {
+  .vw-gallery__head {
+    grid-template-columns: 1fr;
+  }
+}
+
+.vw-filter {
+  position: sticky;
+  top: 4.6rem;
+  z-index: 20;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.75rem 2rem;
+  margin: 2.5rem 0 2rem;
+  padding: 1rem 0;
+  background: var(--bg);
+  border-block: 1px solid var(--line);
+}
+.vw-filter__group {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem;
+}
+.vw-chip {
+  padding: 0.55rem 1rem;
+  border: 1px solid var(--line);
+  border-radius: 0;
+  background: transparent;
+  color: var(--fg);
+  font: 600 0.82rem var(--font-body);
+  cursor: pointer;
+  transition:
+    background-color 0.2s ease,
+    color 0.2s ease,
+    border-color 0.2s ease;
+}
+.vw-chip:hover {
+  border-color: var(--fg);
+}
+.vw-chip[aria-pressed="true"] {
+  background: var(--fg);
+  color: var(--bg);
+  border-color: var(--fg);
+}
+.vw-count {
+  margin-left: auto;
+  font-size: 0.82rem;
+  color: var(--muted);
+  font-variant-numeric: tabular-nums;
+}
+
+.vw-masonry {
+  column-count: 3;
+  column-gap: 1rem;
+}
+@media (max-width: 1000px) {
+  .vw-masonry {
+    column-count: 2;
+  }
+}
+@media (max-width: 560px) {
+  .vw-masonry {
+    column-count: 1;
+  }
+}
+.vw-skel {
+  margin-bottom: 1rem;
+  break-inside: avoid;
+}
+
+.vw-tile {
+  position: relative;
+  display: block;
+  width: 100%;
+  margin: 0 0 1rem;
+  padding: 0;
+  break-inside: avoid;
+  border: 0;
+  border-radius: 0;
+  background: var(--soft);
+  color: var(--fg);
+  font: inherit;
+  text-align: left;
+  cursor: pointer;
+  overflow: hidden;
+  animation: vw-in 0.6s var(--ease) both;
+  animation-delay: calc(min(var(--i), 12) * 50ms);
+}
+@keyframes vw-in {
+  from {
+    opacity: 0;
+    transform: translateY(16px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+.vw-tile__media img,
+.vw-tile__media video {
+  width: 100%;
+  height: auto;
+  display: block;
+  transition: transform 0.8s var(--ease);
+}
+.vw-tile:hover .vw-tile__media img,
+.vw-tile:hover .vw-tile__media video {
+  transform: scale(1.05);
+}
+.vw-tile__play {
+  position: absolute;
+  top: 0.9rem;
+  right: 0.9rem;
+  width: 40px;
+  height: 40px;
+  display: grid;
+  place-items: center;
+  background: var(--bg);
+  color: var(--fg);
+}
+.vw-tile__cap {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  padding: 1rem 1.1rem;
+  display: grid;
+  gap: 0.15rem;
+  background: color-mix(in srgb, var(--ink) 84%, transparent);
+  color: var(--paper);
+  transform: translateY(100%);
+  transition: transform 0.35s var(--ease);
+}
+.vw-tile__cap span {
+  font-size: 0.72rem;
+  font-weight: 600;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  opacity: 0.75;
+}
+.vw-tile__cap strong {
+  font-family: var(--font-display);
+  font-weight: 400;
+  font-size: 1.25rem;
+  line-height: 1.15;
+}
+.vw-tile:hover .vw-tile__cap,
+.vw-tile:focus-visible .vw-tile__cap {
+  transform: none;
+}
+@media (hover: none) {
+  .vw-tile__cap {
+    transform: none;
+  }
+}
+
+/* ---------- Keunggulan ---------- */
+.vw-feats {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: clamp(1.5rem, 4vw, 3rem);
+}
+.vw-feat {
+  border-top: 1px solid var(--fg);
+  padding-top: 1.5rem;
+  display: grid;
+  gap: 0.9rem;
+  align-content: start;
+}
+.vw-feat__n {
+  font-family: var(--font-display);
+  font-style: italic;
+  font-size: 1.15rem;
+  color: var(--muted);
+}
+@media (max-width: 860px) {
+  .vw-feats {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* ---------- CTA penutup ---------- */
+.vw-cta {
+  text-align: center;
+  padding: calc(var(--section-y) * 1.1) var(--gutter);
+}
+.vw-cta .va-wrap {
+  display: grid;
+  gap: 1.75rem;
+  justify-items: center;
+}
+.vw-cta__title {
+  font-family: var(--font-display);
+  font-weight: 400;
+  font-size: clamp(2.6rem, 7.5vw, 6rem);
+  line-height: 0.98;
+  letter-spacing: -0.025em;
+  margin: 0;
+  max-width: 14ch;
+}
+
+/* ---------- Lightbox ---------- */
+.vw-lb {
+  position: fixed;
+  inset: 0;
+  z-index: 2000;
+  display: grid;
+  place-items: center;
+  padding: 4.5rem 4.5rem 2rem;
+  background: color-mix(in srgb, var(--ink) 96%, transparent);
+  animation: va-fade 0.2s ease both;
+}
+.vw-lb__fig {
+  margin: 0;
+  display: grid;
+  gap: 1.25rem;
+  justify-items: center;
+  min-width: 0;
+  max-width: 100%;
+}
+.vw-lb__fig img,
+.vw-lb__fig video {
+  max-width: 100%;
+  max-height: 68vh;
+  object-fit: contain;
+  display: block;
+}
+.vw-lb__cap {
+  display: grid;
+  gap: 0.35rem;
+  justify-items: center;
+  text-align: center;
+  max-width: 60ch;
+}
+.vw-lb__count {
+  margin-top: 0.4rem;
+  font-size: 0.8rem;
+  color: var(--muted);
+  font-variant-numeric: tabular-nums;
+}
+.vw-lb__close {
+  position: absolute;
+  top: 1rem;
+  right: 1rem;
+}
+.vw-lb__btn {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+}
+.vw-lb__btn--prev {
+  left: 1rem;
+}
+.vw-lb__btn--next {
+  right: 1rem;
+}
+@media (max-width: 700px) {
+  .vw-lb {
+    padding: 4rem 1rem 5rem;
+  }
+  .vw-lb__btn {
+    top: auto;
+    bottom: 1rem;
+    transform: none;
+  }
+}
+
+/* ---------- Tema "logo" (font sans): beri bobot pada judul wedding ---------- */
+:where([data-theme="logo"])
+  :is(
+    .vw-hero__title,
+    .vw-title,
+    .vw-cta__title,
+    .vw-statement,
+    .vw-stat strong,
+    .va-times strong
+  ) {
+  font-weight: 600;
+  letter-spacing: -0.03em;
+}
+:where([data-theme="logo"]) .vw-hero__title {
+  font-size: clamp(2.6rem, 8.5vw, 7rem);
+  line-height: 1.02;
+}
+:where([data-theme="logo"]) .vw-cta__title {
+  font-size: clamp(2.3rem, 6vw, 4.6rem);
+  line-height: 1.05;
+}
+:where([data-theme="logo"]) .vw-statement {
+  font-size: clamp(1.6rem, 3.4vw, 2.6rem);
+  font-weight: 500;
+}
+:where([data-theme="logo"]) .vw-tile__cap strong {
+  font-weight: 600;
+  font-size: 1.05rem;
+}
+
+/* ==========================================================
+   TAMBAHKAN DI AKHIR villa.css
+   Navbar: pill Wedding (desktop), tab bar bawah + sheet (HP)
+   Memakai token tema; di tema "logo" Wedding otomatis berwarna --accent (terakota).
+   ========================================================== */
+
+:root {
+  --tabbar-h: 4.25rem;
+}
+
+/* ---------- Desktop ---------- */
+.va-nav__menu {
+  align-items: center;
+}
+.va-nav__link[aria-current="page"] {
+  background-size: 100% 1px;
+}
+.va-nav__user {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.88rem;
+  font-weight: 600;
+  color: var(--muted);
+}
+
+.va-nav__wedding,
+.va-tab-item--wedding {
+  --hl: var(--accent, var(--fg));
+}
+.va-nav__wedding {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.55rem 1.15rem;
+  background: var(--hl);
+  color: var(--bg);
+  font: 600 0.88rem var(--font-body);
+  text-decoration: none;
+  animation: vn-pulse 2.6s ease-out infinite;
+  transition:
+    background-color 0.2s ease,
+    color 0.2s ease;
+}
+.va-nav__wedding svg {
+  fill: currentColor;
+}
+.va-nav__wedding:hover {
+  animation: none;
+  background: transparent;
+  color: var(--hl);
+  box-shadow: inset 0 0 0 1px var(--hl);
+}
+@keyframes vn-pulse {
+  0% {
+    box-shadow: 0 0 0 0 color-mix(in srgb, var(--hl) 45%, transparent);
+  }
+  70%,
+  100% {
+    box-shadow: 0 0 0 0.7rem transparent;
+  }
+}
+
+/* ---------- HP: sembunyikan navbar atas, pakai tab bar bawah ---------- */
+.va-tabbar,
+.va-sheet,
+.va-sheet-overlay {
+  display: none;
+}
+
+@media (max-width: 900px) {
+  .va-nav {
+    display: none;
+  }
+
+  .va-tabbar {
+    position: fixed;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    z-index: 1000;
+    display: grid;
+    grid-template-columns: repeat(5, minmax(0, 1fr));
+    align-items: end;
+    height: calc(var(--tabbar-h) + env(safe-area-inset-bottom, 0px));
+    padding-bottom: env(safe-area-inset-bottom, 0px);
+    border-top: 1px solid var(--fg);
+  }
+  .va-tab-item {
+    position: relative;
+    display: grid;
+    justify-items: center;
+    align-content: center;
+    gap: 0.3rem;
+    height: var(--tabbar-h);
+    padding: 0;
+    border: 0;
+    border-radius: 0;
+    background: transparent;
+    color: var(--muted);
+    font: 600 0.68rem/1 var(--font-body);
+    text-decoration: none;
+    cursor: pointer;
+    transition: color 0.2s ease;
+  }
+  .va-tab-item[aria-current="page"] {
+    color: var(--fg);
+  }
+  .va-tab-item[aria-current="page"]::before {
+    content: "";
+    position: absolute;
+    top: -1px;
+    left: 28%;
+    right: 28%;
+    height: 2px;
+    background: var(--fg);
+  }
+
+  /* Wedding: tombol tengah yang menonjol */
+  .va-tab-item--wedding {
+    color: var(--fg);
+  }
+  .va-tab-item--wedding::before {
+    display: none;
+  }
+  .va-tab-item__icon {
+    width: 3.4rem;
+    height: 3.4rem;
+    margin-top: -1.7rem;
+    display: grid;
+    place-items: center;
+    background: var(--hl);
+    color: var(--bg);
+    border: 4px solid var(--bg);
+    animation: vn-pulse 2.6s ease-out infinite;
+  }
+  .va-tab-item__icon svg {
+    fill: currentColor;
+  }
+
+  /* Beri ruang agar konten & tombol melayang tidak tertutup tab bar */
+  body:has(.va-tabbar) {
+    padding-bottom: calc(var(--tabbar-h) + env(safe-area-inset-bottom, 0px));
+  }
+  body:has(.va-tabbar) .va-float {
+    bottom: calc(var(--tabbar-h) + 1rem + env(safe-area-inset-bottom, 0px));
+  }
+
+  /* Sheet "Lainnya" */
+  .va-sheet-overlay {
+    display: block;
+    position: fixed;
+    inset: 0;
+    z-index: 1001;
+    background: color-mix(in srgb, var(--ink) 55%, transparent);
+    animation: va-fade 0.2s ease both;
+  }
+  .va-sheet {
+    display: grid;
+    position: fixed;
+    left: 0;
+    right: 0;
+    z-index: 1002;
+    bottom: calc(var(--tabbar-h) + env(safe-area-inset-bottom, 0px));
+    padding: 0.5rem var(--gutter) 1.25rem;
+    border-top: 1px solid var(--fg);
+    animation: va-sheet-in 0.25s var(--ease) both;
+  }
+  @keyframes va-sheet-in {
+    from {
+      opacity: 0;
+      transform: translateY(24px);
+    }
+    to {
+      opacity: 1;
+      transform: none;
+    }
+  }
+  .va-sheet__user {
+    display: flex;
+    align-items: center;
+    gap: 0.9rem;
+    padding: 1rem 0;
+    border-bottom: 1px solid var(--line);
+  }
+  .va-sheet__user strong {
+    display: block;
+    font-weight: 600;
+  }
+  .va-sheet__user small {
+    color: var(--muted);
+    font-size: 0.8rem;
+  }
+  .va-sheet__link {
+    display: flex;
+    align-items: center;
+    gap: 0.9rem;
+    width: 100%;
+    padding: 1rem 0;
+    border: 0;
+    border-bottom: 1px solid var(--line);
+    border-radius: 0;
+    background: transparent;
+    color: var(--fg);
+    font: 600 1rem var(--font-body);
+    text-align: left;
+    text-decoration: none;
+    cursor: pointer;
+  }
+  .va-sheet__link > svg:last-child:not(:first-child) {
+    margin-left: auto;
+    color: var(--muted);
+  }
+  .va-sheet__auth {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 0.6rem;
+    padding-top: 1rem;
+  }
 }

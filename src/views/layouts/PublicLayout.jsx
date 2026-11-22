@@ -3,6 +3,7 @@ import FloatingWhatsApp from "@/components/FloatingWhatsApp";
 import Footer from "@/components/Footer";
 import Navbar from "@/components/Navbar";
 import { Outlet } from "react-router-dom";
+import FloatingControlMusic from "../../components/FloatingControlMusic";
 
 export default function PublicLayout() {
     return (
@@ -14,6 +15,7 @@ export default function PublicLayout() {
             <Footer />
             <FloatingToTop />
             <FloatingWhatsApp />
+            <FloatingControlMusic />
         </>
     )
 }

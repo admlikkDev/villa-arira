@@ -38,6 +38,7 @@ import BookingResultPage from "./views/BookingResultPage";
 import MyBookingsPage from "./views/MyBookingPage";
 import NotFoundPage from "./views/NotFoundPage";
 import AdminBookingsIndex from "./views/Admin/Bookings/Index";
+import WeddingPage from "./views/WeddingPage";
 
 export default function App() {
   const { get } = useFetch();
@@ -138,6 +139,10 @@ export default function App() {
         {
           path: '/riwayat-pesanan',
           element: <MyBookingsPage/>
+        },
+        {
+          path: '/wedding',
+          element: <WeddingPage/>
         },
         {
           path: '*',

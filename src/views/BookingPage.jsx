@@ -23,11 +23,11 @@ export default function BookingPage() {
           </p>
         </div>
       </header>
-      <CekJadwal />
+      {/* <hr />  */}
       <PricelistVilla />
-      <hr /> 
       <PaketVilla />
       <AddOnVilla />
+      <CekJadwal />
       {/* <FaqVilla /> */}
     </>
   );
