@@ -39,23 +39,23 @@ export default function GlobalDetailCardIndex({
 
     if (isPending) {
         return (
-            <AdminPanelLayout>
+            <div>
                 <div className="va-state">
                     <Loader2 className="va-spin" size={26} />
                     <p>Memuat data {title}…</p>
                 </div>
-            </AdminPanelLayout>
+            </div>
         );
     }
 
     if (isError) {
         return (
-            <AdminPanelLayout>
+            <div>
                 <div className="va-alert" role="alert">
                     <AlertCircle size={16} />
                     <span>Gagal memuat data: {error.message}</span>
                 </div>
-            </AdminPanelLayout>
+            </div>
         );
     }
 
@@ -71,7 +71,7 @@ export default function GlobalDetailCardIndex({
     }
 
     return (
-        <AdminPanelLayout>
+        <div>
             <GlobalCreateUpdateModal open={openModal} onOpenChange={setOpenModal} isCreate={isCreate} id={id} idParam={idParam} path={pathDetail} title={title} queryKey={pathDetail} fields={fields} initialValues={initialValues} hasId={hasId} isVillaList={true} nameId={nameId} />
             <GlobalDeleteModal open={openDeleteModal} onOpenChange={setOpenDeleteModal} id={deleteId} path={pathDetail} queryKey={`admin-${pathDetail}-section`} />
 
@@ -119,6 +119,6 @@ export default function GlobalDetailCardIndex({
                     ))}
                 </div>
             )}
-        </AdminPanelLayout>
+        </div>
     );
 }

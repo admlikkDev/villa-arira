@@ -6,16 +6,28 @@ import {
 import SectionState from "./SectionState";
 import "../assets/styles/villa.css";
 
-// Endpoint pricelists tidak memakai pagination; urutkan dari harga weekday terendah
-const byPrice = (a, b) => Number(a.weekday_price) - Number(b.weekday_price);
+const bySortOrder = (a, b) => Number(a.sort_order ?? 0) - Number(b.sort_order ?? 0);
+
+const findPrice = (prices = [], season, dayType) => {
+  if (!Array.isArray(prices)) return null;
+  const found = prices.find(
+    (p) =>
+      String(p.season).toLowerCase() === season &&
+      String(p.day_type).toLowerCase() === dayType
+  );
+  return found ? found.price : null;
+};
 
 export default function PricelistVilla() {
   const {
-    data: pricelist = [],
+    data: rentalOptions = [],
     isLoading,
     isError,
     error,
-  } = useVillaList("pricelists", { query: "", sort: byPrice });
+  } = useVillaList("rental-options", {
+    query: "unpage=true",
+    sort: bySortOrder,
+  });
 
   if (isLoading) return <SectionState tone="ink" label="Memuat pricelist…" />;
   if (isError)
@@ -26,17 +38,18 @@ export default function PricelistVilla() {
         error={error.message}
       />
     );
-  if (pricelist.length === 0) {
+  if (rentalOptions.length === 0) {
     return <SectionState tone="paper" label="Data pricelist belum tersedia" />;
   }
+
   return (
     <section id="pricelist" className="va-paper va-section">
       <div className="va-wrap">
         <div className="va-head">
           <h2 className="va-h2">Pricelist Villa Arira</h2>
           <p className="va-lead">
-            Tarif transparan tanpa biaya tersembunyi untuk weekday, weekend,
-            long weekend, dan high season libur nasional.
+            Tarif transparan tanpa biaya tersembunyi untuk weekday, weekend, dan
+            high season libur nasional.
           </p>
         </div>
 
@@ -47,43 +60,66 @@ export default function PricelistVilla() {
                 <th scope="col">Tipe sewa</th>
                 <th scope="col">Kapasitas</th>
                 <th scope="col" className="num">
-                  Weekday<small>Senin – Kamis</small>
+                  Weekday<small>Reguler (Senin – Kamis)</small>
                 </th>
                 <th scope="col" className="num">
-                  Weekend<small>Jumat – Minggu</small>
+                  Weekend<small>Reguler (Jumat – Minggu)</small>
                 </th>
                 <th scope="col" className="num">
-                  Long weekend<small>Libur nasional</small>
+                  High Season<small>Weekday</small>
                 </th>
                 <th scope="col" className="num">
-                  High season<small>Lebaran & nataru</small>
+                  High Season<small>Weekend & Libur Nasional</small>
                 </th>
               </tr>
             </thead>
             <tbody>
-              {pricelist.map((item) => (
-                <tr key={item.id ?? item.title}>
-                  <td>
-                    <h3 className="va-table__title">
-                      {item?.rental_option?.title}
-                    </h3>
-                    <span className="va-muted" style={{ fontSize: "0.84rem" }}>
-                      {item?.rental_option?.description}
-                    </span>
-                  </td>
-                  <td style={{ fontWeight: 500, whiteSpace: "nowrap" }}>
-                    {formatCapacity(item?.rental_option?.max_capacity)}
-                  </td>
-                  <td className="num">{formatRupiah(item.weekday_price)}</td>
-                  <td className="num">{formatRupiah(item.weekend_price)}</td>
-                  <td className="num">
-                    {formatRupiah(item.long_weekend_price)}
-                  </td>
-                  <td className="num">
-                    {formatRupiah(item.high_season_price)}
-                  </td>
-                </tr>
-              ))}
+              {rentalOptions.map((item) => {
+                const regWeekday = findPrice(item.prices, "reguler", "weekday");
+                const regWeekend = findPrice(item.prices, "reguler", "weekend");
+                const highWeekday = findPrice(item.prices, "high", "weekday");
+                const highWeekend = findPrice(item.prices, "high", "weekend");
+
+                return (
+                  <tr key={item.id ?? item.title}>
+                    <td>
+                      <h3 className="va-table__title">{item.title}</h3>
+                      {item.subtitle && (
+                        <div
+                          style={{
+                            fontSize: "0.82rem",
+                            fontWeight: 500,
+                            marginBottom: "0.15rem",
+                          }}
+                        >
+                          {item.subtitle}
+                        </div>
+                      )}
+                      <span
+                        className="va-muted"
+                        style={{ fontSize: "0.84rem" }}
+                      >
+                        {item.description}
+                      </span>
+                    </td>
+                    <td style={{ fontWeight: 500, whiteSpace: "nowrap" }}>
+                      {formatCapacity(item.max_capacity)}
+                    </td>
+                    <td className="num">
+                      {regWeekday !== null ? formatRupiah(regWeekday) : "-"}
+                    </td>
+                    <td className="num">
+                      {regWeekend !== null ? formatRupiah(regWeekend) : "-"}
+                    </td>
+                    <td className="num">
+                      {highWeekday !== null ? formatRupiah(highWeekday) : "-"}
+                    </td>
+                    <td className="num">
+                      {highWeekend !== null ? formatRupiah(highWeekend) : "-"}
+                    </td>
+                  </tr>
+                );
+              })}
             </tbody>
           </table>
         </div>

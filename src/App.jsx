@@ -39,6 +39,10 @@ import MyBookingsPage from "./views/MyBookingPage";
 import NotFoundPage from "./views/NotFoundPage";
 import AdminBookingsIndex from "./views/Admin/Bookings/Index";
 import WeddingPage from "./views/WeddingPage";
+import RuleIndex from "./views/Admin/Rule/Index";
+import EventBookingIndex from "./views/Admin/Bookings/EventBooking";
+import EventRequestIndex from "./views/Admin/Bookings/RequestEventBooking";
+import AdminPanelLayout from "./views/layouts/AdminPanelLayout";
 
 export default function App() {
   const { get } = useFetch();
@@ -49,26 +53,29 @@ export default function App() {
       if (!resp.status) throw new Error(resp.error);
       return resp.data;
     },
-    staleTime: 1000 * 60 * 5, 
+    staleTime: 1000 * 60 * 5,
   });
 
-  {useEffect(() => {
+  {
+    useEffect(() => {
       const clientKey = import.meta.env.VITE_MIDTRANS_CLIENT_KEY;
-      const scriptId = 'midtrans-snap-script';
-    
+      const scriptId = "midtrans-snap-script";
+
       if (!document.getElementById(scriptId)) {
-        const script = document.createElement('script');
+        const script = document.createElement("script");
         script.id = scriptId;
-        script.src = "https://app.sandbox.midtrans.com/snap/snap.js"; 
-        script.setAttribute('data-client-key', clientKey);
+        script.src = "https://app.sandbox.midtrans.com/snap/snap.js";
+        script.setAttribute("data-client-key", clientKey);
         document.body.appendChild(script);
       }
     }, []);
-}  
+  }
 
   useEffect(() => {
     if (data) {
-      const appData = Array.isArray(data?.data) ? data.data[0] : (data?.data || data);
+      const appData = Array.isArray(data?.data)
+        ? data.data[0]
+        : data?.data || data;
 
       if (appData) {
         if (appData.title) {
@@ -90,162 +97,179 @@ export default function App() {
 
   return useRoutes([
     {
-      path: '/login',
-      element: <Login />
+      path: "/login",
+      element: <Login />,
     },
     {
-      path: '/register',
-      element: <Register />
+      path: "/register",
+      element: <Register />,
     },
     {
       element: <PublicLayout />,
       children: [
         {
-          path: '/',
-          element: <Homepage />
+          path: "/",
+          element: <Homepage />,
         },
         {
-          path: '/booking',
-          element: <BookingPage />
+          path: "/booking",
+          element: <BookingPage />,
         },
         {
-          path: '/booking/addon',
-          element: <BookingAddonPage />
+          path: "/booking/addon",
+          element: <BookingAddonPage />,
         },
         {
-          path: '/gallery',
-          element: <GalleryPage />
+          path: "/gallery",
+          element: <GalleryPage />,
         },
         {
-          path: '/contact',
-          element: <ContactPage />
+          path: "/contact",
+          element: <ContactPage />,
         },
         {
-          path: '/tipe-villa/:id',
-          element: <RentalDetailPage />
+          path: "/tipe-villa/:id",
+          element: <RentalDetailPage />,
         },
         {
-          path: '/booking/success',
-          element: <BookingResultPage variant="success"/>
+          path: "/booking/success",
+          element: <BookingResultPage variant="success" />,
         },
         {
-          path: '/booking/pending',
-          element: <BookingResultPage variant="pending"/>
+          path: "/booking/pending",
+          element: <BookingResultPage variant="pending" />,
         },
         {
-          path: '/booking/failed',
-          element: <BookingResultPage variant="failed"/>
+          path: "/booking/failed",
+          element: <BookingResultPage variant="failed" />,
         },
         {
-          path: '/riwayat-pesanan',
-          element: <MyBookingsPage/>
+          path: "/riwayat-pesanan",
+          element: <MyBookingsPage />,
         },
         {
-          path: '/wedding',
-          element: <WeddingPage/>
+          path: "/wedding",
+          element: <WeddingPage />,
         },
         {
-          path: '*',
-          element: <NotFoundPage />
-        }
-      ]
-    },
-    // admin panel
-    {
-      path: '/admin/hero-section',
-      element: <Index />
+          path: "*",
+          element: <NotFoundPage />,
+        },
+      ],
     },
     {
-      path: '/admin/faq-section',
-      element: <FaqIndex />
-    },
-    {
-      path: '/admin/gallery',
-      element: <GalleryIndex />
-    },
-    {
-      path: '/admin/testimony',
-      element: <TestimonyIndex />
-    },
-    {
-      path: '/admin/application',
-      element: <ApplicationIndex />
-    },
-    {
-      path: '/admin/package',
-      element: <PackageIndex />
-    },
-    {
-      path: '/admin/package/:idParam',
-      element: <PackageListIndex />
-    },
-    {
-      path: '/admin/specification',
-      element: <SpecificationIndex />
-    },
-    {
-      path: '/admin/facility',
-      element: <FacilityIndex />
-    },
-    {
-      path: '/admin/addon',
-      element: <AddonIndex />
-    },
-    {
-      path: '/admin/logo',
-      element: < LogoIndex/>
-    },
-    {
-      path: '/admin/specification/image',
-      element: < ImageSpecification/>
-    },
-    {
-      path: '/admin/pricelist',
-      element: < PricelistIndex/>
-    },
-    {
-      path: '/admin/addon/:idParam',
-      element: <AddonListIndex />
-    },
-    {
-      path: '/admin/rental-options',
-      element: <RentalOptionIndex />
-    },
-    {
-      path: '/admin/wisata-terdekat',
-      element: <WisataIndex />
-    },
-    {
-      path: '/admin/wisata-terdekat/:idParam',
-      element: <WisataListIndex />
-    },
-    {
-      path: '/admin/messages',
-      element: <MessageIndex />
-    },
-    {
-      path: '/admin/reasons',
-      element: <ReasonIndex />
-    },
-    {
-      path: '/admin/whatsapp-template',
-      element: <WhatsappTemplateIndex />
-    },
-    {
-      path: '/admin/users',
-      element: <UserIndex />
-    },
-    {
-      path: '/admin/seasons',
-      element: <SeasonIndex />
-    },
-    {
-      path: '/admin/rental-options/:id',
-      element: <AdminRentalPrices />
-    },
-    {
-      path: '/admin/bookings',
-      element: <AdminBookingsIndex />
+      element: <AdminPanelLayout />,
+      children: [
+        // admin panel
+        {
+          path: "/admin/hero-section",
+          element: <Index />,
+        },
+        {
+          path: "/admin/faq-section",
+          element: <FaqIndex />,
+        },
+        {
+          path: "/admin/gallery",
+          element: <GalleryIndex />,
+        },
+        {
+          path: "/admin/testimony",
+          element: <TestimonyIndex />,
+        },
+        {
+          path: "/admin/application",
+          element: <ApplicationIndex />,
+        },
+        {
+          path: "/admin/package",
+          element: <PackageIndex />,
+        },
+        {
+          path: "/admin/package/:idParam",
+          element: <PackageListIndex />,
+        },
+        {
+          path: "/admin/specification",
+          element: <SpecificationIndex />,
+        },
+        {
+          path: "/admin/facility",
+          element: <FacilityIndex />,
+        },
+        {
+          path: "/admin/addon",
+          element: <AddonIndex />,
+        },
+        {
+          path: "/admin/logo",
+          element: <LogoIndex />,
+        },
+        {
+          path: "/admin/specification/image",
+          element: <ImageSpecification />,
+        },
+        {
+          path: "/admin/pricelist",
+          element: <PricelistIndex />,
+        },
+        {
+          path: "/admin/addon/:idParam",
+          element: <AddonListIndex />,
+        },
+        {
+          path: "/admin/rental-options",
+          element: <RentalOptionIndex />,
+        },
+        {
+          path: "/admin/wisata-terdekat",
+          element: <WisataIndex />,
+        },
+        {
+          path: "/admin/wisata-terdekat/:idParam",
+          element: <WisataListIndex />,
+        },
+        {
+          path: "/admin/messages",
+          element: <MessageIndex />,
+        },
+        {
+          path: "/admin/reasons",
+          element: <ReasonIndex />,
+        },
+        {
+          path: "/admin/whatsapp-template",
+          element: <WhatsappTemplateIndex />,
+        },
+        {
+          path: "/admin/users",
+          element: <UserIndex />,
+        },
+        {
+          path: "/admin/seasons",
+          element: <SeasonIndex />,
+        },
+        {
+          path: "/admin/rental-options/:id",
+          element: <AdminRentalPrices />,
+        },
+        {
+          path: "/admin/bookings",
+          element: <AdminBookingsIndex />,
+        },
+        {
+          path: "/admin/event-bookings",
+          element: <EventBookingIndex />,
+        },
+        {
+          path: "/admin/request-event-bookings",
+          element: <EventRequestIndex />,
+        },
+        {
+          path: "/admin/rules",
+          element: <RuleIndex />,
+        },
+      ],
     },
   ]);
 }

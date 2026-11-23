@@ -38,30 +38,30 @@ export default function Index() {
 
     if (isLoading) {
         return (
-            <AdminPanelLayout>
+            <div>
                 <div className="va-state">
                     <Loader2 className="va-spin" size={26} />
                     <p>Memuat data hero section…</p>
                 </div>
-            </AdminPanelLayout>
+            </div>
         );
     }
 
     if (isError) {
         return (
-            <AdminPanelLayout>
+            <div>
                 <div className="va-alert" role="alert">
                     <AlertCircle size={16} />
                     <span>Gagal memuat data: {error.message}</span>
                 </div>
-            </AdminPanelLayout>
+            </div>
         );
     }
 
     const heroContent = data?.data || data;
 
     return (
-        <AdminPanelLayout>
+        <div>
             <UpdateHeroModal open={isOpen} onOpenChange={setIsOpen} data={heroContent} />
 
             <header className="va-adm-head">
@@ -92,6 +92,6 @@ export default function Index() {
                     Terakhir diperbarui: {formatTimeAgo(heroContent?.updatedAt)}
                 </span>
             </div>
-        </AdminPanelLayout>
+        </div>
     );
 }

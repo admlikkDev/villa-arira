@@ -11,7 +11,7 @@ export default function AddOnVilla() {
     if (addons.length === 0) return null;
 
     return (
-        <section id="add-on" className="va-paper va-section">
+        <section id="add-on" className="va-ink va-section">
             <div className="va-wrap">
                 <div className="va-head">
                     <h2 className="va-h2">Add-on & fasilitas ekstra</h2>
@@ -44,12 +44,6 @@ export default function AddOnVilla() {
                                     <span className="va-price">{formatRupiah(item.price)}</span>
                                     {item.unit && <span className="va-price-note">{item.unit}</span>}
                                 </div>
-                                <button
-                                    className="va-btn va-btn--ghost va-btn--sm"
-                                    onClick={() => alert(`Menambahkan ${item.title} ke reservasi`)}
-                                >
-                                    <Plus size={16} /> Tambah
-                                </button>
                             </div>
                         </article>
                     ))}

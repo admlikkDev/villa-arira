@@ -107,12 +107,17 @@ export default function Navbar() {
     if (pathname === "/") window.scrollTo({ top: 0, behavior: "smooth" });
   };
 
-  const moreActive = sheetOpen || pathname === "/contact" || pathname === HISTORY_PATH;
-
+  const moreActive =
+    sheetOpen || pathname === "/contact" || pathname === HISTORY_PATH;
+  // console.log(user?.user?.role)
   return (
     <>
       {/* ===== DESKTOP: navbar atas ===== */}
-      <nav className="va-nav" data-visible={showNav} aria-label="Navigasi utama">
+      <nav
+        className="va-nav"
+        data-visible={showNav}
+        aria-label="Navigasi utama"
+      >
         <Link to="/" className="va-brand" onClick={brandClick}>
           Villa Arira
         </Link>
@@ -140,14 +145,29 @@ export default function Navbar() {
                 <User size={15} /> {username}
               </span>
               {hasBooked && (
-                <Link to={HISTORY_PATH} className="va-btn va-btn--ghost va-btn--sm">
+                <Link
+                  to={HISTORY_PATH}
+                  className="va-btn va-btn--ghost va-btn--sm"
+                >
                   <History size={15} /> Riwayat
                 </Link>
+              )}
+              {user?.user?.role == "admin" ? (
+                <>
+                  <Link to="/admin/hero-section" className="va-btn va-btn--sm">
+                    Dashboard
+                  </Link>
+                </>
+              ) : (
+                <></>
               )}
               <Link to="/booking#cek-jadwal" className="va-btn va-btn--sm">
                 Booking
               </Link>
-              <button className="va-btn va-btn--ghost va-btn--sm" onClick={exit}>
+              <button
+                className="va-btn va-btn--ghost va-btn--sm"
+                onClick={exit}
+              >
                 Logout
               </button>
             </>
@@ -202,11 +222,20 @@ export default function Navbar() {
       {/* ===== HP: sheet "Lainnya" ===== */}
       {sheetOpen && (
         <>
-          <div className="va-sheet-overlay" onClick={() => setSheetOpen(false)} />
-          <div className="va-paper va-sheet" role="dialog" aria-label="Menu lainnya">
+          <div
+            className="va-sheet-overlay"
+            onClick={() => setSheetOpen(false)}
+          />
+          <div
+            className="va-paper va-sheet"
+            role="dialog"
+            aria-label="Menu lainnya"
+          >
             {user && (
               <div className="va-sheet__user">
-                <span className="va-sb__avatar">{(username ?? "?").charAt(0).toUpperCase()}</span>
+                <span className="va-sb__avatar">
+                  {(username ?? "?").charAt(0).toUpperCase()}
+                </span>
                 <div>
                   <strong>{username}</strong>
                   <small>Akun Anda</small>

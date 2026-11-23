@@ -54,8 +54,6 @@ export default function GlobalCreateUpdateModal({
   is_imageSpecification = false,
   is_price = false,
 }) {
-
-  console.log(initialValues)
   const [formData, setFormData] = useState(initialValues);
   const [errors, setErrors] = useState({});
 
@@ -91,7 +89,6 @@ export default function GlobalCreateUpdateModal({
     enabled: open && hasSelect,
     staleTime: 5 * 60 * 1000,
   });
-
 
   // Selama edit, tampilkan spinner sampai data TERBARU tiba (bukan cache lama)
   const showLoading = !isCreate && isFetchingDetail;
@@ -160,9 +157,6 @@ export default function GlobalCreateUpdateModal({
     onError: handleMutationError,
   });
 
-  // Payload khusus harga. Nilai dari form diutamakan; yang tidak ada di form
-  // (season, day_type, rental_option_id) diambil dari `initialValues` yang dikirim halaman.
-  // Mengembalikan null jika harga belum valid (error sudah ditampilkan di field `price`).
   const buildPricePayload = (current) => {
     const ctx = initialValues ?? {};
     const price = Number(current.price);
@@ -181,7 +175,6 @@ export default function GlobalCreateUpdateModal({
       price,
     };
 
-    // buang key yang kosong agar tidak terkirim sebagai null
     return Object.fromEntries(Object.entries(body).filter(([, v]) => !isBlank(v)));
   };
 
@@ -233,18 +226,12 @@ export default function GlobalCreateUpdateModal({
 
       if (is_price) {
         payload = buildPricePayload(payload);
-        if (!payload) return; // harga belum valid
+        if (!payload) return; 
       }
     }
 
-    console.log(payload)
     if (isCreate) createMutation.mutate(payload);
     else updateMutation.mutate(payload);
-
-    if (path === "application")
-      setTimeout(() => {
-        location.reload();
-      }, 2000);
   };
 
   const isPending = createMutation.isPending || updateMutation.isPending;
@@ -253,8 +240,20 @@ export default function GlobalCreateUpdateModal({
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="va-paper va-modal">
-        <DialogHeader className="va-modal__head">
+      <DialogContent 
+        className="va-paper va-modal" 
+        style={{ 
+          maxWidth: "540px", 
+          width: "90vw", 
+          maxHeight: "85vh", // Membatasi tinggi maksimum modal agar pas di layar
+          display: "flex", 
+          flexDirection: "column",
+          padding: 0,
+          overflow: "hidden"
+        }}
+      >
+        {/* Header (Diam di atas) */}
+        <DialogHeader className="va-modal__head" style={{ padding: "1.25rem 1.5rem 0.75rem 1.5rem", flexShrink: 0 }}>
           <DialogTitle className="va-modal__title">
             {isCreate ? `Tambah ${title} baru` : `Edit ${title}`}
           </DialogTitle>
@@ -271,8 +270,19 @@ export default function GlobalCreateUpdateModal({
             <p>Memuat data…</p>
           </div>
         ) : (
-          <form onSubmit={submit}>
-            <div className="va-modal__body">
+          <form onSubmit={submit} style={{ display: "flex", flexDirection: "column", flex: 1, minHeight: 0 }}>
+            
+            {/* Bagian Body Form (Diberikan overflow-y: auto agar bisa di-scroll mandiri) */}
+            <div 
+              className="va-modal__body" 
+              style={{ 
+                flex: 1, 
+                overflowY: "auto", 
+                padding: "1rem 1.5rem",
+                display: "grid",
+                gap: "1rem"
+              }}
+            >
               {errors.general && (
                 <div className="va-alert" role="alert">
                   <AlertCircle size={16} />
@@ -290,7 +300,7 @@ export default function GlobalCreateUpdateModal({
                   (isLogoField(field) ? errors.logo_id : null);
 
                 return (
-                  <div key={field.name} className="va-field">
+                  <div key={field.name} className="va-field" style={{ marginBottom: 0 }}>
                     <label className="va-label" htmlFor={field.name}>
                       {field.label}
                     </label>
@@ -310,14 +320,14 @@ export default function GlobalCreateUpdateModal({
                         aria-invalid={invalid}
                       />
                     ) : field.type === "file" ? (
-                      <>
+                      <div style={{ display: "grid", gap: "0.5rem" }}>
                         {typeof formData[field.name] === "string" &&
                           formData[field.name] && (
-                            <div className="va-current">
-                              <img src={formData[field.name]} alt="Pratinjau" />
+                            <div className="va-current" style={{ display: "flex", gap: "1rem", alignItems: "center" }}>
+                              <img src={formData[field.name]} alt="Pratinjau" style={{ width: "60px", height: "60px", objectFit: "cover", borderRadius: "6px" }} />
                               <div>
                                 <strong>File saat ini</strong>
-                                <p className="va-muted" style={{ margin: 0 }}>
+                                <p className="va-muted" style={{ margin: 0, fontSize: "0.85rem" }}>
                                   Unggah file baru jika ingin mengubahnya.
                                 </p>
                               </div>
@@ -327,6 +337,7 @@ export default function GlobalCreateUpdateModal({
                           id={field.name}
                           name={field.name}
                           type="file"
+                          accept="image/*"
                           className="va-input"
                           onChange={(e) =>
                             handleChange(field.name, e.target.files[0])
@@ -334,7 +345,7 @@ export default function GlobalCreateUpdateModal({
                           disabled={isPending}
                           aria-invalid={invalid}
                         />
-                      </>
+                      </div>
                     ) : field.type === "select" ? (
                       <Select
                         name={field.name}
@@ -399,14 +410,26 @@ export default function GlobalCreateUpdateModal({
                     )}
 
                     {invalid && (
-                      <p className="va-error">{firstError(errorText)}</p>
+                      <p className="va-error" style={{ marginTop: "0.25rem" }}>{firstError(errorText)}</p>
                     )}
                   </div>
                 );
               })}
             </div>
 
-            <DialogFooter className="va-modal__foot">
+            {/* Footer / Tombol Aksi (Diam menempel di bawah) */}
+            <DialogFooter 
+              className="va-modal__foot" 
+              style={{ 
+                padding: "1rem 1.5rem", 
+                borderTop: "1px solid rgba(0,0,0,0.06)", 
+                flexShrink: 0,
+                display: "flex",
+                justifyContent: "flex-end",
+                gap: "0.5rem",
+                background: "inherit"
+              }}
+            >
               <button
                 type="button"
                 className="va-btn va-btn--ghost"

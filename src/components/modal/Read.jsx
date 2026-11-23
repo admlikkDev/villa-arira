@@ -242,7 +242,7 @@ export default function GlobalIndex({
   };
 
   return (
-    <AdminPanelLayout>
+    <div>
       <GlobalCreateUpdateModal
         open={openModal}
         onOpenChange={setOpenModal}
@@ -466,6 +466,6 @@ export default function GlobalIndex({
           onChange={setPage}
         />
       )}
-    </AdminPanelLayout>
+    </div>
   );
 }

@@ -815,7 +815,7 @@ export default function AdminRentalPrices() {
   );
 
   return (
-    <AdminPanelLayout>
+    <div>
       <GlobalCreateUpdateModal
         open={openModal}
         onOpenChange={(o) => {
@@ -1065,6 +1065,6 @@ export default function AdminRentalPrices() {
           )}
         </>
       )}
-    </AdminPanelLayout>
+    </div>
   );
 }

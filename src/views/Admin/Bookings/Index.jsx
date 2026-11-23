@@ -13,7 +13,7 @@ import Pagination from "../../../components/Pagination";
 import { formatRupiah } from "../../../hooks/Usevillaquery";
 import {
   ADMIN_BOOKING_PATH,
-  STATUS_LABEL,
+  STATUS_LABEL as BASE_STATUS_LABEL,
   bookingFields,
   canCancel,
   canCheckIn,
@@ -28,15 +28,25 @@ import "../../../assets/styles/booking.css";
 
 const PAGE_SIZE = 10;
 
+// Tambahkan label terjemahan untuk status baru seperti partially_paid
+const STATUS_LABEL = {
+  ...BASE_STATUS_LABEL,
+  partially_paid: "Sebagian (DP)",
+  pending: "Menunggu bayar",
+  paid: "Lunas",
+  completed: "Selesai",
+  cancelled: "Dibatalkan",
+};
+
 const TABS = [
   { key: "all", label: "Semua" },
   { key: "pending", label: "Menunggu bayar" },
+  { key: "partially_paid", label: "Sebagian (DP)" },
   { key: "paid", label: "Lunas" },
   { key: "completed", label: "Selesai" },
   { key: "cancelled", label: "Dibatalkan" },
 ];
 
-// Aksi yang bisa dilakukan admin; `can` mengikuti aturan status dari server
 const ACTIONS = {
   checkIn: {
     label: "Check-in",
@@ -68,8 +78,16 @@ const formatDateTime = (iso) =>
   iso ? new Date(iso).toLocaleString("id-ID", { day: "numeric", month: "short", year: "numeric", hour: "2-digit", minute: "2-digit" }) : "-";
 
 function StatusBadge({ status }) {
-  return <span className="va-status" data-status={status}>{STATUS_LABEL[status] ?? (status || "-")}</span>;
+  const label = STATUS_LABEL[status] ?? humanize(status) ?? "-";
+  return (
+    <span className="va-status" data-status={status}>
+      {label}
+    </span>
+  );
 }
+
+const humanize = (s) =>
+  String(s ?? "").replace(/[_-]+/g, " ").replace(/^./, (c) => c.toUpperCase());
 
 export default function AdminBookingsIndex() {
   const { data: bookings = [], isLoading, isError, error, isFetching, refetch } = useAdminBookings();
@@ -85,7 +103,7 @@ export default function AdminBookingsIndex() {
   const [query, setQuery] = useState("");
   const [page, setPage] = useState(1);
   const [detailId, setDetailId] = useState(null);
-  const [confirm, setConfirm] = useState(null); // { action, booking }
+  const [confirm, setConfirm] = useState(null);
 
   const rows = useMemo(() => bookings.map((raw) => ({ raw, f: bookingFields(raw) })), [bookings]);
 
@@ -117,7 +135,6 @@ export default function AdminBookingsIndex() {
   const currentPage = Math.min(page, Math.max(totalPages, 1));
   const pageRows = filtered.slice((currentPage - 1) * PAGE_SIZE, currentPage * PAGE_SIZE);
 
-  // Detail selalu diambil dari data terbaru agar ikut berubah setelah aksi
   const detail = detailId ? rows.find(({ raw }) => raw.id === detailId) : null;
 
   const runConfirmed = () => {
@@ -128,6 +145,7 @@ export default function AdminBookingsIndex() {
   const renderActions = (raw) =>
     Object.entries(ACTIONS).map(([key, action]) => {
       if (!action.can(raw)) return null;
+      if(raw?.check_in_at == null && action.label == "Check-out") return
       const Icon = action.icon;
       return (
         <button
@@ -145,7 +163,7 @@ export default function AdminBookingsIndex() {
     });
 
   return (
-    <AdminPanelLayout>
+    <div>
       <header className="va-adm-head">
         <div>
           <h2 className="va-adm-title">Manajemen booking</h2>
@@ -161,7 +179,7 @@ export default function AdminBookingsIndex() {
         </div>
       </header>
 
-      <div className="va-tabs" role="tablist" aria-label="Filter status">
+      <div className="va-tabs" role="tablist" aria-label="Filter status" style={{ flexWrap: "wrap", gap: "0.5rem" }}>
         {TABS.map((t) => (
           <button
             key={t.key}
@@ -178,7 +196,7 @@ export default function AdminBookingsIndex() {
 
       <div className="va-field" style={{ maxWidth: "26rem", marginBottom: "1.5rem" }}>
         <label className="va-label" htmlFor="bk-search">Cari booking</label>
-        <div className="va-input-wrap">
+        <div className="va-input-wrap" style={{ position: "relative" }}>
           <input
             id="bk-search"
             className="va-input"
@@ -217,7 +235,7 @@ export default function AdminBookingsIndex() {
                 <th>Tanggal</th>
                 <th>Total</th>
                 <th>Status</th>
-                <th className="is-right" style={{ width: "11rem" }}>Aksi</th>
+                <th className="is-right" style={{ width: "11rem", textAlign: "right" }}>Aksi</th>
               </tr>
             </thead>
             <tbody>
@@ -241,7 +259,7 @@ export default function AdminBookingsIndex() {
                   <td><span className="va-adm-price">{f.total ? formatRupiah(f.total) : "-"}</span></td>
                   <td><StatusBadge status={f.status} /></td>
                   <td>
-                    <div className="va-adm-actions">
+                    <div className="va-adm-actions" style={{ justifyContent: "flex-end" }}>
                       <button type="button" className="va-icon-btn va-icon-btn--sm" title="Detail" aria-label="Detail" onClick={() => setDetailId(raw.id)}>
                         <Eye size={15} />
                       </button>
@@ -257,44 +275,49 @@ export default function AdminBookingsIndex() {
 
       <Pagination page={currentPage} totalPages={totalPages} onChange={setPage} />
 
-      {/* Detail booking */}
+      {/* Detail booking yang diperbaiki tata letaknya agar rapi */}
       <Dialog open={Boolean(detail)} onOpenChange={(open) => !open && setDetailId(null)}>
-        <DialogContent className="va-paper va-modal">
+        <DialogContent className="va-paper va-modal" style={{ maxWidth: "500px", width: "90vw", maxHeight: "85vh", overflowY: "auto" }}>
           {detail && (
             <>
               <DialogHeader className="va-modal__head">
-                <DialogTitle className="va-modal__title">{detail.f.code}</DialogTitle>
-                <DialogDescription className="va-modal__desc">
+                <DialogTitle className="va-modal__title" style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+                  <span>{detail.f.code}</span>
                   <StatusBadge status={detail.f.status} />
+                </DialogTitle>
+                <DialogDescription className="va-modal__desc">
+                  Detail informasi pemesanan tamu
                 </DialogDescription>
               </DialogHeader>
 
-              <div className="va-modal__body">
-                <dl className="va-result__box">
-                  <div><dt>Tamu</dt><dd>{detail.f.customerName}</dd></div>
-                  {detail.f.customerPhone && <div><dt>Telepon</dt><dd>{detail.f.customerPhone}</dd></div>}
-                  {detail.f.customerEmail && <div><dt>Email</dt><dd>{detail.f.customerEmail}</dd></div>}
-                  <div><dt>Tipe sewa</dt><dd>{detail.f.rentalTitle}</dd></div>
-                  <div><dt>Check-in</dt><dd>{formatDate(detail.f.checkIn)}</dd></div>
-                  <div><dt>Check-out</dt><dd>{formatDate(detail.f.checkOut)}</dd></div>
-                  <div><dt>Durasi</dt><dd>{detail.f.stay}</dd></div>
-                  <div><dt>Jumlah tamu</dt><dd>{detail.f.guests ? `${detail.f.guests} orang` : "-"}</dd></div>
-                  {detail.f.reason && <div><dt>Keperluan</dt><dd>{detail.f.reason}</dd></div>}
-                  <div><dt>Check-in aktual</dt><dd>{formatDateTime(detail.f.checkedInAt)}</dd></div>
-                  <div><dt>Check-out aktual</dt><dd>{formatDateTime(detail.f.checkedOutAt)}</dd></div>
-                  <div><dt>Dipesan pada</dt><dd>{formatDateTime(detail.f.createdAt)}</dd></div>
-                  <div><dt>Total</dt><dd>{detail.f.total ? formatRupiah(detail.f.total) : "-"}</dd></div>
-                </dl>
+              <div className="va-modal__body" style={{ display: "grid", gap: "1rem", padding: "1rem 0" }}>
+                <div style={{ background: "rgba(0,0,0,0.03)", padding: "1rem", borderRadius: "8px", display: "grid", gap: "0.5rem" }}>
+                  <div style={{ display: "flex", justifyContent: "between" }}><span className="va-muted">Tamu:</span> <strong>{detail.f.customerName}</strong></div>
+                  {detail.f.customerPhone && <div style={{ display: "flex", justifyContent: "between" }}><span className="va-muted">Telepon:</span> <span>{detail.f.customerPhone}</span></div>}
+                  {detail.f.customerEmail && <div style={{ display: "flex", justifyContent: "between" }}><span className="va-muted">Email:</span> <span>{detail.f.customerEmail}</span></div>}
+                  <div style={{ display: "flex", justifyContent: "between" }}><span className="va-muted">Tipe sewa:</span> <span>{detail.f.rentalTitle}</span></div>
+                  <div style={{ display: "flex", justifyContent: "between" }}><span className="va-muted">Check-in:</span> <span>{formatDate(detail.f.checkIn)}</span></div>
+                  <div style={{ display: "flex", justifyContent: "between" }}><span className="va-muted">Check-out:</span> <span>{formatDate(detail.f.checkOut)}</span></div>
+                  <div style={{ display: "flex", justifyContent: "between" }}><span className="va-muted">Durasi:</span> <span>{detail.f.stay}</span></div>
+                  <div style={{ display: "flex", justifyContent: "between" }}><span className="va-muted">Jumlah tamu:</span> <span>{detail.f.guests ? `${detail.f.guests} orang` : "-"}</span></div>
+                  {detail.f.reason && <div style={{ display: "flex", justifyContent: "between" }}><span className="va-muted">Keperluan:</span> <span>{detail.f.reason}</span></div>}
+                  <div style={{ display: "flex", justifyContent: "between" }}><span className="va-muted">Check-in aktual:</span> <span>{formatDateTime(detail.f.checkedInAt)}</span></div>
+                  <div style={{ display: "flex", justifyContent: "between" }}><span className="va-muted">Check-out aktual:</span> <span>{formatDateTime(detail.f.checkedOutAt)}</span></div>
+                  <div style={{ display: "flex", justifyContent: "between" }}><span className="va-muted">Dipesan pada:</span> <span>{formatDateTime(detail.f.createdAt)}</span></div>
+                  <div style={{ display: "flex", justifyContent: "between", borderTop: "1px solid rgba(0,0,0,0.1)", paddingTop: "0.5rem", marginTop: "0.5rem" }}>
+                    <span style={{ fontWeight: 600 }}>Total Harga:</span> 
+                    <strong className="va-adm-price" style={{ fontSize: "1.1rem" }}>{detail.f.total ? formatRupiah(detail.f.total) : "-"}</strong>
+                  </div>
+                </div>
 
                 {detail.f.addons.length > 0 && (
                   <div>
-                    <span className="va-label">Add-on</span>
-                    <ul className="va-checks" style={{ marginTop: "0.6rem" }}>
+                    <span className="va-label" style={{ marginBottom: "0.5rem", display: "block" }}>Add-on Pilihan</span>
+                    <ul className="va-checks" style={{ display: "grid", gap: "0.35rem" }}>
                       {detail.f.addons.map((a, i) => (
-                        <li key={a.id ?? i}>
-                          <span>
-                            {a.addon?.title ?? a.title ?? `Add-on #${a.addon_id ?? a.id}`} × {a.quantity ?? 1}
-                          </span>
+                        <li key={a.id ?? i} style={{ background: "rgba(0,0,0,0.02)", padding: "0.5rem 0.75rem", borderRadius: "6px", display: "flex", justifyContent: "space-between" }}>
+                          <span>{a.addon?.title ?? a.title ?? `Add-on #${a.addon_id ?? a.id}`}</span>
+                          <strong>× {a.quantity ?? 1}</strong>
                         </li>
                       ))}
                     </ul>
@@ -302,7 +325,7 @@ export default function AdminBookingsIndex() {
                 )}
               </div>
 
-              <DialogFooter className="va-modal__foot">
+              <DialogFooter className="va-modal__foot" style={{ display: "flex", gap: "0.5rem", justifyContent: "flex-end" }}>
                 <button type="button" className="va-btn va-btn--ghost" onClick={() => setDetailId(null)}>Tutup</button>
                 {Object.entries(ACTIONS).map(([key, action]) => {
                   if (!action.can(detail.raw)) return null;
@@ -340,6 +363,6 @@ export default function AdminBookingsIndex() {
           )}
         </DialogContent>
       </Dialog>
-    </AdminPanelLayout>
+    </div>
   );
 }

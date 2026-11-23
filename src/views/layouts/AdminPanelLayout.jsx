@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from 'react';
-import { Link, useLocation, useNavigate } from 'react-router-dom';
+import { Link, Outlet, useLocation, useNavigate } from 'react-router-dom';
 import {
     LayoutTemplate,
     Images,
@@ -52,14 +52,17 @@ const menuItems = {
                 { title: 'Specification', icon: ClipboardList, url: '/admin/specification' },
                 { title: 'Wisata Terdekat', icon: MapPinned, url: '/admin/wisata-terdekat' },
                 { title: 'Kelola Alasan', icon: BadgeCheck, url: '/admin/reasons' },
+                { title: 'Kelola Aturan', icon: BadgeCheck, url: '/admin/rules' },
             ],
         },
         {
             label: 'Data user',
             items: [
-                { title: 'Bookings', icon: CalendarCheck, url: '/admin/bookings' },
                 { title: 'Users', icon: Users, url: '/admin/users' },
                 { title: 'Messages', icon: Inbox, url: '/admin/messages' },
+                { title: 'Bookings', icon: CalendarCheck, url: '/admin/bookings' },
+                { title: 'Event Bookings', icon: CalendarCheck, url: '/admin/event-bookings' },
+                { title: 'Request Event Bookings', icon: CalendarCheck, url: '/admin/request-event-bookings' },
             ],
         },
         {
@@ -92,12 +95,33 @@ function BrandMark() {
     );
 }
 
+// Dipisah agar update jam setiap detik tidak menyebabkan re-render seluruh layout/halaman
+function AdminClock() {
+    const [now, setNow] = useState(() => new Date());
+
+    useEffect(() => {
+        const timer = setInterval(() => setNow(new Date()), 1000);
+        return () => clearInterval(timer);
+    }, []);
+
+    return (
+        <div className="va-adm-clock">
+            <Clock size={16} strokeWidth={1.5} />
+            <span className="va-adm-date va-hide-sm">
+                {now.toLocaleDateString('id-ID', { weekday: 'short', day: 'numeric', month: 'short' })}
+            </span>
+            {now
+                .toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit', second: '2-digit' })
+                .replace(/\./g, ':')}
+        </div>
+    );
+}
+
 export default function AdminPanelLayout({ children, role = 'admin' }) {
     const location = useLocation();
     const navigate = useNavigate();
     const { logout, user } = useAuth();
 
-    const [now, setNow] = useState(new Date());
     const [collapsed, setCollapsed] = useState(false); // desktop: mode ikon
     const [mobileOpen, setMobileOpen] = useState(false); // mobile: drawer
     const [menuOpen, setMenuOpen] = useState(false); // menu akun
@@ -126,11 +150,6 @@ export default function AdminPanelLayout({ children, role = 'admin' }) {
     useEffect(() => {
         if (!user) navigate('/');
     }, [user, navigate]);
-
-    useEffect(() => {
-        const timer = setInterval(() => setNow(new Date()), 1000);
-        return () => clearInterval(timer);
-    }, []);
 
     useEffect(() => {
         if (activeGroup && groupState[activeGroup.label] === false) toggleGroup(activeGroup.label);
@@ -273,19 +292,11 @@ export default function AdminPanelLayout({ children, role = 'admin' }) {
                         <a className="va-btn va-btn--ghost va-btn--sm va-hide-sm" href="/" target="_blank" rel="noopener noreferrer">
                             Lihat website <ExternalLink size={14} />
                         </a>
-                        <div className="va-adm-clock">
-                            <Clock size={16} strokeWidth={1.5} />
-                            <span className="va-adm-date va-hide-sm">
-                                {now.toLocaleDateString('id-ID', { weekday: 'short', day: 'numeric', month: 'short' })}
-                            </span>
-                            {now
-                                .toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit', second: '2-digit' })
-                                .replace(/\./g, ':')}
-                        </div>
+                        <AdminClock />
                     </div>
                 </header>
 
-                <div className="va-adm-body">{children}</div>
+                <div className="va-adm-body">{children ?? <Outlet />}</div>
             </main>
         </div>
     );

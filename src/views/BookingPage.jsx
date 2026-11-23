@@ -25,9 +25,9 @@ export default function BookingPage() {
       </header>
       {/* <hr />  */}
       <PricelistVilla />
-      <PaketVilla />
       <AddOnVilla />
       <CekJadwal />
+      <PaketVilla />
       {/* <FaqVilla /> */}
     </>
   );
