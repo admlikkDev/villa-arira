@@ -18,6 +18,7 @@ import { toast } from 'sonner';
 import { useVillaListWithLists, formatRupiah } from '../hooks/Usevillaquery';
 import useFetch from '../hooks/useFetch';
 import { useAuth } from '../hooks/useAuth';
+import { loadSnap } from '../hooks/useSnap';
 import SectionState from './SectionState';
 import '../assets/styles/villa.css';
 
@@ -55,7 +56,7 @@ const errMsg = (e) => {
 
 function EventModal({ config, onClose }) {
     const { mode, pkg } = config;
-    const { post } = useFetch();
+    const { get, post } = useFetch();
     const { user } = useAuth();
 
     const today = new Date();
@@ -120,6 +121,23 @@ function EventModal({ config, onClose }) {
         return '';
     };
 
+    const sendAdminNotification = async (actionType, packageName) => {
+        try {
+            const appResp = await get('application');
+            const appData = appResp.data?.data ?? appResp.data;
+            const adminPhone = appData?.phone_number || appData?.phone || '0895334886338';
+
+            const waMessage = `Halo Admin Villa Arira, ada ${actionType} baru untuk paket *${packageName}* pada tanggal ${fmtDate(start)} (${startTime} - ${endTime}) dengan jumlah tamu ${guests} orang. Mohon dicek. Terima kasih!`;
+
+            await post('whatsapp/send-text', {
+                message: waMessage,
+                phone: adminPhone,
+            });
+        } catch (err) {
+            console.error('Gagal mengirim notifikasi WhatsApp ke admin:', err);
+        }
+    };
+
     const submit = async (e) => {
         e.preventDefault();
         const problem = validate();
@@ -138,14 +156,12 @@ function EventModal({ config, onClose }) {
         let payload;
 
         if (mode === 'booking') {
-            // POST my-event-bookings
             endpoint = BOOKING_ENDPOINT;
             payload = {
                 ...base,
                 villa_package_id: Number(pkg.id),
             };
         } else if (mode === 'request') {
-            // POST my-event-requests (bukan custom event, membawa villa_package_id)
             endpoint = REQUEST_ENDPOINT;
             payload = {
                 title: title.trim(),
@@ -154,7 +170,6 @@ function EventModal({ config, onClose }) {
                 villa_package_id: Number(pkg.id),
             };
         } else {
-            // POST my-event-requests (custom event, membawa budget)
             endpoint = REQUEST_ENDPOINT;
             payload = {
                 title: title.trim(),
@@ -167,14 +182,45 @@ function EventModal({ config, onClose }) {
         setSubmitting(true);
         setError('');
         const resp = await post(endpoint, payload);
-        setSubmitting(false);
 
         if (!resp.status) {
+            setSubmitting(false);
             setError(errMsg(resp.error));
             toast.error('Gagal mengirim.');
             return;
         }
-        toast.success(mode === 'booking' ? 'Pemesanan event dikirim.' : 'Permintaan event dikirim.');
+
+        const responseData = resp.data?.data ?? resp.data;
+        const packageName = pkg?.title || title || 'Paket Custom Event';
+
+        if (mode === 'booking') {
+            const snapToken = responseData?.payment?.snap_token || responseData?.snap_token;
+            
+            if (snapToken) {
+                setSubmitting(false);
+                const snap = await loadSnap();
+                snap.pay(snapToken, {
+                    onSuccess: async () => {
+                        toast.success('Pembayaran berhasil!');
+                        await sendAdminNotification('pemesanan event & pembayaran sukses', packageName);
+                        setDone(true);
+                    },
+                    onPending: async () => {
+                        toast.info('Menunggu pembayaran selesai.');
+                        await sendAdminNotification('pemesanan event (menunggu pembayaran)', packageName);
+                        setDone(true);
+                    },
+                    onError: () => toast.error('Pembayaran gagal.'),
+                    onClose: () => toast.warning('Pembayaran belum selesai.'),
+                });
+                return;
+            }
+        }
+
+        // Untuk mode request / custom
+        await sendAdminNotification('pengajuan request event', packageName);
+        setSubmitting(false);
+        toast.success('Permintaan event dikirim.');
         setDone(true);
     };
 
@@ -229,7 +275,7 @@ function EventModal({ config, onClose }) {
                         <h3 className="va-h3">{mode === 'booking' ? 'Pemesanan terkirim' : 'Permintaan terkirim'}</h3>
                         <p className="va-text" style={{ maxWidth: '40ch' }}>
                             {mode === 'booking'
-                                ? 'Pemesanan event Anda sudah kami terima. Admin akan mengonfirmasi jadwal dan langkah selanjutnya.'
+                                ? 'Pemesanan event Anda sudah kami terima. Notifikasi telah dikirimkan ke admin.'
                                 : 'Permintaan event Anda sudah kami terima. Admin akan menghubungi Anda untuk membahas penawaran.'}
                         </p>
                         <button type="button" className="va-btn" onClick={onClose}>Tutup</button>
@@ -237,7 +283,6 @@ function EventModal({ config, onClose }) {
                 ) : (
                     <form onSubmit={submit} noValidate>
                         <div className="vp-modal__body">
-                            {/* Kalender */}
                             <div className="vp-cal">
                                 <div className="va-cal__bar">
                                     <button type="button" className="va-icon-btn" onClick={() => setMonth(new Date(y, m - 1, 1))} aria-label="Bulan sebelumnya">
@@ -259,7 +304,6 @@ function EventModal({ config, onClose }) {
                                 </p>
                             </div>
 
-                            {/* Form */}
                             <div className="vp-fields">
                                 <div className="vp-row">
                                     <div className="va-field">
@@ -376,7 +420,7 @@ function EventModal({ config, onClose }) {
                             <div className="vp-modal__actions">
                                 <button type="button" className="va-btn va-btn--ghost" onClick={onClose} disabled={submitting}>Batal</button>
                                 <button type="submit" className="va-btn" disabled={submitting || !user}>
-                                    {submitting ? <><Loader2 size={16} className="va-spin" /> Mengirim…</> : mode === 'booking' ? 'Kirim pemesanan' : 'Kirim permintaan'}
+                                    {submitting ? <><Loader2 size={16} className="va-spin" /> Memproses…</> : mode === 'booking' ? 'Bayar Sekarang' : 'Kirim permintaan'}
                                 </button>
                             </div>
                         </footer>
@@ -386,9 +430,10 @@ function EventModal({ config, onClose }) {
         </div>
     );
 }
+
 export default function PaketVilla() {
     const { data: packages = [], isLoading, isError, error } = useVillaListWithLists('villa-packages');
-    const [modal, setModal] = useState(null); // { mode: 'booking' | 'request' | 'custom', pkg }
+    const [modal, setModal] = useState(null);
 
     if (isLoading) return <SectionState tone="paper" label="Memuat paket villa…" />;
     if (isError) return <SectionState tone="paper" label="Paket villa gagal dimuat" error={error.message} />;
@@ -411,47 +456,57 @@ export default function PaketVilla() {
                 </div>
 
                 <div className="vp-grid">
-                    {packages.map((item, index) => (
-                        <article
-                            key={item.id ?? index}
-                            className={`vp-card${item.is_wedding ? ' va-paper vp-card--wedding' : ''}`}
-                        >
-                            <div className="vp-card__head">
-                                <span className="vp-card__n">{String(index + 1).padStart(2, '0')}</span>
-                            </div>
+                    {packages.map((item, index) => {
+                        const requiresApproval = Boolean(item.requires_approval);
 
-                            <div>
-                                <h3 className="va-h3 vp-card__title">{item.title}</h3>
-                                {item.subtitle && <p className="va-text" style={{ marginTop: '0.4rem' }}>{item.subtitle}</p>}
-                            </div>
+                        return (
+                            <article
+                                key={item.id ?? index}
+                                className={`vp-card${item.is_wedding ? ' va-paper vp-card--wedding' : ''}`}
+                            >
+                                <div className="vp-card__head">
+                                    <span className="vp-card__n">{String(index + 1).padStart(2, '0')}</span>
+                                </div>
 
-                            <div>
-                                <span className="va-price">{formatRupiah(item.price)}</span>
-                                <span className="va-price-note">{item.type === 'per_hour' ? 'per jam' : 'sekali acara'}</span>
-                            </div>
+                                <div>
+                                    <h3 className="va-h3 vp-card__title">{item.title}</h3>
+                                    {item.subtitle && <p className="va-text" style={{ marginTop: '0.4rem' }}>{item.subtitle}</p>}
+                                </div>
 
-                            <div className="vp-facts">
-                                {item.max_capacity ? (
-                                    <span><Users size={16} strokeWidth={1.6} /> Hingga {item.max_capacity} orang</span>
-                                ) : null}
-                                <span><Clock size={16} strokeWidth={1.6} /> {item.type === 'per_hour' ? 'Tarif per jam' : 'Tarif tetap'}</span>
-                            </div>
+                                <div>
+                                    <span className="va-price">{formatRupiah(item.price)}</span>
+                                    <span className="va-price-note">{item.type === 'per_hour' ? 'per jam' : 'sekali acara'}</span>
+                                </div>
 
-                            {item.lists?.length > 0 && (
-                                <ul className="va-checks">
-                                    {item.lists.map((f, i) => (
-                                        <li key={f.id ?? i}><Check size={16} strokeWidth={2} />{f.text}</li>
-                                    ))}
-                                </ul>
-                            )}
+                                <div className="vp-facts">
+                                    {item.max_capacity ? (
+                                        <span><Users size={16} strokeWidth={1.6} /> Hingga {item.max_capacity} orang</span>
+                                    ) : null}
+                                    <span><Clock size={16} strokeWidth={1.6} /> {item.type === 'per_hour' ? 'Tarif per jam' : 'Tarif tetap'}</span>
+                                </div>
 
-                            <div className="vp-card__foot">
-                                {item.is_wedding ? (
-                                    <Link to="/wedding" className="va-btn va-btn--block" style={{ textAlign: 'center', display: 'inline-flex', justifyContent: 'center', alignItems: 'center', gap: '0.4rem' }}>
-                                        Lihat halaman wedding <ArrowUpRight size={16} />
-                                    </Link>
-                                ) : (
-                                    <>
+                                {item.lists?.length > 0 && (
+                                    <ul className="va-checks">
+                                        {item.lists.map((f, i) => (
+                                            <li key={f.id ?? i}><Check size={16} strokeWidth={2} />{f.text}</li>
+                                        ))}
+                                    </ul>
+                                )}
+
+                                <div className="vp-card__foot">
+                                    {item.is_wedding ? (
+                                        <Link to="/wedding" className="va-btn va-btn--block" style={{ textAlign: 'center', display: 'inline-flex', justifyContent: 'center', alignItems: 'center', gap: '0.4rem' }}>
+                                            Lihat halaman wedding <ArrowUpRight size={16} />
+                                        </Link>
+                                    ) : requiresApproval ? (
+                                        <button
+                                            type="button"
+                                            className="va-btn va-btn--block"
+                                            onClick={() => setModal({ mode: 'request', pkg: item })}
+                                        >
+                                            Ajukan request khusus paket ini
+                                        </button>
+                                    ) : (
                                         <button
                                             type="button"
                                             className="va-btn va-btn--block"
@@ -459,21 +514,12 @@ export default function PaketVilla() {
                                         >
                                             Pilih tanggal &amp; pesan
                                         </button>
-                                        <button
-                                            type="button"
-                                            className="vp-card__link"
-                                            style={{ background: 'none', borderTop: 0, borderLeft: 0, borderRight: 0, cursor: 'pointer', fontFamily: 'inherit' }}
-                                            onClick={() => setModal({ mode: 'request', pkg: item })}
-                                        >
-                                            Ajukan request khusus paket ini
-                                        </button>
-                                    </>
-                                )}
-                            </div>
-                        </article>
-                    ))}
+                                    )}
+                                </div>
+                            </article>
+                        );
+                    })}
 
-                    {/* Kartu statis: paket custom */}
                     <article className="vp-card vp-card--custom">
                         <div className="vp-card__head">
                             <span className="vp-card__n"><Sparkles size={22} strokeWidth={1.5} /></span>

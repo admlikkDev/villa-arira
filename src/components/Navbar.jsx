@@ -20,14 +20,13 @@ import "../assets/styles/villa.css";
 import { useAuth } from "../hooks/useAuth";
 import useFetch from "../hooks/useFetch";
 
-// Booking milik user yang sedang login (GET /api/my-bookings)
 const MY_BOOKINGS_ENDPOINT = "my-bookings";
+const MY_EVENT_BOOKINGS_ENDPOINT = "my-event-bookings";
+const MY_EVENT_REQUESTS_ENDPOINT = "my-event-requests";
 const HISTORY_PATH = "/riwayat-pesanan";
 
-// Halaman dengan hero layar penuh: navbar desktop baru muncul setelah scroll
 const HERO_PAGES = ["/", "/wedding"];
 
-// Menu desktop
 const menuItems = [
   { name: "Home", to: "/", end: true },
   { name: "Booking", to: "/booking" },
@@ -47,26 +46,34 @@ export default function Navbar() {
 
   const username = user?.user?.username;
 
-  // Cek apakah user pernah booking (hanya saat login)
-  const { data: bookingData } = useQuery({
-    queryKey: ["my-bookings-exists", user?.user?.id ?? username],
+  const { data: hasAnyHistory = false } = useQuery({
+    queryKey: ["my-history-exists", user?.user?.id ?? username],
     enabled: Boolean(user),
     retry: false,
     staleTime: 5 * 60 * 1000,
     queryFn: async () => {
-      const resp = await get(`${MY_BOOKINGS_ENDPOINT}?page=1&size=1`);
-      if (!resp.status) throw new Error(resp.error);
-      return resp.data;
+      const [villaResp, eventResp, reqResp] = await Promise.all([
+        get(`${MY_BOOKINGS_ENDPOINT}?page=1&size=1`).catch(() => ({ status: false })),
+        get(`${MY_EVENT_BOOKINGS_ENDPOINT}?page=1&size=1`).catch(() => ({ status: false })),
+        get(`${MY_EVENT_REQUESTS_ENDPOINT}?page=1&size=1`).catch(() => ({ status: false })),
+      ]);
+
+      const countItems = (resp) => {
+        if (!resp?.status) return 0;
+        const list = resp.data?.data ?? resp.data;
+        return (
+          resp.data?.pagination?.total_items ??
+          (Array.isArray(list) ? list.length : 0)
+        );
+      };
+
+      const total = countItems(villaResp) + countItems(eventResp) + countItems(reqResp);
+      return total > 0;
     },
   });
 
-  const bookingList = bookingData?.data ?? bookingData;
-  const totalBookings =
-    bookingData?.pagination?.total_items ??
-    (Array.isArray(bookingList) ? bookingList.length : 0);
-  const hasBooked = Boolean(user) && totalBookings > 0;
+  const hasBooked = Boolean(user) && hasAnyHistory;
 
-  // Navbar desktop: selalu tampil, kecuali di halaman hero (muncul setelah scroll 80px)
   useEffect(() => {
     const onScroll = () => {
       const s = window.scrollY > 80;
@@ -79,14 +86,12 @@ export default function Navbar() {
   }, [pathname]);
   const showNav = !HERO_PAGES.includes(pathname) || scrolled;
 
-  // Klik di mana saja menutup keranjang
   useEffect(() => {
     const close = () => setCartOpen(false);
     window.addEventListener("click", close);
     return () => window.removeEventListener("click", close);
   }, []);
 
-  // Sheet "Lainnya" (HP): tutup saat pindah halaman atau tekan Escape
   useEffect(() => {
     setSheetOpen(false);
   }, [pathname]);
@@ -109,10 +114,9 @@ export default function Navbar() {
 
   const moreActive =
     sheetOpen || pathname === "/contact" || pathname === HISTORY_PATH;
-  // console.log(user?.user?.role)
+
   return (
     <>
-      {/* ===== DESKTOP: navbar atas ===== */}
       <nav
         className="va-nav"
         data-visible={showNav}
@@ -186,7 +190,6 @@ export default function Navbar() {
         <Cart display={cartOpen ? "flex" : "none"} />
       </nav>
 
-      {/* ===== HP: tab bar bawah ===== */}
       <nav className="va-paper va-tabbar" aria-label="Navigasi utama">
         <NavLink to="/" end className="va-tab-item">
           <Home size={20} strokeWidth={1.6} />
@@ -219,7 +222,6 @@ export default function Navbar() {
         </button>
       </nav>
 
-      {/* ===== HP: sheet "Lainnya" ===== */}
       {sheetOpen && (
         <>
           <div

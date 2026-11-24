@@ -4099,3 +4099,80 @@ html:has(.va-shell)::-webkit-scrollbar,
     .vp-modal__actions { width: 100%; }
     .vp-modal__actions .va-btn { flex: 1; }
 }
+
+/* Halaman booking: checkout add-on, hasil pembayaran, riwayat pesanan, 404.
+   Import setelah villa.css. Dua warna saja (--ink & --paper), tanpa border-radius. */
+
+/* ---------- Checkout ---------- */
+.va-co { display: grid; grid-template-columns: minmax(0, 1.5fr) minmax(320px, 1fr); gap: clamp(2rem, 5vw, 4rem); align-items: start; }
+.va-co__head { display: flex; justify-content: space-between; align-items: baseline; gap: 1rem; margin-bottom: 1.25rem; }
+.va-co__list { border-bottom: 1px solid var(--line); }
+/* Baris add-on (nama class baru agar tidak bentrok dengan .va-addon-card lama di villa.css) */
+.va-opt { display: grid; grid-template-columns: minmax(0, 1fr) auto; align-items: center; gap: 1rem 2rem; padding: 1.75rem 0; border: 0; border-top: 1px solid var(--line); border-radius: 0; background: transparent; box-shadow: none; transform: none; transition: background-color 0.2s ease, box-shadow 0.2s ease; }
+.va-opt:hover { background: transparent; box-shadow: none; transform: none; }
+.va-opt[data-active='true'], .va-opt[data-active='true']:hover { background: var(--soft); box-shadow: inset 3px 0 0 var(--fg); margin-inline: -1.25rem; padding-inline: 1.25rem; }
+.va-opt__main { display: grid; gap: 0.5rem; min-width: 0; }
+.va-opt__price { margin-top: 0.5rem; }
+.va-co__summary { position: sticky; top: 6rem; border: 1px solid var(--fg); padding: clamp(1.5rem, 3vw, 2rem); display: grid; gap: 1.5rem; }
+.va-sum { margin: 0; display: grid; gap: 0.85rem; }
+.va-sum > div { display: flex; justify-content: space-between; gap: 1rem; font-size: 0.92rem; }
+.va-sum dt { color: var(--muted); }
+.va-sum dt small { display: block; font-size: 0.78rem; }
+.va-sum dd { margin: 0; text-align: right; font-weight: 600; }
+.va-sum__block { display: grid; gap: 0.75rem; padding-top: 1.25rem; border-top: 1px solid var(--line); }
+.va-sum__total { display: flex; justify-content: space-between; align-items: baseline; padding-top: 1.25rem; border-top: 1px solid var(--fg); }
+.va-sum__total .va-price { font-size: 2.4rem; }
+.va-co__actions { display: grid; gap: 0.6rem; }
+
+.va-qty { display: inline-flex; align-items: center; border: 1px solid var(--fg); flex: none; }
+.va-qty button { width: 38px; height: 38px; display: grid; place-items: center; background: transparent; border: 0; border-radius: 0; color: var(--fg); cursor: pointer; transition: background-color 0.2s ease, color 0.2s ease; }
+.va-qty button:hover:not(:disabled) { background: var(--fg); color: var(--bg); }
+.va-qty button:disabled { opacity: 0.3; cursor: not-allowed; }
+.va-qty span { min-width: 2.6rem; text-align: center; font-weight: 700; font-variant-numeric: tabular-nums; }
+
+@media (max-width: 960px) {
+    .va-co { grid-template-columns: 1fr; }
+    .va-co__summary { position: static; }
+}
+@media (max-width: 560px) {
+    .va-opt { grid-template-columns: 1fr; }
+}
+
+/* ---------- Hasil pembayaran ---------- */
+.va-result { min-height: 100vh; display: grid; align-items: center; padding: calc(var(--section-y) + 1rem) var(--gutter) var(--section-y); }
+.va-result__inner { width: 100%; max-width: 720px; margin: 0 auto; display: grid; gap: 1.75rem; animation: va-rise 0.7s var(--ease) both; }
+.va-result__icon { width: 64px; height: 64px; display: grid; place-items: center; background: var(--fg); color: var(--bg); }
+.va-result__icon[data-variant='pending'], .va-result__icon[data-variant='failed'] { background: transparent; color: var(--fg); border: 2px solid var(--fg); }
+.va-result__title { font-family: var(--font-display); font-weight: 400; font-size: clamp(2.6rem, 6vw, 4.5rem); line-height: 1; letter-spacing: -0.01em; margin: 0; }
+.va-result__box { border: 1px solid var(--line); }
+.va-result__box > div { display: flex; justify-content: space-between; gap: 1.5rem; padding: 0.95rem 1.25rem; font-size: 0.92rem; }
+.va-result__box > div + div { border-top: 1px solid var(--line); }
+.va-result__box dt { color: var(--muted); }
+.va-result__box dd { margin: 0; font-weight: 600; text-align: right; }
+.va-result__actions { display: flex; gap: 0.75rem; flex-wrap: wrap; }
+
+/* ---------- Status & riwayat pesanan ---------- */
+.va-status { display: inline-block; padding: 0.3rem 0.7rem; border: 1px solid var(--fg); font-size: 0.78rem; font-weight: 700; white-space: nowrap; }
+.va-status[data-status='paid'], .va-status[data-status='completed'] { background: var(--fg); color: var(--bg); }
+.va-status[data-status='pending'] { border-style: dashed; }
+.va-status[data-status='cancelled'], .va-status[data-status='canceled'], .va-status[data-status='expired'], .va-status[data-status='failed'] { border-color: var(--line); color: var(--muted); text-decoration: line-through; }
+
+.va-bk-list { display: grid; gap: 1.5rem; }
+.va-bk { border: 1px solid var(--line); }
+.va-bk__head { display: flex; justify-content: space-between; align-items: center; gap: 1rem; padding: 1.1rem 1.5rem; border-bottom: 1px solid var(--line); }
+.va-bk__code { font-family: var(--font-display); font-size: 1.5rem; line-height: 1; }
+.va-bk__body { padding: 1.5rem; display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); gap: 1.25rem; }
+.va-bk__body dt { font-size: 0.78rem; color: var(--muted); margin-bottom: 0.2rem; }
+.va-bk__body dd { margin: 0; font-weight: 600; }
+.va-bk__addons { padding: 0 1.5rem 1.5rem; font-size: 0.88rem; color: var(--muted); }
+.va-bk__foot { display: flex; justify-content: space-between; align-items: center; gap: 1rem; flex-wrap: wrap; padding: 1.1rem 1.5rem; border-top: 1px solid var(--line); }
+.va-bk__actions { display: flex; gap: 0.5rem; flex-wrap: wrap; align-items: center; }
+
+/* ---------- 404 ---------- */
+.va-404 { font-family: var(--font-display); font-weight: 400; font-size: clamp(7rem, 22vw, 16rem); line-height: 0.85; letter-spacing: -0.03em; margin: 0; }
+
+/* Penanda kecil di kartu pesanan & sorotan kartu yang dituju dari tab lain */
+.va-bk__tag { display: inline-flex; align-items: center; gap: 0.3rem; padding: 0.2rem 0.55rem; border: 1px solid var(--line); font-size: 0.72rem; font-weight: 600; white-space: nowrap; }
+.va-bk__title { display: flex; align-items: center; gap: 0.6rem; flex-wrap: wrap; }
+.va-bk__notice { margin: 0 1.5rem 1.25rem; }
+.va-bk[data-focus='true'] { border-color: var(--fg); box-shadow: 0 0 0 1px var(--fg); }
